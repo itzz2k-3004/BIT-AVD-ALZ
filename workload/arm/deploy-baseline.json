@@ -14641,7 +14641,7 @@
                     },
                     {
                       "type": "Microsoft.DesktopVirtualization/hostPools",
-                      "apiVersion": "2021-07-12",
+                      "apiVersion": "2022-04-01-Preview",
                       "name": "[parameters('name')]",
                       "location": "[parameters('location')]",
                       "tags": "[parameters('tags')]",
@@ -30114,7 +30114,7 @@
                     "value": "[parameters('fslogixScriptUri')]"
                   },
                   "hostPoolToken": {
-                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('avdWorkloadSubsId')), format('{0}', parameters('avdServiceObjectsRgName'))), 'Microsoft.DesktopVirtualization/hostPools', parameters('avdHostPoolName')), '2021-07-12').registrationInfo.token]"
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('avdWorkloadSubsId')), format('{0}', parameters('avdServiceObjectsRgName'))), 'Microsoft.DesktopVirtualization/hostPools', parameters('avdHostPoolName')), '2022-04-01-Preview').registrationInfo.token]"
                   },
                   "marketPlaceGalleryWindows": {
                     "value": "[parameters('marketPlaceGalleryWindows')]"
