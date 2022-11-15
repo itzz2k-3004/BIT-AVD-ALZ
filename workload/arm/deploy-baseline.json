@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.12.40.16777",
-      "templateHash": "14050274364267375051"
+      "templateHash": "14729993502403483350"
     }
   },
   "parameters": {
@@ -14092,7 +14092,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.12.40.16777",
-              "templateHash": "8522127842904617041"
+              "templateHash": "13348411811456269439"
             }
           },
           "parameters": {
@@ -14366,7 +14366,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.12.40.16777",
-                      "templateHash": "10745338714337293087"
+                      "templateHash": "2500754752178775888"
                     }
                   },
                   "parameters": {
@@ -14641,7 +14641,7 @@
                     },
                     {
                       "type": "Microsoft.DesktopVirtualization/hostPools",
-                      "apiVersion": "2022-04-01-Preview",
+                      "apiVersion": "2019-12-10-preview",
                       "name": "[parameters('name')]",
                       "location": "[parameters('location')]",
                       "tags": "[parameters('tags')]",
@@ -14842,6 +14842,13 @@
                       "value": "[resourceGroup().name]",
                       "metadata": {
                         "description": "The resource group the AVD host pool was deployed into"
+                      }
+                    },
+                    "hostPoolRestrationInfo": {
+                      "type": "object",
+                      "value": "[reference(resourceId('Microsoft.DesktopVirtualization/hostPools', parameters('name')), '2019-12-10-preview').registrationInfo]",
+                      "metadata": {
+                        "description": "Registration token"
                       }
                     },
                     "name": {
@@ -16350,7 +16357,13 @@
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('avdWorkloadSubsId')), format('{0}', parameters('avdServiceObjectsRgName'))), 'Microsoft.Resources/deployments', format('Deploy-AVD-WorkSpace-{0}', parameters('time')))]"
               ]
             }
-          ]
+          ],
+          "outputs": {
+            "hostPooltoken": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('avdWorkloadSubsId')), format('{0}', parameters('avdServiceObjectsRgName'))), 'Microsoft.Resources/deployments', format('AVD-HostPool-{0}', parameters('time'))), '2020-10-01').outputs.hostPoolRestrationInfo.value.token]"
+            }
+          }
         }
       },
       "dependsOn": [
@@ -29283,6 +29296,9 @@
           "FslogixSharePath": {
             "value": "[if(not(equals(parameters('avdIdentityServiceProvider'), 'AAD')), variables('varFslogixSharePath'), '')]"
           },
+          "hostPoolToken": {
+            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('Deploy-AVD-HostPool-AppGroups-{0}', parameters('time'))), '2020-10-01').outputs.hostPooltoken.value]"
+          },
           "marketPlaceGalleryWindows": {
             "value": "[variables('varMarketPlaceGalleryWindows')[parameters('avdOsImage')]]"
           },
@@ -29309,7 +29325,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.12.40.16777",
-              "templateHash": "2495399023177749201"
+              "templateHash": "16229733117889532008"
             }
           },
           "parameters": {
@@ -29485,6 +29501,12 @@
               "type": "string",
               "metadata": {
                 "description": "Application Security Group (ASG) for the session hosts."
+              }
+            },
+            "hostPoolToken": {
+              "type": "string",
+              "metadata": {
+                "description": "AVD host pool token."
               }
             },
             "avdHostPoolName": {
@@ -30114,7 +30136,7 @@
                     "value": "[parameters('fslogixScriptUri')]"
                   },
                   "hostPoolToken": {
-                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('avdWorkloadSubsId')), format('{0}', parameters('avdServiceObjectsRgName'))), 'Microsoft.DesktopVirtualization/hostPools', parameters('avdHostPoolName')), '2022-04-01-Preview').registrationInfo.token]"
+                    "value": "[parameters('hostPoolToken')]"
                   },
                   "marketPlaceGalleryWindows": {
                     "value": "[parameters('marketPlaceGalleryWindows')]"
@@ -34588,6 +34610,7 @@
       },
       "dependsOn": [
         "avdBaselineResourceGroups",
+        "[subscriptionResourceId('Microsoft.Resources/deployments', format('Deploy-AVD-HostPool-AppGroups-{0}', parameters('time')))]",
         "[subscriptionResourceId('Microsoft.Resources/deployments', format('Deploy-AVD-Networking-{0}', parameters('time')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('avdWorkloadSubsId')), format('{0}', variables('varAvdServiceObjectsRgName'))), 'Microsoft.Resources/deployments', format('AVD-Workload-KeyVault-{0}', parameters('time')))]",
         "[subscriptionResourceId('Microsoft.Resources/deployments', format('Create-Managed-ID-RoleAssign-{0}', parameters('time')))]",
