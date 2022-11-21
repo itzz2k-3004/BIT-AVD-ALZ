@@ -194,6 +194,15 @@ param avdSessionHostsSize string = 'Standard_D2s_v3'
 @description('Optional. OS disk type for session host. (Defualt: Standard_LRS)')
 param avdSessionHostDiskType string = 'Standard_LRS'
 
+@description('Optional. Specifies the SecurityType of the virtual machine. It is set as TrustedLaunch to enable UefiSettings.')
+param avdSessionHostSecurityType string = ''
+
+@description('Optional. Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. avdSessionHostSecurityType should be set to TrustedLaunch to enable UefiSettings.')
+param avdSessionHostSecureBootEnabled bool = false
+
+@description('Optional. Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings.  avdSessionHostSecurityType should be set to TrustedLaunch to enable UefiSettings.')
+param avdSessionHostVTpmEnabled bool = false
+
 @allowed([
     'win10_21h2_office'
     'win10_21h2'
@@ -1143,6 +1152,9 @@ module deployAndConfigureAvdSessionHosts './avd-modules/avd-session-hosts-batch.
         avdSessionHostLocation: avdSessionHostLocation
         avdSessionHostNamePrefix: varAvdSessionHostNamePrefix
         avdSessionHostsSize: avdSessionHostsSize
+        avdSessionHostSecurityType: avdSessionHostSecurityType
+        avdSessionHostSecureBootEnabled: avdSessionHostSecureBootEnabled
+        avdSessionHostVTpmEnabled: avdSessionHostVTpmEnabled
         avdSubnetId: createAvdVnet ? '${avdNetworking.outputs.avdVirtualNetworkResourceId}/subnets/${varAvdVnetworkSubnetName}' : existingVnetSubnetResourceId
         createAvdVnet: createAvdVnet
         avdUseAvailabilityZones: avdUseAvailabilityZones
