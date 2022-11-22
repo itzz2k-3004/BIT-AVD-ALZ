@@ -166,14 +166,19 @@ param enableServerSideEncryption bool = false
 @description('Optional. Specifies whether extension operations should be allowed on the virtual machine. This may only be set to False when no extensions are present on the virtual machine.')
 param allowExtensionOperations bool = true
 
-@description('Optional. Required if name is specified. Password of the user specified in user parameter.')
-@secure()
-param extensionDomainJoinPassword string = ''
+@description('Optional. The configuration for the [AAD Login for Windows] extension. Must at least contain the ["enabled": true] property to be executed.')
+param extensionAadJoinConfig object = {
+  enabled: false
+}
 
 @description('Optional. The configuration for the [Domain Join] extension. Must at least contain the ["enabled": true] property to be executed.')
 param extensionDomainJoinConfig object = {
   enabled: false
 }
+
+@description('Optional. Required if name is specified. Password of the user specified in user parameter.')
+@secure()
+param extensionDomainJoinPassword string = ''
 
 @description('Optional. The configuration for the [Anti Malware] extension. Must at least contain the ["enabled": true] property to be executed.')
 param extensionAntiMalwareConfig object = {
@@ -480,7 +485,23 @@ resource vm_configurationProfileAssignment 'Microsoft.Automanage/configurationPr
   scope: vm
 }
 
-module vm_domainJoinExtension 'extensions/deploy.bicep' = if (extensionDomainJoinConfig.enabled) {
+@description('Azure Active Directory Login for Windows VMs Extension')
+module vm_aadJoinExtension 'extensions/deploy.bicep' = if (extensionAadJoinConfig.enabled && !(extensionDomainJoinConfig.enabled)) {
+  name: '${uniqueString(deployment().name, location)}-VM-AADLoginForWindows'
+  params: {
+    virtualMachineName: vm.name
+    name: 'AADLoginForWindows'
+    publisher: 'Microsoft.Azure.ActiveDirectory'
+    type: 'AADLoginForWindows'
+    typeHandlerVersion: contains(extensionAadJoinConfig, 'typeHandlerVersion') ? extensionAadJoinConfig.typeHandlerVersion : '1.0'
+    autoUpgradeMinorVersion: contains(extensionAadJoinConfig, 'autoUpgradeMinorVersion') ? extensionAadJoinConfig.autoUpgradeMinorVersion : true
+    enableAutomaticUpgrade: contains(extensionAadJoinConfig, 'enableAutomaticUpgrade') ? extensionAadJoinConfig.enableAutomaticUpgrade : false
+    settings: extensionAadJoinConfig.settings
+    enableDefaultTelemetry: enableReferencedModulesTelemetry
+  }
+}
+
+module vm_domainJoinExtension 'extensions/deploy.bicep' = if (extensionDomainJoinConfig.enabled && !(extensionAadJoinConfig.enabled)) {
   name: '${uniqueString(deployment().name, location)}-VM-DomainJoin'
   params: {
     virtualMachineName: vm.name
@@ -636,6 +657,7 @@ module vm_backup '../../Microsoft.RecoveryServices/vaults/protectionContainers/p
   }
   scope: az.resourceGroup(backupVaultResourceGroup)
   dependsOn: [
+    vm_aadJoinExtension
     vm_domainJoinExtension
     vm_microsoftMonitoringAgentExtension
     vm_microsoftAntiMalwareExtension
