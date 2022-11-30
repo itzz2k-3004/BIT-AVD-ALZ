@@ -133,6 +133,8 @@ var varAllAvailabilityZones = pickZones('Microsoft.Compute', 'virtualMachines', 
 var varNicDiagnosticMetricsToEnable = [
     'AllMetrics'
   ]
+// new variable created to ensure that Intune enrollment is not True if identityServiceProvider is not AAD.
+var varCreateIntuneEnrollment = (avdIdentityServiceProvider == 'AAD') ? createIntuneEnrollment : false
 // =========== //
 // Deployments //
 // =========== //
@@ -205,7 +207,7 @@ module avdSessionHosts '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/d
         // Azure AD (AAD) Join.
         extensionAadJoinConfig: {
             enabled: (avdIdentityServiceProvider == 'AAD') ? true: false
-            settings: createIntuneEnrollment ? {
+            settings: varCreateIntuneEnrollment ? {
                 mdmId: '0000000a-0000-0000-c000-000000000000'
             }: {}
         }
@@ -252,7 +254,7 @@ module addAvdHostsToHostPool '../../vm-custom-extensions/add-avd-session-hosts.b
         hostPoolName: avdHostPoolName
         avdAgentPackageLocation: avdAgentPackageLocation
         aadJoin: (avdIdentityServiceProvider == 'AAD') ? true: false
-        mdmId: createIntuneEnrollment ? '0000000a-0000-0000-c000-000000000000' : ''
+        mdmId: varCreateIntuneEnrollment ? '0000000a-0000-0000-c000-000000000000' : ''
     }
     dependsOn: [
         avdSessionHosts

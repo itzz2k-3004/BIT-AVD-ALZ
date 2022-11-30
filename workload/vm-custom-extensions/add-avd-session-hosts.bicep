@@ -28,7 +28,7 @@ resource addToHostPool 'Microsoft.Compute/virtualMachines/extensions@2021-07-01'
         hostPoolName: hostPoolName
         registrationInfoToken: hostPoolToken
         aadJoin: aadJoin
-        mdmId: mdmId
+        mdmId: aadJoin ? mdmId : ''
         sessionHostConfigurationLastUpdateTime: contains(systemData,'hostpoolUpdate') ? systemData.sessionHostConfigurationVersion : ''
       }
     }

@@ -669,7 +669,6 @@ var varMarketPlaceGalleryWindows = {
         version: 'latest'
     }
 }
-var varIntuneEnroll = (avdIdentityServiceProvider == 'AAD') ? createIntuneEnrollment : false
 var varBaseScriptUri = 'https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/'
 var varFslogixScriptUri = '${varBaseScriptUri}scripts/Set-FSLogixRegKeys.ps1'
 var varFsLogixScript = './Set-FSLogixRegKeys.ps1'
