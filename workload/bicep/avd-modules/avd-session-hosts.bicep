@@ -75,7 +75,7 @@ param avdDomainJoinUserName string
 @description('Required, The service providing domain services for Azure Virtual Desktop.')
 param avdIdentityServiceProvider string
 
-@description('Required, Eronll session hosts on Intune.')
+@description('Required, Enroll session hosts on Intune.')
 param createIntuneEnrollment bool
 
 @description('Required. Name of keyvault that contains credentials.')
@@ -209,9 +209,6 @@ module avdSessionHosts '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/d
                 mdmId: '0000000a-0000-0000-c000-000000000000'
             }: {}
         }
-            //}: {
-            //    enabled: (avdIdentityServiceProvider == 'AAD') ? true: false
-            //}
         // Enable and Configure Microsoft Malware.
         extensionAntiMalwareConfig: {
             enabled: true
@@ -254,6 +251,8 @@ module addAvdHostsToHostPool '../../vm-custom-extensions/add-avd-session-hosts.b
         name: '${avdSessionHostNamePrefix}-${padLeft((i + avdSessionHostCountIndex), 3, '0')}'
         hostPoolName: avdHostPoolName
         avdAgentPackageLocation: avdAgentPackageLocation
+        aadJoin: (avdIdentityServiceProvider == 'AAD') ? true: false
+        mdmId: createIntuneEnrollment ? '0000000a-0000-0000-c000-000000000000' : ''
     }
     dependsOn: [
         avdSessionHosts

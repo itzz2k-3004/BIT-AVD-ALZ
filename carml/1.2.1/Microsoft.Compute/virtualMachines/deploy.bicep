@@ -333,7 +333,9 @@ var accountSasProperties = {
   signedProtocol: 'https'
 }
 
-var identityType = systemAssignedIdentity ? (!empty(userAssignedIdentities) ? 'SystemAssigned,UserAssigned' : 'SystemAssigned') : (!empty(userAssignedIdentities) ? 'UserAssigned' : 'None')
+// change SystemAssignedIdentity to True if AADJoin is enabled.
+var systemAssignedIdentityVar = extensionAadJoinConfig.enabled ? true : systemAssignedIdentity
+var identityType = systemAssignedIdentityVar ? (!empty(userAssignedIdentities) ? 'SystemAssigned,UserAssigned' : 'SystemAssigned') : (!empty(userAssignedIdentities) ? 'UserAssigned' : 'None')
 
 var identity = identityType != 'None' ? {
   type: identityType
