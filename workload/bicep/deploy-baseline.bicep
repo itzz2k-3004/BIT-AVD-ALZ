@@ -195,13 +195,28 @@ param avdSessionHostsSize string = 'Standard_D2s_v3'
 param avdSessionHostDiskType string = 'Standard_LRS'
 
 @allowed([
-    'win10_21h2_office'
-    'win10_21h2'
-    'win11_21h2_office'
-    'win11_21h2'
+    'TrustedLaunch'
+    ''
 ])
-@description('Optional. AVD OS image source. (Default: win10-21h2)')
-param avdOsImage string = 'win10_21h2'
+@description('Optional. Specifies the SecurityType of the virtual machine. It is set as TrustedLaunch to enable UefiSettings.')
+param avdSessionHostSecurityType string = ''
+
+@description('Optional. Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. avdSessionHostSecurityType should be set to TrustedLaunch to enable UefiSettings.')
+param avdSessionHostSecureBootEnabled bool = false
+
+@description('Optional. Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings.  avdSessionHostSecurityType should be set to TrustedLaunch to enable UefiSettings.')
+param avdSessionHostVTpmEnabled bool = false
+
+@allowed([
+    'win10_22h2_office'
+    'win10_22h2_office_g2'
+    'win10_22h2'
+    'win10_22h2_g2'
+    'win11_22h2_office'
+    'win11_22h2'
+])
+@description('Optional. AVD OS image source. (Default: win10-22h2-g2)')
+param avdOsImage string = 'win10_22h2_g2'
 
 @description('Optional. Set to deploy image from Azure Compute Gallery. (Default: false)')
 param useSharedImage bool = false
@@ -632,16 +647,28 @@ var varAvdScalingPlanSchedules = [
 ]
 
 var varMarketPlaceGalleryWindows = {
-    win10_21h2_office: {
+    win10_22h2_office: {
         publisher: 'MicrosoftWindowsDesktop'
         offer: 'office-365'
-        sku: 'win10-21h2-avd-m365'
+        sku: 'win10-22h2-avd-m365'
         version: 'latest'
     }
-    win10_21h2: {
+    win10_22h2: {
         publisher: 'MicrosoftWindowsDesktop'
         offer: 'windows-10'
-        sku: 'win10-21h2-avd'
+        sku: 'win10-22h2-avd'
+        version: 'latest'
+    }
+    win10_22h2_office_g2: {
+        publisher: 'MicrosoftWindowsDesktop'
+        offer: 'office-365'
+        sku: 'win10-22h2-avd-m365-g2'
+        version: 'latest'
+    }
+    win10_22h2_g2: {
+        publisher: 'MicrosoftWindowsDesktop'
+        offer: 'windows-10'
+        sku: 'win10-22h2-avd-g2'
         version: 'latest'
     }
     win11_21h2_office: {
@@ -654,6 +681,18 @@ var varMarketPlaceGalleryWindows = {
         publisher: 'MicrosoftWindowsDesktop'
         offer: 'Windows-11'
         sku: 'win11-21h2-avd'
+        version: 'latest'
+    }
+    win11_22h2: {
+        publisher: 'MicrosoftWindowsDesktop'
+        offer: 'Windows-11'
+        sku: 'win11-22h2-avd'
+        version: 'latest'
+    }
+    win11_22h2_office: {
+        publisher: 'MicrosoftWindowsDesktop'
+        offer: 'office-365'
+        sku: 'win11-22h2-avd-m365'
         version: 'latest'
     }
     winServer_2022_Datacenter: {
@@ -1142,6 +1181,9 @@ module deployAndConfigureAvdSessionHosts './avd-modules/avd-session-hosts-batch.
         avdSessionHostLocation: avdSessionHostLocation
         avdSessionHostNamePrefix: varAvdSessionHostNamePrefix
         avdSessionHostsSize: avdSessionHostsSize
+        avdSessionHostSecurityType: avdSessionHostSecurityType
+        avdSessionHostSecureBootEnabled: avdSessionHostSecureBootEnabled
+        avdSessionHostVTpmEnabled: avdSessionHostVTpmEnabled
         avdSubnetId: createAvdVnet ? '${avdNetworking.outputs.avdVirtualNetworkResourceId}/subnets/${varAvdVnetworkSubnetName}' : existingVnetSubnetResourceId
         createAvdVnet: createAvdVnet
         avdUseAvailabilityZones: avdUseAvailabilityZones
