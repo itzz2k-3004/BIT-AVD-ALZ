@@ -28,11 +28,11 @@ Prior to deploying, you need to ensure you have met the following prerequisites:
 ### Local Workstation Requirements (for PowerShell or CLI deployment)
 
 - For PowerShell Deployment, must have PowerShell Core (v7) installed. [Reference](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)
--- Hint: from Administrative Command prompt on Windows 10 or later, run "winget install --id Microsoft.Powershell --source winget"
+  - Hint: from Administrative Command prompt on Windows 10 or later, run "winget install --id Microsoft.Powershell --source winget"
 - For AZ CLI deployments, must have AZCli installed and up to date. [Reference](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
--- Hint: from Administrative Command prompt on Windows 10 or later, run "winget install -e --id Microsoft.AzureCLI"
+  - Hint: from Administrative Command prompt on Windows 10 or later, run "winget install -e --id Microsoft.AzureCLI"
 - For both PowerShell and AZ CLI deployments, you'll need to install Bicep. AzCLI includes Bicep, but there is a separate install available. [Reference](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/install#windows)
--- Hint: from Administrative Command prompt on Windows 10 or later, run "winget install -e --id Microsoft.Bicep"
+  - Hint: from Administrative Command prompt on Windows 10 or later, run "winget install -e --id Microsoft.Bicep"
 
 ## Planning
 
