@@ -25,6 +25,12 @@ Prior to deploying, you need to ensure you have met the following prerequisites:
 - The [Microsoft.DesktopVirtualization](https://docs.microsoft.com/azure/virtual-desktop/create-host-pools-azure-marketplace?tabs=azure-portal#final-requirements) resource provider must be registered in subscription(s) to be used for deployment.
 - You will need the ObjectId of the **Windows Virtual Desktop** Enterprise Application (with Application Id **9cdead84-a844-4324-93f2-b2e6bb768d07**). This ObjectId is unique for each tenant and is used to give permissions for the [Start VM on Connect](https://docs.microsoft.com/azure/virtual-desktop/start-virtual-machine-connect) feature.
 
+### Local Workstation Requirements (for PowerShell or CLI deployment)
+
+- For PowerShell Deployment, must have PowerShell Core (v7) installed. [Reference](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)
+- For AZ CLI deployments, must have AZCli installed and up to date. [Reference](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
+- For both PowerShell and AZ CLI deployments, you'll need to install Bicep. AzCLI includes Bicep, but there is a separate install available. [Reference](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/install#windows)
+
 ## Planning
 
 This section covers the high-level steps for planning an AVD deployment and the decisions that need to be made. The deployment will use the Microsoft provided Bicep/PowerShell/Azure CLI templates from this repository and the customer provided configuration files that contain the system specific information.
