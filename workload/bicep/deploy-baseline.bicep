@@ -36,7 +36,7 @@ param avdVmLocalUserPassword string = ''
 @description('Required, The service providing domain services for Azure Virtual Desktop. (Default: ADDS)')
 param avdIdentityServiceProvider string = 'ADDS'
 
-@description('Required, Eronll session hosts on Intune. (Default: false)')
+@description('Required, Enroll session hosts on Intune. (Default: false)')
 param createIntuneEnrollment bool = false
 
 @description('Optional, Identity ID to grant RBAC role to access AVD application group. (Default: "")')

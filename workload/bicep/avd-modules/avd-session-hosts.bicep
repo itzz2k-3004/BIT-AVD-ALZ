@@ -84,7 +84,7 @@ param avdDomainJoinUserName string
 @description('Required, The service providing domain services for Azure Virtual Desktop.')
 param avdIdentityServiceProvider string
 
-@description('Required, Eronll session hosts on Intune.')
+@description('Required, Enroll session hosts on Intune.')
 param createIntuneEnrollment bool
 
 @description('Required. Name of keyvault that contains credentials.')

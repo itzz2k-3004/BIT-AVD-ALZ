@@ -76,7 +76,7 @@
       "type": "bool",
       "defaultValue": false,
       "metadata": {
-        "description": "Required, Eronll session hosts on Intune. (Defualt: false)"
+        "description": "Required, Enroll session hosts on Intune. (Defualt: false)"
       }
     },
     "avdApplicationGroupIdentitiesIds": {
@@ -29809,7 +29809,7 @@
             "createIntuneEnrollment": {
               "type": "bool",
               "metadata": {
-                "description": "Required, Eronll session hosts on Intune."
+                "description": "Required, Enroll session hosts on Intune."
               }
             },
             "encryptionAtHost": {
@@ -30708,7 +30708,7 @@
                     "createIntuneEnrollment": {
                       "type": "bool",
                       "metadata": {
-                        "description": "Required, Eronll session hosts on Intune."
+                        "description": "Required, Enroll session hosts on Intune."
                       }
                     },
                     "avdWrklKvName": {
