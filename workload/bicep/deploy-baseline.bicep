@@ -33,13 +33,13 @@ param avdVmLocalUserPassword string = ''
     'AADDS' // Azure Active Directory Domain Services
     'AAD' // Azure AD Join
 ])
-@description('Required, The service providing domain services for Azure Virtual Desktop. (Defualt: ADDS)')
+@description('Required, The service providing domain services for Azure Virtual Desktop. (Default: ADDS)')
 param avdIdentityServiceProvider string = 'ADDS'
 
-@description('Required, Eronll session hosts on Intune. (Defualt: false)')
+@description('Required, Eronll session hosts on Intune. (Default: false)')
 param createIntuneEnrollment bool = false
 
-@description('Optional, Identity ID to grant RBAC role to access AVD application group. (Defualt: "")')
+@description('Optional, Identity ID to grant RBAC role to access AVD application group. (Default: "")')
 param avdApplicationGroupIdentitiesIds string = ''
 
 @allowed([
@@ -47,7 +47,7 @@ param avdApplicationGroupIdentitiesIds string = ''
     'ServicePrincipal'
     'User'
 ])
-@description('Optional, Identity type to grant RBAC role to access AVD application group. (Defualt: "")')
+@description('Optional, Identity type to grant RBAC role to access AVD application group. (Default: "")')
 param avdApplicationGroupIdentityType string = 'Group'
 
 @description('Required. AD domain name.')
@@ -173,25 +173,25 @@ param avdDeploySessionHostsCount int = 1
 @description('Optional. The session host number to begin with for the deployment. This is important when adding virtual machines to ensure the names do not conflict. (Default: 0)')
 param avdSessionHostCountIndex int = 0
 
-@description('Optional. Creates an availability zone and adds the VMs to it. Cannot be used in combination with availability set nor scale set. (Defualt: true)')
+@description('Optional. Creates an availability zone and adds the VMs to it. Cannot be used in combination with availability set nor scale set. (Default: true)')
 param avdUseAvailabilityZones bool = true
 
-@description('Optional. Sets the number of fault domains for the availability set. (Defualt: 3)')
+@description('Optional. Sets the number of fault domains for the availability set. (Default: 3)')
 param avdAsFaultDomainCount int = 2
 
-@description('Optional. Sets the number of update domains for the availability set. (Defualt: 5)')
+@description('Optional. Sets the number of update domains for the availability set. (Default: 5)')
 param avdAsUpdateDomainCount int = 5
 
-@description('Optional. Storage account SKU for FSLogix storage. Recommended tier is Premium LRS or Premium ZRS. (when available) (Defualt: Premium_LRS)')
+@description('Optional. Storage account SKU for FSLogix storage. Recommended tier is Premium LRS or Premium ZRS. (when available) (Default: Premium_LRS)')
 param fslogixStorageSku string = 'Premium_LRS'
 
 @description('Optional. This property can be used by user in the request to enable or disable the Host Encryption for the virtual machine. This will enable the encryption for all the disks including Resource/Temp disk at host itself. For security reasons, it is recommended to set encryptionAtHost to True. Restrictions: Cannot be enabled if Azure Disk Encryption (guest-VM encryption using bitlocker/DM-Crypt) is enabled on your VMs.')
 param encryptionAtHost bool = false
 
-@description('Optional. Session host VM size. (Defualt: Standard_D2s_v3)')
+@description('Optional. Session host VM size. (Default: Standard_D2s_v3)')
 param avdSessionHostsSize string = 'Standard_D2s_v3'
 
-@description('Optional. OS disk type for session host. (Defualt: Standard_LRS)')
+@description('Optional. OS disk type for session host. (Default: Standard_LRS)')
 param avdSessionHostDiskType string = 'Standard_LRS'
 
 @description('Optional. Specifies the SecurityType of the virtual machine. It is set as TrustedLaunch to enable UefiSettings.')
@@ -393,7 +393,7 @@ param opsTeamTag string = 'workload-admins@Contoso.com'
 @description('Optional. Organizational owner of the AVD deployment. (Default: workload-owner@Contoso.com)')
 param ownerTag string = 'workload-owner@Contoso.com'
 
-@description('Optional. Cost center of owner team. (Defualt: Contoso-CC)')
+@description('Optional. Cost center of owner team. (Default: Contoso-CC)')
 param costCenterTag string = 'Contoso-CC'
 
 @allowed([
@@ -684,7 +684,7 @@ var varFslogixScriptUri = '${varBaseScriptUri}scripts/Set-FSLogixRegKeys.ps1'
 var varFsLogixScript = './Set-FSLogixRegKeys.ps1'
 var varFslogixSharePath = '\\\\${varAvdFslogixStorageName}.file.${environment().suffixes.storage}\\${varAvdFslogixProfileContainerFileShareName}'
 var varFsLogixScriptArguments = '-volumeshare ${varFslogixSharePath}'
-var varAvdAgentPackageLocation = 'https://wvdportalstorageblob.blob.${environment().suffixes.storage}/galleryartifacts/Configuration_09-08-2022.zip'
+var varAvdAgentPackageLocation = 'https://wvdportalstorageblob.blob.${environment().suffixes.storage}/galleryartifacts/Configuration_10-27-2022.zip'
 var varStorageAccountContributorRoleId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 var varReaderRoleId = 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
 var varAvdVmPowerStateContributor = '40c5ff49-9181-41f8-ae61-143b0e78555e'

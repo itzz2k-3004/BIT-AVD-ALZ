@@ -266,6 +266,8 @@ module addAvdHostsToHostPool '../../vm-custom-extensions/add-avd-session-hosts.b
         name: '${avdSessionHostNamePrefix}-${padLeft((i + avdSessionHostCountIndex), 3, '0')}'
         hostPoolName: avdHostPoolName
         avdAgentPackageLocation: avdAgentPackageLocation
+        aadJoin: (avdIdentityServiceProvider == 'AAD') ? true: false
+        mdmId: createIntuneEnrollment ? '0000000a-0000-0000-c000-000000000000' : ''
     }
     dependsOn: [
         avdSessionHosts

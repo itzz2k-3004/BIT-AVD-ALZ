@@ -2,6 +2,8 @@ param name string
 param location string
 param avdAgentPackageLocation string
 param hostPoolName string
+param aadJoin bool
+param mdmId string
 param systemData object = {}
 
 
@@ -24,7 +26,10 @@ resource addToHostPool 'Microsoft.Compute/virtualMachines/extensions@2021-07-01'
       properties: {
         hostPoolName: hostPoolName
         registrationInfoToken: hostPoolToken
-        aadJoin: false
+        aadJoin: aadJoin
+        aadJoinPreview: contains(systemData, 'aadJoinPreview') ? systemData.aadJoinPreview : false
+        mdmId: mdmId
+        UseAgentDownloadEndpoint: true
         sessionHostConfigurationLastUpdateTime: contains(systemData,'hostpoolUpdate') ? systemData.sessionHostConfigurationVersion : ''
       }
     }
