@@ -194,14 +194,18 @@ param avdSessionHostsSize string = 'Standard_D2s_v3'
 @description('Optional. OS disk type for session host. (Defualt: Standard_LRS)')
 param avdSessionHostDiskType string = 'Standard_LRS'
 
-@description('Optional. Specifies the SecurityType of the virtual machine. It is set as TrustedLaunch to enable UefiSettings.')
-param avdSessionHostSecurityType string = ''
+@allowed([
+    'TrustedLaunch'
+    'ConfidentialVM'
+])
+@description('Optional. Specifies the securityType of the virtual machine. It is set as TrustedLaunch to enable UefiSettings.')
+param securityType string 
 
-@description('Optional. Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. avdSessionHostSecurityType should be set to TrustedLaunch to enable UefiSettings.')
-param avdSessionHostSecureBootEnabled bool = false
+@description('Optional. Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. securityType should be set to TrustedLaunch to enable UefiSettings.')
+param secureBootEnabled bool = false
 
-@description('Optional. Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings.  avdSessionHostSecurityType should be set to TrustedLaunch to enable UefiSettings.')
-param avdSessionHostVTpmEnabled bool = false
+@description('Optional. Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings.  securityType should be set to TrustedLaunch to enable UefiSettings.')
+param vTPMEnabled bool = false
 
 @allowed([
     'win10_21h2_office'
@@ -1174,9 +1178,9 @@ module deployAndConfigureAvdSessionHosts './avd-modules/avd-session-hosts-batch.
         avdSessionHostLocation: avdSessionHostLocation
         avdSessionHostNamePrefix: varAvdSessionHostNamePrefix
         avdSessionHostsSize: avdSessionHostsSize
-        avdSessionHostSecurityType: avdSessionHostSecurityType
-        avdSessionHostSecureBootEnabled: avdSessionHostSecureBootEnabled
-        avdSessionHostVTpmEnabled: avdSessionHostVTpmEnabled
+        securityType: securityType
+        secureBootEnabled: secureBootEnabled
+        vTPMEnabled: vTPMEnabled
         avdSubnetId: createAvdVnet ? '${avdNetworking.outputs.avdVirtualNetworkResourceId}/subnets/${varAvdVnetworkSubnetName}' : existingVnetSubnetResourceId
         createAvdVnet: createAvdVnet
         avdUseAvailabilityZones: avdUseAvailabilityZones

@@ -48,14 +48,14 @@ param encryptionAtHost bool
 @description('Session host VM size.')
 param avdSessionHostsSize string
 
-@description('Optional. Specifies the SecurityType of the virtual machine. It is set as TrustedLaunch to enable UefiSettings.')
-param avdSessionHostSecurityType string
+@description('Optional. Specifies the securityType of the virtual machine. It is set as TrustedLaunch to enable UefiSettings.')
+param securityType string
 
-@description('Optional. Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. SecurityType should be set to TrustedLaunch to enable UefiSettings.')
-param avdSessionHostSecureBootEnabled bool
+@description('Optional. Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. securityType should be set to TrustedLaunch to enable UefiSettings.')
+param secureBootEnabled bool
 
-@description('Optional. Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings.  SecurityType should be set to TrustedLaunch to enable UefiSettings.')
-param avdSessionHostVTpmEnabled bool
+@description('Optional. Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings.  securityType should be set to TrustedLaunch to enable UefiSettings.')
+param vTPMEnabled bool
 
 @description('OS disk type for session host.')
 param avdSessionHostDiskType string
@@ -169,9 +169,9 @@ module avdSessionHosts '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/d
         osType: 'Windows'
         licenseType: 'Windows_Client'
         vmSize: avdSessionHostsSize
-        securityType: avdSessionHostSecurityType
-        secureBootEnabled: avdSessionHostSecureBootEnabled
-        vTpmEnabled: avdSessionHostVTpmEnabled
+        securityType: securityType
+        secureBootEnabled: secureBootEnabled
+        vTpmEnabled: vTPMEnabled
         imageReference: useSharedImage ? json('{\'id\': \'${avdImageTemplateDefinitionId}\'}') : marketPlaceGalleryWindows
         osDisk: {
             createOption: 'fromImage'
