@@ -206,10 +206,14 @@ param avdSessionHostVTpmEnabled bool = false
 @allowed([
     'win10_21h2_office'
     'win10_21h2'
+    'win10_22h2_office_g2'
+    'win10_22h2_g2'
     'win11_21h2_office'
     'win11_21h2'
+    'win11_22h2_office'
+    'win11_22h2'
 ])
-@description('Optional. AVD OS image source. (Default: win10-21h2)')
+@description('Optional. AVD OS image source. (Default: win10_21h2)')
 param avdOsImage string = 'win10_21h2'
 
 @description('Optional. Set to deploy image from Azure Compute Gallery. (Default: false)')
@@ -653,6 +657,18 @@ var varMarketPlaceGalleryWindows = {
         sku: 'win10-21h2-avd'
         version: 'latest'
     }
+    win10_22h2_office_g2: {
+        publisher: 'MicrosoftWindowsDesktop'
+        offer: 'office-365'
+        sku: 'win10-22h2-avd-m365-g2'
+        version: 'latest'
+    }
+    win10_22h2_g2: {
+        publisher: 'MicrosoftWindowsDesktop'
+        offer: 'windows-10'
+        sku: 'win10-22h2-avd-g2'
+        version: 'latest'
+    }
     win11_21h2_office: {
         publisher: 'MicrosoftWindowsDesktop'
         offer: 'office-365'
@@ -665,16 +681,16 @@ var varMarketPlaceGalleryWindows = {
         sku: 'win11-21h2-avd'
         version: 'latest'
     }
-    winServer_2022_Datacenter: {
-        publisher: 'MicrosoftWindowsServer'
-        offer: 'WindowsServer'
-        sku: '2022-datacenter'
+    win11_22h2_office: {
+        publisher: 'MicrosoftWindowsDesktop'
+        offer: 'office-365'
+        sku: 'win11-22h2-avd-m365'
         version: 'latest'
     }
-    winServer_2019_Datacenter: {
-        publisher: 'MicrosoftWindowsServer'
-        offer: 'WindowsServer'
-        sku: '2019-datacenter'
+    win11_22h2: {
+        publisher: 'MicrosoftWindowsDesktop'
+        offer: 'Windows-11'
+        sku: 'win11-22h2-avd'
         version: 'latest'
     }
 }
