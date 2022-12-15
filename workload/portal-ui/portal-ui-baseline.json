@@ -974,7 +974,7 @@
                                 {
                                     "name": "securityType",
                                     "type": "Microsoft.Common.DropDown",
-                                    "label": "",
+                                    "label": "Security Type",
                                     "filter": true,
                                     "defaultValue": "Standard",
                                     "toolTip": "Choose a type of security that matches your needs: Standard includes basic protections at no additional cost. Trusted launch virtual machines provide additional security features on Gen2 virtual machines to protect against persistent and advanced attacks.",

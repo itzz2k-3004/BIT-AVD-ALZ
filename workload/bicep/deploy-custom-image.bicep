@@ -52,6 +52,16 @@ param createAibCustomRole bool = true
 @description('Optional. Required. AVD OS image source. (Default: win10-21h2)')
 param avdOsImage string = 'win10_21h2'
 
+@allowed([
+    ''
+    'Standard'
+    'TrustedLaunch'
+    'ConfidentialVM'
+    'ConfidentialVMSupported'
+])
+@description('Optional. Choose the Security Type.')
+param securityType string
+
 @description('Optional. Set to deploy image from Azure Compute Gallery. (Default: true)')
 param useSharedImage bool = true
 
@@ -274,7 +284,6 @@ var avdOsImageDefinitions = {
         sku: 'win10-22h2-avd-m365-g2'
         osAccountType: 'Standard_LRS'
         hyperVGeneration: 'V2'
-        securityType: 'TrustedLaunch'
     }
     win10_22h2_g2: {
         name: 'Windows10_22H2_g2'
@@ -285,7 +294,6 @@ var avdOsImageDefinitions = {
         sku: 'win10-22h2-avd-g2'
         osAccountType: 'Standard_LRS'
         hyperVGeneration: 'V2'
-        securityType: 'TrustedLaunch'
     }
     win11_21h2_office: {
         name: 'Windows11_21H2_Office'
@@ -296,7 +304,6 @@ var avdOsImageDefinitions = {
         sku: 'win11-21h2-avd-m365'
         osAccountType: 'Standard_LRS'
         hyperVGeneration: 'V2'
-        securityType: 'TrustedLaunch'
     }
     win11_21h2: {
         name: 'Windows11_21H2'
@@ -307,7 +314,6 @@ var avdOsImageDefinitions = {
         sku: 'win11-21h2-avd'
         osAccountType: 'Standard_LRS'
         hyperVGeneration: 'V2'
-        securityType: 'TrustedLaunch'
     }
     win11_22h2_office: {
         name: 'Windows11_22H2'
@@ -318,7 +324,6 @@ var avdOsImageDefinitions = {
         sku: 'win11-22h2-avd-m365'
         osAccountType: 'Standard_LRS'
         hyperVGeneration: 'V2'
-        securityType: 'TrustedLaunch'
     }
     win11_22h2: {
         name: 'Windows11_22H2_Office'
@@ -329,7 +334,6 @@ var avdOsImageDefinitions = {
         sku: 'win11-22h2-avd'
         osAccountType: 'Standard_LRS'
         hyperVGeneration: 'V2'
-        securityType: 'TrustedLaunch'
     }
 }
 var baseScriptUri = 'https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/'
@@ -523,7 +527,7 @@ module avdImageTemplateDefinition '../../carml/1.3.0/Microsoft.Compute/galleries
         sku: avdOsImageDefinitions[avdOsImage].sku
         location: aibLocation
         hyperVGeneration: avdOsImageDefinitions[avdOsImage].hyperVGeneration
-        securityType: avdOsImageDefinitions[avdOsImage].securityType
+        securityType: securityType
         tags: createResourceTags ? commonResourceTags : {}
     }
     dependsOn: [

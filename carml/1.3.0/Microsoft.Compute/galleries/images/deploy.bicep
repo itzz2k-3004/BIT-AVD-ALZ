@@ -63,11 +63,13 @@ param hyperVGeneration string = 'V1'
 
 @description('Optional. The security type of the image. Requires a hyperVGeneration V2.')
 @allowed([
+  ''
+  'Standard'
   'TrustedLaunch'
   'ConfidentialVM'
   'ConfidentialVMSupported'
 ])
-param securityType string
+param securityType string = 'Standard'
 
 @description('Optional. The description of this gallery Image Definition resource. This property is updatable.')
 param imageDefinitionDescription string = ''
@@ -141,8 +143,9 @@ resource image 'Microsoft.Compute/galleries/images@2022-03-03' = {
         max: maxRecommendedMemory
       }
     }
-    hyperVGeneration: !empty(securityType) ? 'V2' : hyperVGeneration
-    features: !empty(securityType) ? [
+    hyperVGeneration: hyperVGeneration
+    // don't need feature for Standard Security and everything but standard requires gen 2 VMs.
+    features: securityType != 'Standard' && securityType != '' && hyperVGeneration == 'V2' ? [
       {
         name: 'securityType'
         value: securityType
