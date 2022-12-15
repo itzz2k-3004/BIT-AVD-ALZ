@@ -42,25 +42,11 @@ param createAibCustomRole bool = true
 @allowed([
     'win10_21h2_office'
     'win10_21h2'
-    'win10_22h2_office_g2'
-    'win10_22h2_g2'
     'win11_21h2_office'
     'win11_21h2'
-    'win11_22h2_office'
-    'win11_22h2'
 ])
 @description('Optional. Required. AVD OS image source. (Default: win10-21h2)')
 param avdOsImage string = 'win10_21h2'
-
-@allowed([
-    ''
-    'Standard'
-    'TrustedLaunch'
-    'ConfidentialVM'
-    'ConfidentialVMSupported'
-])
-@description('Optional. Choose the Security Type.')
-param securityType string
 
 @description('Optional. Set to deploy image from Azure Compute Gallery. (Default: true)')
 param useSharedImage bool = true
@@ -160,7 +146,7 @@ param costCenterTag string = 'Contoso-CC'
 @allowed([
     'Prod'
     'Dev'
-    'staging '
+    'staging '
 ])
 @description('Optional. Deployment environment of the application, workload. (Default: Dev)')
 param environmentTypeTag string = 'Dev'
@@ -275,28 +261,8 @@ var avdOsImageDefinitions = {
         osAccountType: 'Standard_LRS'
         hyperVGeneration: 'V1'
     }
-    win10_22h2_office_g2: {
-        name: 'Windows10_22H2_Office_g2'
-        osType: 'Windows'
-        osState: 'Generalized'
-        offer: 'office-365'
-        publisher: 'MicrosoftWindowsDesktop'
-        sku: 'win10-22h2-avd-m365-g2'
-        osAccountType: 'Standard_LRS'
-        hyperVGeneration: 'V2'
-    }
-    win10_22h2_g2: {
-        name: 'Windows10_22H2_g2'
-        osType: 'Windows'
-        osState: 'Generalized'
-        offer: 'windows-10'
-        publisher: 'MicrosoftWindowsDesktop'
-        sku: 'win10-22h2-avd-g2'
-        osAccountType: 'Standard_LRS'
-        hyperVGeneration: 'V2'
-    }
     win11_21h2_office: {
-        name: 'Windows11_21H2_Office'
+        name: 'Windows11_21H2'
         osType: 'Windows'
         osState: 'Generalized'
         offer: 'office-365'
@@ -312,26 +278,6 @@ var avdOsImageDefinitions = {
         offer: 'windows-11'
         publisher: 'MicrosoftWindowsDesktop'
         sku: 'win11-21h2-avd'
-        osAccountType: 'Standard_LRS'
-        hyperVGeneration: 'V2'
-    }
-    win11_22h2_office: {
-        name: 'Windows11_22H2'
-        osType: 'Windows'
-        osState: 'Generalized'
-        offer: 'office-365'
-        publisher: 'MicrosoftWindowsDesktop'
-        sku: 'win11-22h2-avd-m365'
-        osAccountType: 'Standard_LRS'
-        hyperVGeneration: 'V2'
-    }
-    win11_22h2: {
-        name: 'Windows11_22H2_Office'
-        osType: 'Windows'
-        osState: 'Generalized'
-        offer: 'windows-11'
-        publisher: 'MicrosoftWindowsDesktop'
-        sku: 'win11-22h2-avd'
         osAccountType: 'Standard_LRS'
         hyperVGeneration: 'V2'
     }
@@ -514,7 +460,7 @@ module azureComputeGallery '../../carml/1.2.0/Microsoft.Compute/galleries/deploy
 }
 
 // Image Template Definition.
-module avdImageTemplateDefinition '../../carml/1.3.0/Microsoft.Compute/galleries/images/deploy.bicep' = {
+module avdImageTemplateDefinition '../../carml/1.2.0/Microsoft.Compute/galleries/images/deploy.bicep' = {
     scope: resourceGroup('${avdSharedServicesSubId}', '${avdSharedResourcesRgName}')
     name: 'Deploy-AVD-Image-Template-Definition-${time}'
     params: {
@@ -527,7 +473,6 @@ module avdImageTemplateDefinition '../../carml/1.3.0/Microsoft.Compute/galleries
         sku: avdOsImageDefinitions[avdOsImage].sku
         location: aibLocation
         hyperVGeneration: avdOsImageDefinitions[avdOsImage].hyperVGeneration
-        securityType: securityType
         tags: createResourceTags ? commonResourceTags : {}
     }
     dependsOn: [

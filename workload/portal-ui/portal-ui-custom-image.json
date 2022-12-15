@@ -123,73 +123,20 @@
                                         "required": true,
                                         "allowedValues": [
                                             {
-                                                "label": "Windows 10 21H2 (Gen1)",
+                                                "label": "Windows 10",
                                                 "value": "win10_21h2"
                                             },
                                             {
-                                                "label": "Windows 10 21H2 - Office 365 (Gen1)",
+                                                "label": "Windows 10 - Office 365",
                                                 "value": "win10_21h2_office"
                                             },
                                             {
-                                                "label": "Windows 10 22H2 (Gen2)",
-                                                "value": "win10_22h2_g2"
-                                            },
-                                            {
-                                                "label": "Windows 10 22H2 - Office 365 (Gen2)",
-                                                "value": "win10_22h2_office_g2"
-                                            },
-                                            {
-                                                "label": "Windows 11 21H2 (Gen2)",
+                                                "label": "Windows 11",
                                                 "value": "win11_21h2"
                                             },
                                             {
-                                                "label": "Windows 11 21H2 - Office 365 (Gen2)",
+                                                "label": "Windows 11 - Office 365",
                                                 "value": "win11_21h2_office"
-                                            },
-                                            {
-                                                "label": "Windows 11 22H2 (Gen2)",
-                                                "value": "win11_22h2"
-                                            },
-                                            {
-                                                "label": "Windows 11 22H2 - Office 365 (Gen2)",
-                                                "value": "win11_22h2_office"
-                                            }
-                                        ]
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "name": "avdCustomImageSecurityProfile",
-                            "type": "Microsoft.Common.Section",
-                            "visible": true,
-                            "label": "Image Definition Features",
-                            "elements": [
-                                {
-                                    "name": "securityType",
-                                    "type": "Microsoft.Common.DropDown",
-                                    "visible": "[or(contains(steps('avdCustomImage').avdCustomImageOsSelection.avdCustomImageOsImage, 'g2'), contains(steps('avdCustomImage').avdCustomImageOsSelection.avdCustomImageOsImage, 'Win11'))]",
-                                    "label": "Security Type",
-                                    "defaultValue": "Standard",
-                                    "toolTip": "Security type refers to the different security features available for a virtual machine. Security features like Trusted launch and Confidential virtual machines help to improve the security of Azure generation 2 virtual machines. However, additional security features have some limitations, which include not supporting back up, managed disks, and ephemeral OS disks. Learn more about Trusted launch virtual machine and Confidential virtual machine.",
-                                    "constraints": {
-                                        "required": true,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Standard",
-                                                "value": "Standard"
-                                            },
-                                            {
-                                                "label": "Trusted Launch",
-                                                "value": "TrustedLaunch"
-                                            },
-                                            {
-                                                "label": "Confidential Virtual Machine",
-                                                "value": "ConfidentialVM"
-                                            },
-                                            {
-                                                "label": "Confidential Virtual Machine Supported",
-                                                "value": "ConfidentialVMSupported"
                                             }
                                         ]
                                     }
