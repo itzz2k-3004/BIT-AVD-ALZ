@@ -1104,7 +1104,6 @@
                                 "style": "Warning"
                             }
                         },
-                        
                         {
                             "name": "avdVnetPrivateDnsZone",
                             "type": "Microsoft.Common.OptionsGroup",
