@@ -25,7 +25,7 @@
                                     "name": "info",
                                     "type": "Microsoft.Common.InfoBox",
                                     "options": {
-                                        "text": "Prior to deployment, make sure you meet all the prerequisites for using this Azure virtual desktop accelerator. Be sure to review the documentation for the link.",
+                                        "text": "Prior to deployment, make sure you meet the prerequisites for using this Azure virtual desktop Landing Zone Accelerator. Be sure to review the documentation on the link.",
                                         "uri": "https://github.com/Azure/avdaccelerator/blob/main/workload/docs/getting-started.md"                                                                                     
                                     }
                                 }
@@ -45,22 +45,6 @@
                                         "style": "Info"
                                     }
                                 },
-                               
-                                {
-                                    "name": "recommendations ALZ",
-                                    "type": "Microsoft.Common.InfoBox",
-                                    "visible": true,
-                                    "options": {
-                                      "icon": "None",
-                                      "text": "It is recommended to have already deployed an ALZ architecture (not mandatory) from a template reference implementation available.",
-                                      "uri":"https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/wvd/ready",
-                                      "style": "Info"
-                                    }
-                                }
-                                
-                               
-                                
-                               
                             ]
                         },
                         {
