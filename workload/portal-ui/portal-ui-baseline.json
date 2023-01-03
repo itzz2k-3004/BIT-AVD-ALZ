@@ -25,8 +25,8 @@
                                     "name": "info",
                                     "type": "Microsoft.Common.InfoBox",
                                     "options": {
-                                        "text": "Subscription and location selected in this step, will be used to deploy AVD workload Landing Zone resources (Application group, host pool, workspace, key vaults, storage, VMs etc.).",
-                                        "style": "Info"
+                                        "text": "Prior to deployment, make sure you meet all the prerequisites for using this Azure virtual desktop accelerator. Be sure to review the documentation for the link.",
+                                        "uri": "https://github.com/Azure/avdaccelerator/blob/main/workload/docs/getting-started.md"                                                                                     
                                     }
                                 }
                             ]
@@ -45,16 +45,7 @@
                                         "style": "Info"
                                     }
                                 },
-                                {
-                                    "name": "permissions",
-                                    "type": "Microsoft.Common.InfoBox",
-                                    "visible": true,
-                                    "options": {
-                                      "icon": "None",
-                                      "text": "You need access to the Azure AVD subscription(s) with owner permissions.",
-                                      "style": "Info"
-                                    }
-                                },
+                               
                                 {
                                     "name": "recommendations ALZ",
                                     "type": "Microsoft.Common.InfoBox",
@@ -62,6 +53,7 @@
                                     "options": {
                                       "icon": "None",
                                       "text": "It is recommended to have already deployed an ALZ architecture (not mandatory) from a template reference implementation available.",
+                                      "uri":"https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/wvd/ready",
                                       "style": "Info"
                                     }
                                 }
@@ -202,7 +194,6 @@
                                     "visible": "[not(equals(steps('avdIdentity').avdIdentityDomainInformation.avdIdentityServiceProvider, 'AAD'))]",
                                     "options": {
                                         "text": "Identity service provider must already exist, as they are a prerequisite for the AVD accelerator deployment.",
-                                        "uri": "https://github.com/Azure/avdaccelerator/wiki/Getting-Started",
                                         "style": "Info"
                                     }
                                 }
@@ -920,17 +911,7 @@
                                 }
                             ]
                         },
-                        {
-                            "name": "licenceinfo",
-                            "type": "Microsoft.Common.InfoBox",
-                            "visible": true,
-                            "options": {
-                              "icon": "None",
-                              "text": "Select the appropriate licenses for proper AVD entitlement.",
-                              "uri": "https://learn.microsoft.com/es-mx/azure/virtual-desktop/prerequisites#operating-systems-and-licenses",
-                              "style": "info"
-                            }
-                        },
+                       
                         {
                             "name": "avdSessionHostsOsSection",
                             "type": "Microsoft.Common.Section",
@@ -1187,16 +1168,7 @@
                                 }
                             ]
                         },
-                        {
-                            "name": "avdVnetPeeringInfoBox",
-                            "type": "Microsoft.Common.InfoBox",
-                            "visible": "[equals(steps('avdNetwork').createAvdVnet, true)]",
-                            "options": {
-                                "text": "vNet peering will be created to existing vNet hub with access to identity and DNS services .",
-                                "uri": "https://docs.microsoft.com/azure/architecture/example-scenario/wvd/windows-virtual-desktop?context=/azure/virtual-desktop/context/context",
-                                "style": "info"
-                            }
-                        },
+                      
                         {
                             "name": "avdHubVnetPeering",
                             "type": "Microsoft.Common.Section",
@@ -1281,17 +1253,8 @@
                                             }
                                         ]
                                     }
-                                },
-                                {
-                                    "name": "text1",
-                                    "type": "Microsoft.Common.InfoBox",
-                                    "visible": true,
-                                    "options": {
-                                      "icon": "None",
-                                      "text": "If the new AVD workload will be connected (peered) with a Hub VNet, contributor permissions are required on the referenced Hub VNet.",
-                                      "style": "info"
-                                    }
                                 }
+                               
                             ]
                         }
                     ]
