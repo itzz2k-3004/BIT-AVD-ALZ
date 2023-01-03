@@ -44,7 +44,7 @@
                                         "text": "Subscription and location selected in this step, will be used to deploy AVD workload Landing Zone resources (Application group, host pool, workspace, key vaults, storage, VMs etc.).",
                                         "style": "Info"
                                     }
-                                },
+                                }
                             ]
                         },
                         {
@@ -178,6 +178,7 @@
                                     "visible": "[not(equals(steps('avdIdentity').avdIdentityDomainInformation.avdIdentityServiceProvider, 'AAD'))]",
                                     "options": {
                                         "text": "Identity service provider must already exist, as they are a prerequisite for the AVD accelerator deployment.",
+					"uri": "https://github.com/Azure/avdaccelerator/wiki/Getting-Started",
                                         "style": "Info"
                                     }
                                 }
@@ -1152,7 +1153,16 @@
                                 }
                             ]
                         },
-                      
+			{
+                            "name": "avdVnetPeeringInfoBox",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[equals(steps('avdNetwork').createAvdVnet, true)]",
+                            "options": {
+                                "text": "vNet peering will be created to existing vNet hub with access to identity and DNS services .",
+                                "uri": "https://docs.microsoft.com/azure/architecture/example-scenario/wvd/windows-virtual-desktop?context=/azure/virtual-desktop/context/context",
+                                "style": "info"
+                            }
+                        },
                         {
                             "name": "avdHubVnetPeering",
                             "type": "Microsoft.Common.Section",
