@@ -897,7 +897,6 @@
                                 }
                             ]
                         },
-                       
                         {
                             "name": "avdSessionHostsOsSection",
                             "type": "Microsoft.Common.Section",
@@ -985,7 +984,6 @@
                                 "style": "info"
                             }
                         },
-                        
                         {
                             "name": "createAvdVnet",
                             "type": "Microsoft.Common.OptionsGroup",
@@ -1249,7 +1247,6 @@
                                         ]
                                     }
                                 }
-                               
                             ]
                         }
                     ]
