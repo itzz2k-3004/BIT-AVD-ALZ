@@ -25,9 +25,9 @@
                                     "name": "infoPrereqs",
                                     "type": "Microsoft.Common.InfoBox",
                                     "options": {
-                                        "text": "Prior to deployment, make sure you meet the prerequisites for using this Azure virtual desktop Landing Zone Accelerator. Be sure to review the documentation on the link.",
+                                        "text": "Prior to deployment, make sure you meet the prerequisites for using this Azure virtual desktop Landing Zone Accelerator. Be sure to review the documentation on this link.",
                                         "uri": "https://github.com/Azure/avdaccelerator/blob/main/workload/docs/getting-started.md",
-					"style": "Warning"
+					"style": "Info"
                                     }
                                 }
                             ]
