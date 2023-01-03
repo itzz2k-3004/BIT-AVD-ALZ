@@ -255,6 +255,17 @@
                             }
                         },
                         {
+                            "name": "AIB permissions",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": true,
+                            "options": {
+                              "icon": "None",
+                              "text": "Learn more about Azure VM Image Builder Permissions .",
+                              "uri": "https://learn.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-permissions-powershell",
+                              "style":"info"
+                            }
+                          },
+                        {
                             "name": "avdCustomImageIdentityAibSelectManagedIdentity",
                             "type": "Microsoft.Solutions.ResourceSelector",
                             "visible": "[equals(steps('avdCustomImageAib').avdCustomImageIdentityAibCreateManagedIdentity, false)]",
