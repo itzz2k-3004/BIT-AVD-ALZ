@@ -117,4 +117,4 @@ module avdApplicationGroups '../../../carml/1.2.0/Microsoft.DesktopVirtualizatio
 // Outputs //
 // =========== //
 output avdAppGroupsArray array = [for (resourceId, i) in finalApplicationGroups: avdApplicationGroups[i].outputs.resourceId]
-output hostPooltoken string = avdHostPool.outputs.hostPoolRestrationInfo.token
+output hostPooltoken string = avdHostPool.outputs.hostPoolRegistrationInfo.token

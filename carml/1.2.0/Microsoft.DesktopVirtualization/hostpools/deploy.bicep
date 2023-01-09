@@ -207,7 +207,8 @@ output resourceId string = hostPool.id
 @description('The resource group the AVD host pool was deployed into')
 output resourceGroupName string = resourceGroup().name
 
-output hostPoolRestrationInfo object = hostPool.properties.registrationInfo
+@description('The host pool''s registration info, including token')
+output hostPoolRegistrationInfo object = hostPool.properties.registrationInfo
 
 @description('The name of the AVD host pool')
 output name string = hostPool.name
