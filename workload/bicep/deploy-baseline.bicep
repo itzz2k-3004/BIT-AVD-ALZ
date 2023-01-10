@@ -553,7 +553,6 @@ var varAvdHostPoolName = avdUseCustomNaming ? avdHostPoolCustomName : 'vdpool-${
 var varAvdHostFriendlyName = avdUseCustomNaming ? avdHostPoolCustomFriendlyName : '${deploymentPrefix}-${avdManagementPlaneLocation}-001'
 var varAvdApplicationGroupNameDesktop = avdUseCustomNaming ? avdApplicationGroupCustomNameDesktop : 'vdag-desktop-${varAvdManagementPlaneNamingStandard}-001'
 var varAvdApplicationGroupFriendlyName = avdUseCustomNaming ? avdApplicationGroupCustomFriendlyName : 'Desktops-${deploymentPrefix}-${avdManagementPlaneLocation}-001'
-var varAvdApplicationGroupAppFriendlyName = 'Desktops-${deploymentPrefix}'
 var varAvdApplicationGroupNameRapp = avdUseCustomNaming ? avdApplicationGroupCustomNameRapp : 'vdag-rapp-${varAvdManagementPlaneNamingStandard}-001'
 var varAvdApplicationGroupFriendlyNameRapp = avdUseCustomNaming ? avdApplicationGroupCustomFriendlyNameRapp : 'Apps-${deploymentPrefix}-${avdManagementPlaneLocation}-001'
 var varAvdScalingPlanName = avdUseCustomNaming ? avdScalingPlanCustomName : 'vdscaling-${varAvdManagementPlaneNamingStandard}-001'
@@ -803,7 +802,7 @@ resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (
 // Resource groups.
 // Compute, service objects, network.
 // Network.
-module avdBaselineNetworkResourceGroup '../../carml/1.2.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (createAvdVnet) {
+module avdBaselineNetworkResourceGroup '../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (createAvdVnet) {
     scope: subscription(avdWorkloadSubsId)
     name: 'Deploy-${varAvdNetworkObjectsRgName}-${time}'
     params: {
@@ -818,7 +817,7 @@ module avdBaselineNetworkResourceGroup '../../carml/1.2.0/Microsoft.Resources/re
 }
 
 // Compute, service objects
-module avdBaselineResourceGroups '../../carml/1.2.0/Microsoft.Resources/resourceGroups/deploy.bicep' = [for resourceGroup in resourceGroups: {
+module avdBaselineResourceGroups '../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = [for resourceGroup in resourceGroups: {
     scope: subscription(avdWorkloadSubsId)
     name: 'Deploy-AVD-${resourceGroup.purpose}-${time}'
     params: {
@@ -830,7 +829,7 @@ module avdBaselineResourceGroups '../../carml/1.2.0/Microsoft.Resources/resource
 }]
 
 // Storage.
-module avdBaselineStorageResourceGroup '../../carml/1.2.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (varCreateAvdFslogixDeployment && (avdIdentityServiceProvider != 'AAD')) {
+module avdBaselineStorageResourceGroup '../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (varCreateAvdFslogixDeployment && (avdIdentityServiceProvider != 'AAD')) {
     scope: subscription(avdWorkloadSubsId)
     name: 'Deploy-${varAvdStorageObjectsRgName}-${time}'
     params: {
@@ -957,7 +956,6 @@ module avdManagementPLane 'avd-modules/avd-management-plane.bicep' = {
     params: {
         avdApplicationGroupNameDesktop: varAvdApplicationGroupNameDesktop
         avdApplicationGroupFriendlyNameDesktop: varAvdApplicationGroupFriendlyName
-        avdApplicationGroupAppFriendlyNameDesktop: varAvdApplicationGroupAppFriendlyName
         avdWorkSpaceName: varAvdWorkSpaceName
         avdWorkSpaceFriendlyName: varAvdWorkSpaceFriendlyName
         avdApplicationGroupNameRapp: varAvdApplicationGroupNameRapp
@@ -997,7 +995,6 @@ module deployAvdManagedIdentitiesRoleAssign 'avd-modules/avd-identity.bicep' = {
     name: 'Create-Managed-ID-RoleAssign-${time}'
     params: {
         avdComputeObjectsRgName: varAvdComputeObjectsRgName
-        avdDeploySessionHosts: avdDeploySessionHosts
         avdEnterpriseAppObjectId: avdEnterpriseAppObjectId
         avdDeployScalingPlan: avdDeployScalingPlan
         avdSessionHostLocation: avdSessionHostLocation
@@ -1007,7 +1004,6 @@ module deployAvdManagedIdentitiesRoleAssign 'avd-modules/avd-identity.bicep' = {
         createStartVmOnConnectCustomRole: createStartVmOnConnectCustomRole
         fslogixManagedIdentityName: varFslogixManagedIdentityName
         readerRoleId: varReaderRoleId
-        avdManagementPlaneLocation: avdManagementPlaneLocation
         avdIdentityServiceProvider: avdIdentityServiceProvider
         storageAccountContributorRoleId: varStorageAccountContributorRoleId
         avdVmPowerStateContributor: varAvdVmPowerStateContributor
@@ -1022,7 +1018,7 @@ module deployAvdManagedIdentitiesRoleAssign 'avd-modules/avd-identity.bicep' = {
 }
 
 // Key vault.
-module avdWrklKeyVault '../../carml/1.2.0/Microsoft.KeyVault/vaults/deploy.bicep' = if (avdDeploySessionHosts) {
+module avdWrklKeyVault '../../carml/1.3.0/Microsoft.KeyVault/vaults/deploy.bicep' = if (avdDeploySessionHosts) {
     scope: resourceGroup('${avdWorkloadSubsId}', '${varAvdServiceObjectsRgName}')
     name: 'AVD-Workload-KeyVault-${time}'
     params: {
@@ -1124,7 +1120,6 @@ module deployAvdStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bicep' = i
         avdTimeZone: varTimeZones[avdSessionHostLocation]
         avdWrklStoragePrivateEndpointName: varAvdWrklStoragePrivateEndpointName
         avdApplicationSecurityGroupResourceId: createAvdVnet ? '${avdNetworking.outputs.avdApplicationSecurityGroupResourceId}' : ''
-        avdComputeObjectsRgName: varAvdComputeObjectsRgName
         avdDomainJoinUserName: avdDomainJoinUserName
         avdWrklKvName: varAvdWrklKvName
         avdServiceObjectsRgName: varAvdServiceObjectsRgName
