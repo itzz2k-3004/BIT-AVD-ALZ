@@ -38,7 +38,7 @@ param time string = utcNow()
 // =========== //
 
 // Resource group if new Log Analytics space is required
-module avdBaselineMonitoringResourceGroup '../../../carml/1.2.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (deployAlaWorkspace) {
+module avdBaselineMonitoringResourceGroup '../../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (deployAlaWorkspace) {
   scope: subscription(avdWorkloadSubsId)
   name: 'Deploy-${avdMonitoringRgName}-${time}'
   params: {
@@ -50,7 +50,7 @@ module avdBaselineMonitoringResourceGroup '../../../carml/1.2.0/Microsoft.Resour
 }
 
 // Azure log analytics workspace.
-module avdAlaWorkspace '../../../carml/1.2.1/Microsoft.OperationalInsights/workspaces/deploy.bicep' = if (deployAlaWorkspace) {
+module avdAlaWorkspace '../../../carml/1.3.0/Microsoft.OperationalInsights/workspaces/deploy.bicep' = if (deployAlaWorkspace) {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdMonitoringRgName}')
   name: 'AVD-Log-Analytics-Workspace-${time}'
   params: {
@@ -66,7 +66,7 @@ module avdAlaWorkspace '../../../carml/1.2.1/Microsoft.OperationalInsights/works
 }
 
 // Introduce delay after log analitics workspace creation.
-module avdAlaWorkspaceDelay '../../../carml/1.0.0/Microsoft.Resources/deploymentScripts/deploy.bicep' = if (deployAlaWorkspace) {
+module avdAlaWorkspaceDelay '../../../carml/1.3.0/Microsoft.Resources/deploymentScripts/deploy.bicep' = if (deployAlaWorkspace) {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdMonitoringRgName}')
   name: 'AVD-ALA-Workspace-Delay-${time}'
   params: {
@@ -104,7 +104,6 @@ module deployDiagnosticsAzurePolicyForAvd 'avd-azure-policy-monitoring.bicep' = 
 module deployMonitoringEventsPerformanceSettings 'avd-monitoring-events-performance-counters.bicep' = {
   name: 'Deploy-AVD-Events-Performance-${time}'
   params: {
-      avdManagementPlaneLocation: avdManagementPlaneLocation
       deployAlaWorkspace: deployAlaWorkspace
       alaWorkspaceId: deployAlaWorkspace ? '' : alaWorkspaceId
       avdMonitoringRgName: avdMonitoringRgName

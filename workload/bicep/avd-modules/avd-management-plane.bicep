@@ -36,9 +36,6 @@ param avdApplicationGroupNameDesktop string
 @description('AVD Application group for the session hosts. Desktop type (friendly name).')
 param avdApplicationGroupFriendlyNameDesktop string
 
-@description('AVD Application group app for the session hosts. Desktop type (friendly name).')
-param avdApplicationGroupAppFriendlyNameDesktop string
-
 @description('Optional. AVD deploy remote app application group.')
 param avdDeployRappGroup bool
 
@@ -136,9 +133,6 @@ var varAvdHostPoolDiagnostic = [
   'Connection'
   'HostRegistration'
   'AgentHealthStatus'
-  'NetworkData'
-  'ConnectionGraphicsData'
-  'SessionHostManagement'
 ]
 var varAvdApplicationGroupDiagnostic = [
   'Checkpoint'
@@ -151,16 +145,13 @@ var varAvdWorkspaceDiagnostic = [
   'Management'
   'Feed'
 ]
-var varAvdScalingPlanDiagnostic = [
-  'Autoscale'
-]
 
 // =========== //
 // Deployments //
 // =========== //
 
 // Hostpool.
-module avdHostPool '../../../carml/1.2.0/Microsoft.DesktopVirtualization/hostpools/deploy.bicep' = {
+module avdHostPool '../../../carml/1.3.0/Microsoft.DesktopVirtualization/hostpools/deploy.bicep' = {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
   name: 'AVD-HostPool-${time}'
   params: {
@@ -181,7 +172,7 @@ module avdHostPool '../../../carml/1.2.0/Microsoft.DesktopVirtualization/hostpoo
 }
 
 // Application groups.
-module avdApplicationGroups '../../../carml/1.2.0/Microsoft.DesktopVirtualization/applicationgroups/deploy.bicep' = [for applicationGroup in varFinalApplicationGroups: {
+module avdApplicationGroups '../../../carml/1.3.0/Microsoft.DesktopVirtualization/applicationgroups/deploy.bicep' = [for applicationGroup in varFinalApplicationGroups: {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
   name: 'Deploy-AppGroup-${applicationGroup.name}-${time}'
   params: {
@@ -208,7 +199,7 @@ module avdApplicationGroups '../../../carml/1.2.0/Microsoft.DesktopVirtualizatio
 }]
 
 // Workspace.
-module avdWorkSpace '../../../carml/1.2.0/Microsoft.DesktopVirtualization/workspaces/deploy.bicep' = {
+module avdWorkSpace '../../../carml/1.3.0/Microsoft.DesktopVirtualization/workspaces/deploy.bicep' = {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
   name: 'Deploy-AVD-WorkSpace-${time}'
   params: {
@@ -233,7 +224,7 @@ module avdWorkSpace '../../../carml/1.2.0/Microsoft.DesktopVirtualization/worksp
 }
 
 // Scaling plan.
-module avdScalingPlan '../../../carml/1.2.0/Microsoft.DesktopVirtualization/scalingplans/deploy.bicep' =  if (avdDeployScalingPlan && (avdHostPoolType == 'Pooled'))  {
+module avdScalingPlan '../../../carml/1.3.0/Microsoft.DesktopVirtualization/scalingplans/deploy.bicep' =  if (avdDeployScalingPlan && (avdHostPoolType == 'Pooled'))  {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
   name: 'Deploy-AVD-ScalingPlan-${time}'
   params: {
@@ -252,7 +243,6 @@ module avdScalingPlan '../../../carml/1.2.0/Microsoft.DesktopVirtualization/scal
       tags: avdTags
       diagnosticWorkspaceId: avdAlaWorkspaceResourceId
       diagnosticLogsRetentionInDays: avdDiagnosticLogsRetentionInDays
-      logsToEnable: varAvdScalingPlanDiagnostic
   }
   dependsOn: [
     avdHostPool

@@ -3,9 +3,6 @@ targetScope = 'subscription'
 // ========== //
 // Parameters //
 // ========== //
-@description('Resource Group name for the session hosts.')
-param avdComputeObjectsRgName string
-
 @description('Optional. AVD workload subscription ID, multiple subscriptions scenario.')
 param avdWorkloadSubsId string
 
@@ -144,7 +141,7 @@ resource avdWrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' exist
 }
 
 // Provision the storage account and Azure Files.
-module fslogixStorage '../../../carml/1.2.0/Microsoft.Storage/storageAccounts/deploy.bicep' = {
+module fslogixStorage '../../../carml/1.3.0/Microsoft.Storage/storageAccounts/deploy.bicep' = {
     scope: resourceGroup('${avdWorkloadSubsId}', '${avdStorageObjectsRgName}')
     name: 'AVD-Fslogix-Storage-${time}'
     params: {
@@ -206,10 +203,11 @@ module fslogixStorage '../../../carml/1.2.0/Microsoft.Storage/storageAccounts/de
 }
 
 // Provision temporary VM and add it to domain.
-module managementVM '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/deploy.bicep' = {
+module managementVM '../../../carml/1.3.0/Microsoft.Compute/virtualMachines/deploy.bicep' = {
     scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
     name: 'Deploy-Mgmt-VM-${time}'
     params: {
+        availabilityZone: []
         name: managementVmName
         location: avdSessionHostLocation
         timeZone: avdTimeZone
@@ -218,7 +216,6 @@ module managementVM '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/depl
             '${fslogixManagedIdentityResourceId}': {}
         }
         encryptionAtHost: encryptionAtHost
-        availabilityZone: []
         osType: 'Windows'
         //licenseType: 'Windows_Client'
         vmSize: avdSessionHostsSize
@@ -274,7 +271,7 @@ module managementVM '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/depl
 }
 
 // Introduce delay for management VM to be ready.
-module managementVmDelay '../../../carml/1.0.0/Microsoft.Resources/deploymentScripts/deploy.bicep' = {
+module managementVmDelay '../../../carml/1.3.0/Microsoft.Resources/deploymentScripts/deploy.bicep' = {
     scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
     name: 'AVD-Management-VM-Delay-${time}'
     params: {

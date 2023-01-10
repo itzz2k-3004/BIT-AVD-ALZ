@@ -440,6 +440,7 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2021-07-01' = {
         storageUri: !empty(bootDiagnosticStorageAccountName) ? 'https://${bootDiagnosticStorageAccountName}${bootDiagnosticStorageAccountUri}' : null
       }
     }
+    availabilityzone:[]
     availabilitySet: !empty(availabilitySetName) ? json('{"id":"${az.resourceId('Microsoft.Compute/availabilitySets', availabilitySetName)}"}') : null
     proximityPlacementGroup: !empty(proximityPlacementGroupName) ? json('{"id":"${az.resourceId('Microsoft.Compute/proximityPlacementGroups', proximityPlacementGroupName)}"}') : null
     priority: vmPriority

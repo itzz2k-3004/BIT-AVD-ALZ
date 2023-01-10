@@ -3,9 +3,6 @@ targetScope = 'subscription'
 // ========== //
 // Parameters //
 // ========== //
-@description('Required. Location where to deploy AVD management plane.')
-param avdManagementPlaneLocation string
-
 @description('Required. AVD workload subscription ID, multiple subscriptions scenario.')
 param avdWorkloadSubsId string
 
@@ -418,7 +415,7 @@ var varWindowsPerformanceCounters = [
 // =========== //
 // OS seetings
 //@batchSize(1)
-module avdOsEvents '../../../carml/1.2.1/Microsoft.OperationalInsights/workspaces/dataSources/deploy.bicep' = [for (varWindowsEvent, i) in varWindowsEvents: {
+module avdOsEvents '../../../carml/1.3.0/Microsoft.OperationalInsights/workspaces/dataSources/deploy.bicep' = [for (varWindowsEvent, i) in varWindowsEvents: {
   scope: resourceGroup('${varAvdOsSettingsAlaWorkspaceSubId}', '${varAvdOsSettingsAlaWorkspaceRgName}')
   name: 'AVD-Monitoring-OS-Events-${i}-${time}'
   params: {
@@ -433,7 +430,7 @@ module avdOsEvents '../../../carml/1.2.1/Microsoft.OperationalInsights/workspace
 }]
 
 //@batchSize(1)
-module avdOsPerformanceCounters '../../../carml/1.2.1/Microsoft.OperationalInsights/workspaces/dataSources/deploy.bicep' = [for (varWindowsPerformanceCounter, i) in varWindowsPerformanceCounters: {
+module avdOsPerformanceCounters '../../../carml/1.3.0/Microsoft.OperationalInsights/workspaces/dataSources/deploy.bicep' = [for (varWindowsPerformanceCounter, i) in varWindowsPerformanceCounters: {
   scope: resourceGroup('${varAvdOsSettingsAlaWorkspaceSubId}', '${varAvdOsSettingsAlaWorkspaceRgName}')
   name: 'AVD-Monitoring-OS-Performance-Counters-${i}-${time}'
   params: {
