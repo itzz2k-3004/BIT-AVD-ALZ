@@ -523,6 +523,7 @@ module vm_aadJoinExtension 'extensions/deploy.bicep' = if (extensionAadJoinConfi
     autoUpgradeMinorVersion: contains(extensionAadJoinConfig, 'autoUpgradeMinorVersion') ? extensionAadJoinConfig.autoUpgradeMinorVersion : true
     enableAutomaticUpgrade: contains(extensionAadJoinConfig, 'enableAutomaticUpgrade') ? extensionAadJoinConfig.enableAutomaticUpgrade : false
     settings: contains(extensionAadJoinConfig, 'settings') ? extensionAadJoinConfig.settings : {}
+    location: location
   }
 }
 
@@ -537,6 +538,7 @@ module vm_domainJoinExtension 'extensions/deploy.bicep' = if (extensionDomainJoi
     autoUpgradeMinorVersion: contains(extensionDomainJoinConfig, 'autoUpgradeMinorVersion') ? extensionDomainJoinConfig.autoUpgradeMinorVersion : true
     enableAutomaticUpgrade: contains(extensionDomainJoinConfig, 'enableAutomaticUpgrade') ? extensionDomainJoinConfig.enableAutomaticUpgrade : false
     settings: extensionDomainJoinConfig.settings
+    location: location
     protectedSettings: {
       Password: extensionDomainJoinPassword
     }
