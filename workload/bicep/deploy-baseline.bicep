@@ -346,6 +346,11 @@ param avdAvailabilitySetCustomNamePrefix string = 'avail-avd'
 @description('Optional. AVD fslogix and MSIX app attach storage account prefix custom name. (Default: stavd)')
 param storageAccountPrefixCustomName string = 'stavd'
 
+@description('Optional. AVD fslogix storage account profile container file share custom name. (Default: fslogix-pc-app1-001)')
+param fileShareCustomNameFslogix string = 'fslogix-pc-app1-001'
+
+@description('Optional. AVD MSIX App Attach storage account profile container file share custom name. (Default: msix-app1-001)')
+param fileShareCustomNameMsix string = 'msix-app1-001'
 
 //@maxLength(64)
 //@description('Optional. AVD fslogix storage account office container file share prefix custom name. (Default: fslogix-oc-app1-001)')
@@ -354,8 +359,6 @@ param storageAccountPrefixCustomName string = 'stavd'
 @maxLength(6)
 @description('Optional. AVD keyvault prefix custom name. (Default: kv-avd)')
 param avdWrklKvPrefixCustomName string = 'kv-avd'
-
-
 
 //
 // Resource tagging
@@ -581,9 +584,9 @@ var varAvdWrklKvPrivateEndpointName = 'pe-kv-avd-${varDeploymentPrefixLowercase}
 var varAvdSessionHostNamePrefix = avdUseCustomNaming ? avdSessionHostCustomNamePrefix : 'vm-avd-${varDeploymentPrefixLowercase}'
 var varAvdAvailabilitySetNamePrefix = avdUseCustomNaming ? '${avdAvailabilitySetCustomNamePrefix}-${varAvdSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}' : 'avail-avd-${varAvdSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}'
 var varStorageManagedIdentityName = 'id-avd-storage-${varAvdSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}'
-var varAvdFslogixStorageName = deployAvdStorageAzureFiles.outputs.storageAccountName
+var varFslogixStorageName = deployAvdStorageAzureFilesFslogix.outputs.storageAccountName
+var varMsixStorageName = deployAvdStorageAzureFilesMsix.outputs.storageAccountName
 var varManagementVmName = 'vm-mgmt-${varDeploymentPrefixLowercase}'
-//var varAvdMsixStorageName = deployAvdMsixStorageAzureFiles.outputs.storageAccountName
 //var varAvdWrklStoragePrivateEndpointName = 'pe-stavd${varDeploymentPrefixLowercase}${varAvdNamingUniqueStringSixChar}-file'
 var varAvdAlaWorkspaceName = avdUseCustomNaming ? avdAlaWorkspaceCustomName :  'log-avd-${varAvdManagementPlaneLocationAcronym}' //'log-avd-${varAvdComputeStorageResourcesNamingStandard}-${varAvdNamingUniqueStringSixChar}'
 var varStgAccountForFlowLogsName = avdUseCustomNaming ? '${storageAccountPrefixCustomName}${varDeploymentPrefixLowercase}flowlogs${varAvdNamingUniqueStringSixChar}' : 'stavd${varDeploymentPrefixLowercase}flowlogs${varAvdNamingUniqueStringSixChar}'
@@ -731,8 +734,8 @@ var varBaseScriptUri = 'https://raw.githubusercontent.com/Azure/avdaccelerator/m
 
 var varFslogixScriptUri = '${varBaseScriptUri}scripts/Set-FSLogixRegKeys.ps1'
 var varFsLogixScript = './Set-FSLogixRegKeys.ps1'
-var varFslogixFileShareName = deployAvdStorageAzureFiles.outputs.fileShareName
-var varFslogixSharePath = '\\\\${varAvdFslogixStorageName}.file.${environment().suffixes.storage}\\${varFslogixFileShareName}'
+var varFslogixFileShareName = deployAvdStorageAzureFilesFslogix.outputs.fileShareName
+var varFslogixSharePath = '\\\\${varFslogixStorageName}.file.${environment().suffixes.storage}\\${varFslogixFileShareName}'
 var varFsLogixScriptArguments = '-volumeshare ${varFslogixSharePath}'
 
 var varAvdAgentPackageLocation = 'https://wvdportalstorageblob.blob.${environment().suffixes.storage}/galleryartifacts/Configuration_09-08-2022.zip'
@@ -752,7 +755,6 @@ var varDnsServers = (customDnsIps == 'none') ? []: (split(allDnsServers, ','))
 var varCreateAvdFslogixDeployment = (avdIdentityServiceProvider == 'AAD') ? false: createAvdFslogixDeployment
 var varCreateMsixDeployment = (avdIdentityServiceProvider == 'AAD') ? false: createMsixDeployment
 var varCreateStorageDeployment = (varCreateAvdFslogixDeployment||varCreateMsixDeployment == true) ? true: false
-
 var varAvdApplicationGroupIdentitiesIds = !empty(avdApplicationGroupIdentitiesIds) ? (split(avdApplicationGroupIdentitiesIds, ',')): []
 var varCreateAvdVnetPeering = !empty(existingHubVnetResourceId) ? true: false
 
@@ -1137,11 +1139,11 @@ resource avdWrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' exist
 }
 
 // Storage.
-module deployAvdStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bicep' = if (varCreateAvdFslogixDeployment && avdDeploySessionHosts && (avdIdentityServiceProvider != 'AAD')) {
+module deployAvdStorageAzureFilesFslogix 'avd-modules/avd-storage-azurefiles.bicep' = if (varCreateAvdFslogixDeployment && avdDeploySessionHosts && (avdIdentityServiceProvider != 'AAD')) {
     name: 'Storage-Azure-Files-${time}'
     params: {
         storagePurpose: 'fslogix'
-        fileShareCustomName: 'fslogix-pc-app1-001'
+        fileShareCustomName: fileShareCustomNameFslogix
         identityServiceProvider: avdIdentityServiceProvider
         dscAgentPackageLocation: varDscAgentPackageLocation
         domainJoinUserPassword: avdDomainJoinUserPassword
@@ -1196,11 +1198,11 @@ module deployAvdStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bicep' = i
 }
 
 // Msix Storage.
-module deployAvdMsixStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bicep' = if (varCreateMsixDeployment && avdDeploySessionHosts && (avdIdentityServiceProvider != 'AAD')) {
+module deployAvdStorageAzureFilesMsix 'avd-modules/avd-storage-azurefiles.bicep' = if (varCreateMsixDeployment && avdDeploySessionHosts && (avdIdentityServiceProvider != 'AAD')) {
     name: 'MsixStorage-AzureFiles-${time}'
     params: {
         storagePurpose: 'msix'
-        fileShareCustomName: 'msix-pc-app1-001'
+        fileShareCustomName: fileShareCustomNameMsix
         identityServiceProvider: avdIdentityServiceProvider
         dscAgentPackageLocation: varDscAgentPackageLocation
         domainJoinUserPassword: avdDomainJoinUserPassword
@@ -1248,7 +1250,7 @@ module deployAvdMsixStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bicep'
     }
     dependsOn: [
         avdBaselineStorageResourceGroup
-        deployAvdStorageAzureFiles
+        deployAvdStorageAzureFilesFslogix
         avdNetworking
         avdWrklKeyVaultget
         avdWrklKeyVault

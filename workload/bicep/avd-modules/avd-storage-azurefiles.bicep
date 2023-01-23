@@ -161,11 +161,10 @@ var varAvdFileShareLogsDiagnostic = [
 var varAvdFileShareMetricsDiagnostic = [
     'Transaction'
 ]
-var varFileShareName = useCustomNaming ? fileShareCustomName : '${varStoragePurposeLower}-pc-${deploymentPrefixLowercase}-001'
+var varFileShareName = useCustomNaming ? fileShareCustomName : '${varStoragePurposeLower}-${deploymentPrefixLowercase}-001'
 var varWrklStoragePrivateEndpointName = 'pe-${varStorageName}-file'
 var varStoragePurposeLowerPrefix = substring(varStoragePurposeLower, 0,2)
 var varStorageName = useCustomNaming ? '${storageAccountPrefixCustomName}${varStoragePurposeLower}${deploymentPrefixLowercase}${namingUniqueStringSixChar}' : 'stavd${varStoragePurposeLower}${deploymentPrefixLowercase}${namingUniqueStringSixChar}'
-
 var varStorageToDomainScriptArgs = '-DscPath ${dscAgentPackageLocation} -StorageAccountName ${varStorageName} -StorageAccountRG ${storageObjectsRgName} -DomainName ${identityDomainName} -IdentityServiceProvider ${identityServiceProvider} -AzureCloudEnvironment AzureCloud -SubscriptionId ${workloadSubsId} -DomainAdminUserName ${domainJoinUserName} -DomainAdminUserPassword ${domainJoinUserPassword} -CustomOuPath ${avdStorageCustomOuPath} -OUName ${avdOuStgPath} -CreateNewOU ${avdCreateOuForStorageString} -ShareName ${varFileShareName} -ClientId ${managedIdentityClientId} -Verbose'
 
 // =========== //
