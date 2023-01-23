@@ -154,7 +154,7 @@ resource avdWrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' exist
 // Session hosts.
 module avdSessionHosts '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/deploy.bicep' = [for i in range(1, sessionHostsCount): {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'AVD-Session-Host-${padLeft((i + sessionHostCountIndex), 3, '0')}-${time}'
+    name: 'Session-Host-${padLeft((i + sessionHostCountIndex), 3, '0')}-${time}'
     params: {
         name: '${sessionHostNamePrefix}-${padLeft((i + sessionHostCountIndex), 3, '0')}'
         location: sessionHostLocation
@@ -259,7 +259,7 @@ module avdSessionHosts '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/d
 // Add session hosts to AVD Host pool.
 module addAvdHostsToHostPool '../../vm-custom-extensions/add-avd-session-hosts.bicep' = [for i in range(1, sessionHostsCount): {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'Add-AVD-SH-${padLeft((i + sessionHostCountIndex), 3, '0')}-to-HP-${time}'
+    name: 'HP-Join-${padLeft((i + avdSessionHostCountIndex), 3, '0')}-to-HP-${time}'
     params: {
         location: sessionHostLocation
         hostPoolToken: hostPoolToken
