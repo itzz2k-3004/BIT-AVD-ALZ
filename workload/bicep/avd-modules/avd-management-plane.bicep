@@ -153,7 +153,7 @@ var varAvdWorkspaceDiagnostic = [
 // Hostpool.
 module avdHostPool '../../../carml/1.3.0/Microsoft.DesktopVirtualization/hostpools/deploy.bicep' = {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
-  name: 'AVD-HostPool-${time}'
+  name: 'HostPool-${time}'
   params: {
     name: avdHostPoolName
     hostpoolFriendlyName: avdHostPoolFriendlyName
@@ -174,7 +174,7 @@ module avdHostPool '../../../carml/1.3.0/Microsoft.DesktopVirtualization/hostpoo
 // Application groups.
 module avdApplicationGroups '../../../carml/1.3.0/Microsoft.DesktopVirtualization/applicationgroups/deploy.bicep' = [for applicationGroup in varFinalApplicationGroups: {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
-  name: 'Deploy-AppGroup-${applicationGroup.name}-${time}'
+  name: 'Application-Group-${applicationGroup.name}-${time}'
   params: {
     name: applicationGroup.name
     friendlyName: applicationGroup.friendlyName
@@ -201,7 +201,7 @@ module avdApplicationGroups '../../../carml/1.3.0/Microsoft.DesktopVirtualizatio
 // Workspace.
 module avdWorkSpace '../../../carml/1.3.0/Microsoft.DesktopVirtualization/workspaces/deploy.bicep' = {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
-  name: 'Deploy-AVD-WorkSpace-${time}'
+  name: 'Workspace-${time}'
   params: {
       name: avdWorkSpaceName
       workspaceFriendlyName: avdWorkSpaceFriendlyName
@@ -226,7 +226,7 @@ module avdWorkSpace '../../../carml/1.3.0/Microsoft.DesktopVirtualization/worksp
 // Scaling plan.
 module avdScalingPlan '../../../carml/1.3.0/Microsoft.DesktopVirtualization/scalingplans/deploy.bicep' =  if (avdDeployScalingPlan && (avdHostPoolType == 'Pooled'))  {
   scope: resourceGroup('${avdWorkloadSubsId}', '${avdServiceObjectsRgName}')
-  name: 'Deploy-AVD-ScalingPlan-${time}'
+  name: 'Scaling-Plan-${time}'
   params: {
       name: avdScalingPlanName
       location: avdManagementPlaneLocation
@@ -254,4 +254,4 @@ module avdScalingPlan '../../../carml/1.3.0/Microsoft.DesktopVirtualization/scal
 // =========== //
 // Outputs //
 // =========== //
-output hostPooltoken string = avdHostPool.outputs.hostPoolRestrationInfo.token
+output hostPooltoken string = avdHostPool.outputs.hostPoolRegistrationInfo.token

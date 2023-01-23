@@ -417,7 +417,7 @@ var varWindowsPerformanceCounters = [
 //@batchSize(1)
 module avdOsEvents '../../../carml/1.3.0/Microsoft.OperationalInsights/workspaces/dataSources/deploy.bicep' = [for (varWindowsEvent, i) in varWindowsEvents: {
   scope: resourceGroup('${varAvdOsSettingsAlaWorkspaceSubId}', '${varAvdOsSettingsAlaWorkspaceRgName}')
-  name: 'AVD-Monitoring-OS-Events-${i}-${time}'
+  name: 'Monitoring-OS-Events-${i}-${time}'
   params: {
     name: 'WindowsEvent${i}'
     kind: 'WindowsEvent'
@@ -432,7 +432,7 @@ module avdOsEvents '../../../carml/1.3.0/Microsoft.OperationalInsights/workspace
 //@batchSize(1)
 module avdOsPerformanceCounters '../../../carml/1.3.0/Microsoft.OperationalInsights/workspaces/dataSources/deploy.bicep' = [for (varWindowsPerformanceCounter, i) in varWindowsPerformanceCounters: {
   scope: resourceGroup('${varAvdOsSettingsAlaWorkspaceSubId}', '${varAvdOsSettingsAlaWorkspaceRgName}')
-  name: 'AVD-Monitoring-OS-Performance-Counters-${i}-${time}'
+  name: 'Monitoring-OS-Performance-Counters-${i}-${time}'
   params: {
     name: 'WindowsPerformanceCounter${i}'
     kind: 'WindowsPerformanceCounter'
