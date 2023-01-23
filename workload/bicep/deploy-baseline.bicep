@@ -581,7 +581,7 @@ var varAvdWrklKvPrivateEndpointName = 'pe-kv-avd-${varDeploymentPrefixLowercase}
 var varAvdSessionHostNamePrefix = avdUseCustomNaming ? avdSessionHostCustomNamePrefix : 'vm-avd-${varDeploymentPrefixLowercase}'
 var varAvdAvailabilitySetNamePrefix = avdUseCustomNaming ? '${avdAvailabilitySetCustomNamePrefix}-${varAvdSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}' : 'avail-avd-${varAvdSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}'
 var varStorageManagedIdentityName = 'id-avd-storage-${varAvdSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}'
-var varAvdFslogixStorageName = deployAvdFslogixStorageAzureFiles.outputs.storageAccountName
+var varAvdFslogixStorageName = deployAvdStorageAzureFiles.outputs.storageAccountName
 var varManagementVmName = 'vm-mgmt-${varDeploymentPrefixLowercase}'
 //var varAvdMsixStorageName = deployAvdMsixStorageAzureFiles.outputs.storageAccountName
 //var varAvdWrklStoragePrivateEndpointName = 'pe-stavd${varDeploymentPrefixLowercase}${varAvdNamingUniqueStringSixChar}-file'
@@ -731,7 +731,7 @@ var varBaseScriptUri = 'https://raw.githubusercontent.com/Azure/avdaccelerator/m
 
 var varFslogixScriptUri = '${varBaseScriptUri}scripts/Set-FSLogixRegKeys.ps1'
 var varFsLogixScript = './Set-FSLogixRegKeys.ps1'
-var varFslogixFileShareName = deployAvdFslogixStorageAzureFiles.outputs.fileShareName
+var varFslogixFileShareName = deployAvdStorageAzureFiles.outputs.fileShareName
 var varFslogixSharePath = '\\\\${varAvdFslogixStorageName}.file.${environment().suffixes.storage}\\${varFslogixFileShareName}'
 var varFsLogixScriptArguments = '-volumeshare ${varFslogixSharePath}'
 
@@ -1248,7 +1248,7 @@ module deployAvdMsixStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bicep'
     }
     dependsOn: [
         avdBaselineStorageResourceGroup
-        deployAvdFslogixStorageAzureFiles
+        deployAvdStorageAzureFiles
         avdNetworking
         avdWrklKeyVaultget
         avdWrklKeyVault

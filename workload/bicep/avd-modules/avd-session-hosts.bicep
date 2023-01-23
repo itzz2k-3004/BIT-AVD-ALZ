@@ -259,7 +259,7 @@ module avdSessionHosts '../../../carml/1.2.0/Microsoft.Compute/virtualMachines/d
 // Add session hosts to AVD Host pool.
 module addAvdHostsToHostPool '../../vm-custom-extensions/add-avd-session-hosts.bicep' = [for i in range(1, sessionHostsCount): {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'HP-Join-${padLeft((i + avdSessionHostCountIndex), 3, '0')}-to-HP-${time}'
+    name: 'HP-Join-${padLeft((i + sessionHostCountIndex), 3, '0')}-to-HP-${time}'
     params: {
         location: sessionHostLocation
         hostPoolToken: hostPoolToken
