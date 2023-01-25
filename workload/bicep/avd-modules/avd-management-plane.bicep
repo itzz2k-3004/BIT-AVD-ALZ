@@ -254,4 +254,5 @@ module avdScalingPlan '../../../carml/1.3.0/Microsoft.DesktopVirtualization/scal
 // =========== //
 // Outputs //
 // =========== //
-output hostPooltoken string = avdHostPool.outputs.hostPoolRegistrationInfo.token
+
+output hostPooltoken string = avdHostPool.outputs.hostPoolRegistrationInfo

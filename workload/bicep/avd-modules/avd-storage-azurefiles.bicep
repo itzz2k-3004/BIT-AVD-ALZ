@@ -233,7 +233,7 @@ module managementVM '../../../carml/1.3.0/Microsoft.Compute/virtualMachines/depl
         adminPassword: avdWrklKeyVaultget.getSecret('avdVmLocalUserPassword')
         nicConfigurations: [
             {
-                nicSuffix: 'nic-01-'
+                nicSuffix: 'nic-01'
                 deleteOption: 'Delete'
                 enableAcceleratedNetworking: false
                 ipConfigurations: createAvdVnet ? [

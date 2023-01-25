@@ -148,7 +148,7 @@ resource defaultTelemetry 'Microsoft.Resources/deployments@2021-04-01' = if (ena
   }
 }
 
-resource hostPool 'Microsoft.DesktopVirtualization/hostpools@2021-07-12' = {
+resource hostPool 'Microsoft.DesktopVirtualization/hostPools@2021-01-14-preview' = {
   name: name
   location: location
   tags: tags
@@ -213,7 +213,7 @@ output resourceId string = hostPool.id
 output resourceGroupName string = resourceGroup().name
 
 @description('Host pool registration info')
-output hostPoolRegistrationInfo object = hostPool.properties.registrationInfo
+output hostPoolRegistrationInfo string = hostPool.properties.registrationInfo.token
 
 @description('The name of the AVD host pool.')
 output name string = hostPool.name

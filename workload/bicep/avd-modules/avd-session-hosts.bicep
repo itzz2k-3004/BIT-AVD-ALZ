@@ -185,7 +185,7 @@ module avdSessionHosts '../../../carml/1.3.0/Microsoft.Compute/virtualMachines/d
         adminPassword: avdWrklKeyVaultget.getSecret('avdVmLocalUserPassword')
         nicConfigurations: [
             {
-                nicSuffix: 'nic-001-'
+                nicSuffix: 'nic-001'
                 deleteOption: 'Delete'
                 enableAcceleratedNetworking: false
                 ipConfigurations: createAvdVnet ? [
