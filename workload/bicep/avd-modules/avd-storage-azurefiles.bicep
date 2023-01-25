@@ -306,7 +306,7 @@ module addFslogixShareToDomainSript '../../vm-custom-extensions/add-azure-files-
     }
     dependsOn: [
         fslogixStorage
-        managementVmWait
+        managementVmDelay
     ]
 }
 
