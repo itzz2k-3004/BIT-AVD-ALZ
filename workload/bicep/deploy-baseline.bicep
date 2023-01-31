@@ -15,7 +15,7 @@ param avdSessionHostLocation string = 'eastus2'
 @description('Optional. Location where to deploy AVD management plane. (Default: eastus2)')
 param avdManagementPlaneLocation string = 'eastus2'
 
-@description('Required. AVD workload subscription ID, multiple subscriptions scenario.')
+@description('Required. AVD workload subscription ID, multiple subscriptions scenario. (Default: )')
 param avdWorkloadSubsId string = ''
 
 @description('Required. Azure Virtual Desktop Enterprise Application object ID. ')
@@ -1292,8 +1292,7 @@ module deployAndConfigureAvdSessionHosts './avd-modules/avd-session-hosts-batch.
         workloadSubsId: avdWorkloadSubsId
         encryptionAtHost: encryptionAtHost
         createAvdFslogixDeployment: (avdIdentityServiceProvider != 'AAD') ? varCreateAvdFslogixDeployment: false
-        storageManagedIdentityResourceId:  ((varCreateAvdFslogixDeployment||varCreateMsixDeployment) && (avdIdentityServiceProvider != 'AAD'))  ? deployManagedIdentitiesRoleAssign.outputs.managedIdentityResourceId : ''
-        //fslogixManagedIdentityResourceId:  (varCreateAvdFslogixDeployment && (avdIdentityServiceProvider != 'AAD'))  ? deployAvdManagedIdentitiesRoleAssign.outputs.fslogixManagedIdentityResourceId : 'none'
+        fslogixManagedIdentityResourceId:  (varCreateAvdFslogixDeployment && (avdIdentityServiceProvider != 'AAD'))  ? deployAvdManagedIdentitiesRoleAssign.outputs.fslogixManagedIdentityResourceId : ''
         fsLogixScript: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScript: ''
         fsLogixScriptArguments: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScriptArguments: ''
         fslogixScriptUri: (avdIdentityServiceProvider != 'AAD') ? varFslogixScriptUri: ''
