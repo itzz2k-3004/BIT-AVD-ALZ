@@ -377,6 +377,9 @@ param avdWrklKvPrefixCustomName string = 'kv-avd'
 @description('Optional. Apply tags on resources and resource groups. (Default: false)')
 param createResourceTags bool = false
 
+@description('Optional. Create own Tags in case the customer do not want predefined Tags')
+param customTags object = {}
+
 @description('Optional. The name of workload for tagging purposes. (Default: Contoso-Workload)')
 param workloadNameTag string = 'Contoso-Workload'
 
@@ -807,14 +810,14 @@ var resourceGroups = [
         name: varAvdServiceObjectsRgName
         location: avdManagementPlaneLocation
         enableDefaultTelemetry: false
-        tags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        tags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : customTags
     }
     {
         purpose: 'Pool-Compute'
         name: varAvdComputeObjectsRgName
         location: avdSessionHostLocation
         enableDefaultTelemetry: false
-        tags: createResourceTags ? union(varAllComputeStorageTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        tags: createResourceTags ? union(varAllComputeStorageTags,varAvdCostManagementParentResourceTag) : customTags
     }
 ]
 
@@ -846,7 +849,7 @@ module avdBaselineNetworkResourceGroup '../../carml/1.2.0/Microsoft.Resources/re
         name: varAvdNetworkObjectsRgName
         location: avdSessionHostLocation
         enableDefaultTelemetry: false
-        tags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        tags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : customTags
     }
     dependsOn: avdDeployMonitoring ? [
         deployMonitoringDiagnosticSettings
@@ -873,7 +876,7 @@ module avdBaselineStorageResourceGroup '../../carml/1.2.0/Microsoft.Resources/re
         name: varAvdStorageObjectsRgName
         location: avdSessionHostLocation
         enableDefaultTelemetry: false
-        tags: createResourceTags ? union(varAllComputeStorageTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        tags: createResourceTags ? union(varAllComputeStorageTags,varAvdCostManagementParentResourceTag) : customTags
     }
     dependsOn: avdDeployMonitoring ? [
         deployMonitoringDiagnosticSettings
@@ -934,7 +937,7 @@ module deployMonitoringDiagnosticSettings './avd-modules/avd-monitoring.bicep' =
         avdAlaWorkspaceName: deployAlaWorkspace ? varAvdAlaWorkspaceName: ''
         avdAlaWorkspaceDataRetention: avdAlaWorkspaceDataRetention
         avdWorkloadSubsId: avdWorkloadSubsId
-        avdTags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        avdTags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : customTags
     }
     dependsOn: []
 }
@@ -950,7 +953,7 @@ module deployAzurePolicyNetworking './avd-modules/avd-azure-policy-networking.bi
         avdMonitoringRgName: varAvdMonitoringRgName
         stgAccountForFlowLogsId: deployStgAccountForFlowLogs ? '' : stgAccountForFlowLogsId
         stgAccountForFlowLogsName: deployStgAccountForFlowLogs ? varStgAccountForFlowLogsName : ''
-        avdTags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        avdTags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : customTags
     }
     dependsOn: [
     ]
@@ -978,7 +981,7 @@ module avdNetworking 'avd-modules/avd-networking.bicep' = if (createAvdVnet) {
         avdVnetworkSubnetAddressPrefix: avdVnetworkSubnetAddressPrefix
         avdWorkloadSubsId: avdWorkloadSubsId
         dnsServers: varDnsServers
-        avdTags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        avdTags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : customTags
         avdAlaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? deployMonitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         avdDiagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
     }
@@ -1018,7 +1021,7 @@ module avdManagementPLane 'avd-modules/avd-management-plane.bicep' = {
         avdIdentityServiceProvider: avdIdentityServiceProvider
         avdApplicationGroupIdentitiesIds: varAvdApplicationGroupIdentitiesIds
         avdApplicationGroupIdentityType: avdApplicationGroupIdentityType
-        avdTags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        avdTags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : customTags
         avdAlaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? deployMonitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         avdDiagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
     }
@@ -1050,7 +1053,7 @@ module deployManagedIdentitiesRoleAssign 'avd-modules/avd-identity.bicep' = {
         desktopVirtualizationPowerOnContributorRoleId: varDesktopVirtualizationPowerOnContributorRoleId
         desktopVirtualizationPowerOnOffContributorRoleId: varDesktopVirtualizationPowerOnOffContributorRoleId
         avdApplicationGroupIdentitiesIds: varAvdApplicationGroupIdentitiesIds
-        avdTags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        avdTags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : customTags
     }
     dependsOn: [
         avdBaselineResourceGroups
@@ -1135,7 +1138,7 @@ module avdWrklKeyVault '../../carml/1.2.0/Microsoft.KeyVault/vaults/deploy.bicep
                 }
             ]
         }
-        tags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        tags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : customTags
 
     }
     dependsOn: [
@@ -1193,7 +1196,7 @@ module deployAvdFslogixStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bic
         marketPlaceGalleryWindowsManagementVm: varMarketPlaceGalleryWindows[avdOsImage]
         subnetResourceId: createAvdVnet ? '${avdNetworking.outputs.avdVirtualNetworkResourceId}/subnets/${varAvdVnetworkSubnetName}' : existingVnetSubnetResourceId
         useSharedImage: useSharedImage
-        tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : customTags
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? deployMonitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
         useCustomNaming: avdUseCustomNaming
@@ -1314,7 +1317,7 @@ module deployAndConfigureAvdSessionHosts './avd-modules/avd-session-hosts-batch.
         hostPoolToken: avdManagementPLane.outputs.hostPooltoken
         marketPlaceGalleryWindows: varMarketPlaceGalleryWindows[avdOsImage]
         useSharedImage: useSharedImage
-        tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+        tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : customTags
         deployMonitoring: avdDeployMonitoring
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? deployMonitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
