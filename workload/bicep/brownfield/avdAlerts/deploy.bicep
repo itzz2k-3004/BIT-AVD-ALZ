@@ -9,7 +9,7 @@ param SetEnabled bool = false
  */
 
 @description('Location of needed scripts to deploy solution.')
-param _ArtifactsLocation string = 'https://storavdlabeus2.blob.core.windows.net/postdeployscripts/'
+param _ArtifactsLocation string = 'https://raw.githubusercontent.com/JCoreMS/AVDAlerts/main/deploySubscription/scripts/'
 
 @description('SaS token if needed for script location.')
 @secure()
@@ -52,8 +52,6 @@ param ANFVolumeResourceIds array = []
 
 param Tags object = {}
 
-param Timestamp string = utcNow()
-
 var ActionGroupName = 'ag-avdmetrics-${Environment}-${Location}'
 var AlertDescriptionHeader = 'Automated AVD Alert Deployment Solution (v2.0.0)\n'
 var AutomationAccountName = 'aa-avdmetrics-${Environment}-${Location}'
@@ -68,7 +66,6 @@ var RunbookNameGetStorage = 'AvdStorageLogData'
 var RunbookNameGetHostPool = 'AvdHostPoolLogData'
 var RunbookScriptGetStorage = 'Get-StorAcctInfov2.ps1'
 var RunbookScriptGetHostPool = 'Get-HostPoolInfo.ps1'
-var ScriptsRepositoryUri = 'https://raw.githubusercontent.com/JCoreMS/AVDAlerts/main/deploySubscription/scripts/'
 var SessionHostRGsAll = [for item in SessionHostsResourceGroupIds : split(item, '/')[4]]
 var SessionHostRGs = union(SessionHostRGsAll,[])
 var StorAcctRGsAll = [for item in StorageAccountResourceIds: split(item, '/')[4]]
@@ -1502,7 +1499,7 @@ resource resourceGroupAVDMetrics 'Microsoft.Resources/resourceGroups@2021-04-01'
   location: Location
 }
 
-module identities 'modules/identities.bicep' = {
+module identities './modules/identities.bicep' = {
   name: 'linked_AutomtnAcct-${AutomationAccountName}'
   scope: resourceGroupAVDMetrics
   params: {
@@ -1514,7 +1511,7 @@ module identities 'modules/identities.bicep' = {
   }
 }
 
-module roleAssignment_UsrIdDesktopRead 'roleAssignSub.bicep' = [for HostPoolId in HostPoolSubIds : {
+module roleAssignment_UsrIdDesktopRead './modules/roleAssignSub.bicep' = [for HostPoolId in HostPoolSubIds : {
   name: 'linked_UsrID-DS_${HostPoolId}'
   scope: subscription(HostPoolId)
   params: {
@@ -1528,7 +1525,7 @@ module roleAssignment_UsrIdDesktopRead 'roleAssignSub.bicep' = [for HostPoolId i
   ]
 }]
 
-module roleAssignment_AutoAcctDesktopRead 'modules/roleAssignRG.bicep' = [for RG in DesktopReadRoleRGs: {
+module roleAssignment_AutoAcctDesktopRead './modules/roleAssignRG.bicep' = [for RG in DesktopReadRoleRGs: {
   scope: resourceGroup(RG)
   name: 'linked_DsktpRead_${RG}'
   params: {
@@ -1542,7 +1539,7 @@ module roleAssignment_AutoAcctDesktopRead 'modules/roleAssignRG.bicep' = [for RG
   ]
 }]
 
-module roleAssignment_LogAnalytics 'modules/roleAssignRG.bicep' = {
+module roleAssignment_LogAnalytics './modules/roleAssignRG.bicep' = {
   scope: resourceGroup(split(LogAnalyticsWorkspaceResourceId, '/')[2], split(LogAnalyticsWorkspaceResourceId, '/')[4])
   name: 'linked_LogContrib_${split(LogAnalyticsWorkspaceResourceId, '/')[4]}'
   params: {
@@ -1556,7 +1553,7 @@ module roleAssignment_LogAnalytics 'modules/roleAssignRG.bicep' = {
   ]
 }
 
-module roleAssignment_Storage 'modules/roleAssignRG.bicep' = [for StorAcctRG in StorAcctRGs: {
+module roleAssignment_Storage './modules/roleAssignRG.bicep' = [for StorAcctRG in StorAcctRGs: {
   scope: resourceGroup(StorAcctRG)
   name: 'linked_StorAcctContrib_${StorAcctRG}'
   params: {
@@ -1570,7 +1567,7 @@ module roleAssignment_Storage 'modules/roleAssignRG.bicep' = [for StorAcctRG in 
   ]
 }]
 
-module metricsResources 'modules/metricsResources.bicep' = {
+module metricsResources './modules/metricsResources.bicep' = {
   name: 'linked_MonitoringResourcesDeployment'
   scope: resourceGroupAVDMetrics
   params: {
@@ -1590,7 +1587,6 @@ module metricsResources 'modules/metricsResources.bicep' = {
     RunbookNameGetHostPool: RunbookNameGetHostPool
     RunbookScriptGetStorage: RunbookScriptGetStorage
     RunbookScriptGetHostPool: RunbookScriptGetHostPool
-    ScriptsRepositoryUri: ScriptsRepositoryUri
     StorageAccountResourceIds: StorageAccountResourceIds
     ActionGroupName: ActionGroupName
     ANFVolumeResourceIds: ANFVolumeResourceIds
