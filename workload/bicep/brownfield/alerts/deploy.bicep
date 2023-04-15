@@ -1509,7 +1509,6 @@ module resourceGroupAVDMetricsCreate '../../../../carml/1.3.0/Microsoft.Resource
   params: {
       name: ResourceGroupName
       location: Location
-      managedBy: ''
       tags: contains(Tags, 'Microsoft.Resources/resourceGroups') ? Tags['Microsoft.Resources/resourceGroups'] : {}
   }
 }

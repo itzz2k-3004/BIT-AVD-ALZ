@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "2810690862225609812"
+      "templateHash": "12158091278077112113"
     }
   },
   "parameters": {
@@ -1441,9 +1441,6 @@
           },
           "location": {
             "value": "[parameters('Location')]"
-          },
-          "managedBy": {
-            "value": ""
           },
           "tags": "[if(contains(parameters('Tags'), 'Microsoft.Resources/resourceGroups'), createObject('value', parameters('Tags')['Microsoft.Resources/resourceGroups']), createObject('value', createObject()))]"
         },
