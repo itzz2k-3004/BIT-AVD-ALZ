@@ -1,3 +1,4 @@
+param AutoMitigate bool
 param ActionGroupId string
 param HostPoolName string
 param LogAlertsHostPool array
@@ -5,19 +6,13 @@ param LogAnalyticsWorkspaceResourceId string
 param Location string
 param Tags object
 
-resource logAlertHostPoolQueries 'Microsoft.Insights/scheduledQueryRules@2021-08-01' = [for i in range(0, length(LogAlertsHostPool)): {
-  name: replace(LogAlertsHostPool[i].name, 'xHostPoolNamex', HostPoolName)
-  location: Location
-  tags: contains(Tags, 'Microsoft.Insights/scheduledQueryRules') ? Tags['Microsoft.Insights/scheduledQueryRules'] : {}
 
-  properties: {
-    actions: {
-      actionGroups: [
-        ActionGroupId
-      ]
-      customProperties: {}
-    }
-    criteria: {
+module logAlertHostPoolQueries '../../../../../carml/1.3.0/Microsoft.Insights/scheduledQueryRules/deploy.bicep' = [for i in range(0, length(LogAlertsHostPool)): {
+  name: 'carml_${replace(LogAlertsHostPool[i].name, 'xHostPoolNamex', HostPoolName)}'
+  params: {
+    name: replace(LogAlertsHostPool[i].name, 'xHostPoolNamex', HostPoolName)
+    autoMitigate: AutoMitigate
+    criterias: {
       allOf: [
         {
           query: replace(LogAlertsHostPool[i].criteria.allOf[0].query, 'xHostPoolNamex', HostPoolName)
@@ -28,14 +23,19 @@ resource logAlertHostPoolQueries 'Microsoft.Insights/scheduledQueryRules@2021-08
           failingPeriods: LogAlertsHostPool[i].criteria.allOf[0].failingPeriods
         }]
     }
-    displayName: replace(LogAlertsHostPool[i].displayName, 'xHostPoolNamex', HostPoolName)
-    description: replace(LogAlertsHostPool[i].description, 'xHostPoolNamex', HostPoolName)
+    scopes: [LogAnalyticsWorkspaceResourceId]
+    location: Location
+    actions: [ {
+      actionGroups: [
+        ActionGroupId
+      ]
+      customProperties: {}
+    } ]
+    alertDescription: replace(LogAlertsHostPool[i].description, 'xHostPoolNamex', HostPoolName)
     enabled: false
     evaluationFrequency: LogAlertsHostPool[i].evaluationFrequency
-    scopes: [
-      LogAnalyticsWorkspaceResourceId
-    ]
     severity: LogAlertsHostPool[i].severity
+    tags: contains(Tags, 'Microsoft.Insights/scheduledQueryRules') ? Tags['Microsoft.Insights/scheduledQueryRules'] : {}
     windowSize: LogAlertsHostPool[i].windowSize
   }
 }]

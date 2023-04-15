@@ -6,19 +6,20 @@ param MetricAlerts object
 param Tags object
 param Location string
 
-resource metricAlerts_VirtualMachines 'Microsoft.Insights/metricAlerts@2018-03-01' = [for i in range(0, length(MetricAlerts.virtualMachines)): if(HostPoolInfo.VMResourceGroup != null) {
-  name:  replace(MetricAlerts.virtualMachines[i].name, 'xHostPoolNamex', HostPoolInfo.HostPoolName)
-  location: 'global'
-  tags: contains(Tags, 'Microsoft.Insights/metricAlerts') ? Tags['Microsoft.Insights/metricAlerts'] : {}
-  properties: {
-    description: MetricAlerts.virtualMachines[i].description
+module metricAlerts_VirtualMachines '../../../../../carml/1.3.0/Microsoft.Insights/metricAlerts/deploy.bicep' = [for i in range(0, length(MetricAlerts.virtualMachines)): if(HostPoolInfo.VMResourceGroup != null) {
+  name: 'carml_${replace(MetricAlerts.virtualMachines[i].name, 'xHostPoolNamex', HostPoolInfo.HostPoolName)}'
+  params: {
+    name: replace(MetricAlerts.virtualMachines[i].name, 'xHostPoolNamex', HostPoolInfo.HostPoolName)
+    criterias: MetricAlerts.virtualMachines[i].criteria
+    location: 'global'
+    alertDescription: MetricAlerts.virtualMachines[i].description
     severity: MetricAlerts.virtualMachines[i].severity
     enabled: Enabled
     scopes: [HostPoolInfo.VMResourceGroup]  //Assuming first VM Resource ID has same RG for all
     evaluationFrequency: MetricAlerts.virtualMachines[i].evaluationFrequency
     windowSize: MetricAlerts.virtualMachines[i].windowSize
-    criteria: MetricAlerts.virtualMachines[i].criteria
     autoMitigate: AutoMitigate
+    tags: contains(Tags, 'Microsoft.Insights/metricAlerts') ? Tags['Microsoft.Insights/metricAlerts'] : {}
     targetResourceType: MetricAlerts.virtualMachines[i].targetResourceType
     targetResourceRegion: Location
     actions: [
@@ -27,10 +28,6 @@ resource metricAlerts_VirtualMachines 'Microsoft.Insights/metricAlerts@2018-03-0
         webHookProperties: {}
       }
     ]
+
   }
 }]
-
-
-output HostPoolInfo object = HostPoolInfo
-output HostPoolName string = HostPoolInfo.HostPoolName
-output HostPoolRG string = HostPoolInfo.VMResourceIDs != null ? split(HostPoolInfo.VMResourceIDs[0], '/')[4] : 'Null Value'

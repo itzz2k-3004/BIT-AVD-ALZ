@@ -47,6 +47,9 @@ param SessionHostsResourceGroupIds array = []
 @description('The Resource IDs for the Azure Files Storage Accounts used for FSLogix profile storage.')
 param StorageAccountResourceIds array = []
 
+@description('ISO 8601 timestamp used for the deployment names and the Automation runbook schedule.')
+param time string = utcNow()
+
 @description('The Resource IDs for the Azure NetApp Volumes used for FSLogix profile storage.')
 param ANFVolumeResourceIds array = []
 
@@ -1493,83 +1496,112 @@ var ActivityLogAlerts = [
   }
 ]
 
-resource resourceGroupAVDMetrics 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: ResourceGroupName
-  tags: contains(Tags, 'Microsoft.Resources/resourceGroups') ? Tags['Microsoft.Resources/resourceGroups'] : {}
-  location: Location
-}
+// =========== //
+// Deployments //
+// =========== //
 
-module identities './modules/identities.bicep' = {
-  name: 'linked_AutomtnAcct-${AutomationAccountName}'
-  scope: resourceGroupAVDMetrics
+// AVD Shared Services Resource Group
+module resourceGroupAVDMetrics '../../../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = {
+  name: 'carml_Resource-Group-${time}'
   params: {
-    AutomationAccountName: AutomationAccountName
-    Location: Location
-    LogAnalyticsWorkspaceResourceId: LogAnalyticsWorkspaceResourceId
-    UsrManagedIdentityName: UsrManagedIdentityName
-    Tags: Tags
+      name: ResourceGroupName
+      location: Location
+      tags: contains(Tags, 'Microsoft.Resources/resourceGroups') ? Tags['Microsoft.Resources/resourceGroups'] : {}
   }
 }
 
-module roleAssignment_UsrIdDesktopRead './modules/roleAssignSub.bicep' = [for HostPoolId in HostPoolSubIds : {
-  name: 'linked_UsrID-DS_${HostPoolId}'
+module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/automationAccounts/deploy.bicep' = {
+  name: 'carml_AutomtnAcct-${AutomationAccountName}'
+  scope: resourceGroup(resourceGroupAVDMetrics.name)
+  params: {
+    name: AutomationAccountName
+    location: Location
+    diagnosticLogCategoriesToEnable: [
+      'JobLogs'
+      'JobStreams'
+    ]
+    diagnosticSettingsName: 'diag-${AutomationAccountName}'
+    linkedWorkspaceResourceId: LogAnalyticsWorkspaceResourceId
+    skuName: 'Free'
+    systemAssignedIdentity: true
+    tags: contains(Tags, 'Microsoft.Automation/automationAccounts') ? Tags['Microsoft.Automation/automationAccounts'] : {}
+  }
+}
+
+module identityUserManaged '../../../../carml/1.3.0/Microsoft.ManagedIdentity/userAssignedIdentities/deploy.bicep' = {
+  name: 'carml_UserMgId_${UsrManagedIdentityName}'
+  scope: resourceGroup(resourceGroupAVDMetrics.name)
+  params:{
+    location: Location
+    name: UsrManagedIdentityName
+    tags: contains(Tags, 'Microsoft.ManagedIdentity/userAssignedIdentities') ? Tags['Microsoft.ManagedIdentity/userAssignedIdentities'] : {}
+  }
+}
+
+module roleAssignment_UsrIdDesktopRead '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/subscription/deploy.bicep' = [for HostPoolId in HostPoolSubIds : {
+  name: 'carml_UsrID-DS_${guid(HostPoolId)}'
   scope: subscription(HostPoolId)
   params: {
-    AccountName: UsrManagedIdentityName
-    Subscription: HostPoolId
-    RoleDefinition: RoleAssignments.DesktopVirtualizationRead
-    PrincipalId: identities.outputs.UsrIdentityPrincipalID
+    location: Location
+    delegatedManagedIdentityResourceId: identityUserManaged.outputs.resourceId
+    principalId: identityUserManaged.outputs.principalId
+    roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.DesktopVirtualizationRead.GUID}'
+    principalType: 'ServicePrincipal'
+    subscriptionId: HostPoolId
   }
   dependsOn: [
-    identities
+    identityUserManaged
   ]
 }]
 
-module roleAssignment_AutoAcctDesktopRead './modules/roleAssignRG.bicep' = [for RG in DesktopReadRoleRGs: {
+module roleAssignment_AutoAcctDesktopRead '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = [for RG in DesktopReadRoleRGs: {
   scope: resourceGroup(RG)
-  name: 'linked_DsktpRead_${RG}'
+  name: 'carml_DsktpRead_${RG}'
   params: {
-    AccountName: AutomationAccountName
-    ResourceGroup: RG
-    RoleDefinition: RoleAssignments.DesktopVirtualizationRead
-    PrincipalId: identities.outputs.AutomationAcctPrincipalID
+    delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
+    principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
+    roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.DesktopVirtualizationRead.GUID}'
+    principalType: 'ServicePrincipal'
+    resourceGroupName: RG
   }
   dependsOn: [
-    identities
+    identityAutomationAccount
   ]
 }]
 
-module roleAssignment_LogAnalytics './modules/roleAssignRG.bicep' = {
+module roleAssignment_LogAnalytics '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = {
   scope: resourceGroup(split(LogAnalyticsWorkspaceResourceId, '/')[2], split(LogAnalyticsWorkspaceResourceId, '/')[4])
-  name: 'linked_LogContrib_${split(LogAnalyticsWorkspaceResourceId, '/')[4]}'
+  name: 'carml_LogContrib_${split(LogAnalyticsWorkspaceResourceId, '/')[4]}'
   params: {
-    AccountName: AutomationAccountName
-    ResourceGroup: split(LogAnalyticsWorkspaceResourceId, '/')[4]
-    RoleDefinition: RoleAssignments.DesktopVirtualizationRead
-    PrincipalId: identities.outputs.AutomationAcctPrincipalID
+    delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
+    principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
+    roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.LogAnalyticsContributor.GUID}'
+    principalType: 'ServicePrincipal'
+    resourceGroupName: split(LogAnalyticsWorkspaceResourceId, '/')[4]
   }
   dependsOn: [
-    identities
+    identityAutomationAccount
   ]
 }
 
-module roleAssignment_Storage './modules/roleAssignRG.bicep' = [for StorAcctRG in StorAcctRGs: {
+module roleAssignment_Storage '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = [for StorAcctRG in StorAcctRGs: {
   scope: resourceGroup(StorAcctRG)
-  name: 'linked_StorAcctContrib_${StorAcctRG}'
+  name: 'carml_StorAcctContrib_${StorAcctRG}'
   params: {
-    AccountName: AutomationAccountName
-    ResourceGroup: StorAcctRG
-    RoleDefinition: RoleAssignments.StoreAcctContrib
-    PrincipalId: identities.outputs.AutomationAcctPrincipalID
+    delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
+    principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
+    roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.StoreAcctContrib.GUID}'
+    principalType: 'ServicePrincipal'
+    resourceGroupName: StorAcctRG
   }
   dependsOn: [
-    identities
+    identityAutomationAccount
   ]
 }]
 
 module metricsResources './modules/metricsResources.bicep' = {
-  name: 'linked_MonitoringResourcesDeployment'
-  scope: resourceGroupAVDMetrics
+  name: 'carml_MonitoringResourcesDeployment'
+  scope: resourceGroup(resourceGroupAVDMetrics.name)
   params: {
     _ArtifactsLocation: _ArtifactsLocation
     _ArtifactsLocationSasToken: _ArtifactsLocationSasToken
@@ -1591,9 +1623,13 @@ module metricsResources './modules/metricsResources.bicep' = {
     ActionGroupName: ActionGroupName
     ANFVolumeResourceIds: ANFVolumeResourceIds
     Tags: Tags
-    UsrAssignedId: identities.outputs.UsrIdentityID
+    UsrAssignedId: identityUserManaged.outputs.principalId
   }
   dependsOn: [
-    identities
+    resourceGroupAVDMetrics
+    roleAssignment_AutoAcctDesktopRead
+    roleAssignment_LogAnalytics
+    roleAssignment_Storage
+    roleAssignment_UsrIdDesktopRead
   ]
 }
