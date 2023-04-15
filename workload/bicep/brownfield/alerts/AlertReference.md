@@ -10,7 +10,7 @@ The following are the Alert Queries and Metrics utilized in the solution and com
 
 This query is also based on the output of the Runbook for AVD Host Pool information that is the AzureDiagnostics table.
 
-```
+```k
 AzureDiagnostics 
 | where Category has "JobStreams" and StreamType_s == "Output" and RunbookName_s == "AvdHostPoolLogData"
 | sort by TimeGenerated
