@@ -11,7 +11,8 @@
   "parameters": {
     "_ArtifactsLocation": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/JCoreMS/avdaccelerator/main/workload/bicep/brownfield/avdAlerts/scripts/",
+      //"defaultValue": "https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/bicep/brownfield/avdAlerts/scripts/",
+      "defaultValue": "https://storeus2public.blob.core.windows.net/postconfigscripts/",
       "metadata": {
         "description": "Location of needed scripts to deploy solution."
       }
