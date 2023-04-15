@@ -75,4 +75,3 @@ Service Health - The alert severity cannot be set or changed from 'Verbose'
 ### [PostDeployment](./PostDeploy.md)
 
 See the above linked section for information on how to enable and view the alerts created.
---
