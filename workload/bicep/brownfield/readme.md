@@ -4,4 +4,4 @@ The brownfield deployments section contains templates to deploy specific feature
 
 - [Start VM On Connect](./startVmOnConnect/readme.md)
 - [Auto Increase Premium File Share](./autoIncreasePremiumFileShareQuota/readme.md)
-- [Deploy Common AVD Related Alerts](./avdAlerts/README.md)
+- [Deploy Common AVD Related Alerts](./alerts/readme.md)
