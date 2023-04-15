@@ -2,8 +2,7 @@
 
 [Home](./readme.md) | [PostDeployment](./PostDeploy.md) | [How to Change Thresholds](./ChangeAlertThreshold.md) | [Alert Reference](./AlertReference.md) | [Excel List of Alert Rules](./references/alerts.xlsx) | [Update History](./UpdateHistory.md)
 
-4/14/23
-**Initial AVD Accelerator Release (v2.0.0)**
+4/14/23 - **Initial AVD Accelerator Release (v2.0.0)**
 
 - Version 2.0 Initial Release  
 - Added UI Definition for ease of deployment vs running scripts  
