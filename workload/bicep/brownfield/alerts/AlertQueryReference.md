@@ -1,10 +1,10 @@
-[Home](./README.md) | [PostDeployment](./PostDeploy.md) | [How to Change Thresholds](./ChangeAlertThreshold.md) | [Alert Reference](./AlertReference.md) | [Excel List of Alert Rules](https://github.com/JCoreMS/AVDAlerts/raw/main/references/alerts.xlsx)
-
 # Alert Reference
 
-The following are the Alert Queries and Metrics utilized in the solution and common for monitoring and AVD environment.  
+[Home](./readme.md) | [PostDeployment](./PostDeploy.md) | [How to Change Thresholds](./ChangeAlertThreshold.md) | [Excel List of Alert Rules](./references/alerts.xlsx) | [Update History](./UpdateHistory.md)
 
 ## Log Analytics Query Based Alerts
+
+The following are the Alert Queries and Metrics utilized in the solution and common for monitoring and AVD environment.  
 
 ### AVD-HostPool-Capacity-XXPercent
 
@@ -32,7 +32,7 @@ AzureDiagnostics
 
 Simply replace the 24h reference in the 2 locations noted below.  
 
-```
+```k
 // Session duration 
 // Lists users by session duration in the last 24 hours. 
 // The "State" provides information on the connection stage of an activity.
@@ -57,7 +57,7 @@ WVDConnections
 
 ### AVD-HostPool-No Resources Available
 
-```
+```k
 WVDConnections 
 | where TimeGenerated > ago (15m) 
 | project-away TenantId, SourceSystem  
@@ -87,7 +87,7 @@ WVDConnections
 
 This query is also based on the output of the Runbook for Azure Files and ANF Storage information that is the AzureDiagnostics table.
 
-```
+```k
 AzureDiagnostics 
 | where Category has "JobStreams"
     and StreamType_s == "Output"
@@ -119,7 +119,7 @@ AzureDiagnostics
 Query example in which you would simply change the event ID number.  For those that involve 2 Event IDs you can change the last line to include those via something like...  
 '|where EventID == 40 or EventID == 52'  
 
-```
+```k
 Event
 | where EventLog == "Microsoft-FSLogix-Apps/Admin"
 | where EventLevelName == "Error"
@@ -128,7 +128,7 @@ Event
 
 ### AVD-VM-Local Disk Free Space XX% Remaining
 
-```
+```k
 Perf
 | where TimeGenerated > ago(15m)
 | where ObjectName == "LogicalDisk" and CounterName == "% Free Space"
@@ -169,4 +169,4 @@ For the Azure Files Possible Throttling alert you will also need to include spec
     - 'ClientShareIngressThrottlingError'
     - 'ClientShareIopsThrottlingError'
 
-Reference for above: https://docs.microsoft.com/en-us/azure/storage/files/storage-troubleshooting-files-performance#how-to-create-an-alert-if-a-file-share-is-throttled
+Reference: [Troubleshooting Azure Files Performance](https://docs.microsoft.com/azure/storage/files/storage-troubleshooting-files-performance#how-to-create-an-alert-if-a-file-share-is-throttled)

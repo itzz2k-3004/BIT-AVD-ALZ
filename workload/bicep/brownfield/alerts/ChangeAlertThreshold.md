@@ -1,6 +1,6 @@
-[Home](./README.md) | [PostDeployment](./PostDeploy.md) | [How to Change Thresholds](./ChangeAlertThreshold.md) | [Alert Query Reference](./AlertQueryReference.md) | [Excel List of Alert Rules](https://github.com/JCoreMS/AVDAlerts/raw/main/references/alerts.xlsx)
-
 # Change Alert Rule Threshold
+
+[Home](./readme.md) | [PostDeployment](./PostDeploy.md) | [Alert Reference](./AlertReference.md) | [Excel List of Alert Rules](./references/alerts.xlsx) | [Update History](./UpdateHistory.md)
 
 The thresholds configured for the solution are not necessarily ideal for all organizations.  In the event you would like to edit or change any of the pre-configured thresholds you can easily do so.  It is recommended that any alert and it's associated threshold is meaningful and actionable. Thus you should have alerts that fire or trigger when you want them to.  Keep in mind the alert rules with percentages can be subjective as well when it comes to things like storage space available. Most of the provided Kusto queries that make up the Log Search may vary but should be easy enough to determine.  
 
