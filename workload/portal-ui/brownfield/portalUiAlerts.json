@@ -73,7 +73,7 @@
                             },
                             "toolTip": "SaS token if needed for script location.",
                             "constraints": {
-                                "required": true,
+                                "required": false,
                                 "regex": "",
                                 "validationMessage": "",
                                 "validations": []
@@ -81,7 +81,7 @@
                             "options": {
                                 "hideConfirmation": true
                             },
-                            "visible": true
+                            "visible": false
                         },
                         {
                             "name": "ResourceGroupStatus",
