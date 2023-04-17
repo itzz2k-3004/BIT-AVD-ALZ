@@ -9,7 +9,7 @@ param SetEnabled bool = false
  */
 
 @description('Location of needed scripts to deploy solution.')
-param _ArtifactsLocation string = 'https://raw.githubusercontent.com/JCoreMS/avdaccelerator/main/workload/bicep/brownfield/avdAlerts/scripts/'
+param _ArtifactsLocation string = 'https://storeus2public.blob.core.windows.net/postconfigscripts/'
 
 @description('SaS token if needed for script location.')
 @secure()
