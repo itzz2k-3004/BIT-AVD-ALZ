@@ -20,6 +20,19 @@
                             }
                         },
                         {
+                            "name": "location",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Location",
+                            "defaultValue": "[[deployment().location]",
+                            "toolTip": "The location for the resources deployed in this solution.",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": ""
+                            },
+                            "visible": false
+                        },
+                        {
                             "name": "HostPoolsApi",
                             "type": "Microsoft.Solutions.ArmApiControl",
                             "request": {
@@ -53,7 +66,7 @@
                             "name": "_ArtifactsLocation",
                             "type": "Microsoft.Common.TextBox",
                             "label": "_Artifacts Location",
-                            "subLabel": "",                            
+                            "subLabel": "",
                             "toolTip": "Location of needed scripts to deploy solution.",
                             "constraints": {
                                 "required": true,
