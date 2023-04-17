@@ -1508,6 +1508,8 @@ module resourceGroupAVDMetricsCreate '../../../../carml/1.3.0/Microsoft.Resource
   name: 'carml_Resource-Group-${time}'
   params: {
       name: ResourceGroupName
+      location: Location
+      enableDefaultTelemetry: false
       tags: contains(Tags, 'Microsoft.Resources/resourceGroups') ? Tags['Microsoft.Resources/resourceGroups'] : {}
   }
 }
