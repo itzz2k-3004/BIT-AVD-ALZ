@@ -161,7 +161,7 @@ module activityLogAlerts '../../../../../carml/1.3.0/Microsoft.Insights/activity
   params: {
     name: ActivityLogAlerts[i].name
     enabled: false
-    location: 'Global'
+    location: 'global'
     tags: contains(Tags, 'Microsoft.Insights/activityLogAlerts') ? Tags['Microsoft.Insights/activityLogAlerts'] : {}
     scopes: [
       '/subscriptions/${SubscriptionId}'
