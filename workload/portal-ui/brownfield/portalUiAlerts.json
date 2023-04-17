@@ -56,7 +56,7 @@
                             "subLabel": "",
                             "toolTip": "Location of needed scripts to deploy solution.",
                             "constraints": {
-                                "required": true,
+                                "required": false,
                                 "regex": "",
                                 "validationMessage": "",
                                 "validations": []
