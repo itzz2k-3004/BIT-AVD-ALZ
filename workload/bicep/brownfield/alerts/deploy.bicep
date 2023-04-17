@@ -33,7 +33,7 @@ param Environment string = 't'
 param HostPools array = []
 
 @description('Azure Region for Resources.')
-param Location string
+param Location string = deployment().location
 
 @description('The Resource ID for the Log Analytics Workspace.')
 param LogAnalyticsWorkspaceResourceId string
