@@ -23,7 +23,7 @@
                             "name": "location",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Location",
-                            "defaultValue": "[[deployment().location]",
+                            "defaultValue": "[deployment().location]",
                             "toolTip": "The location for the resources deployed in this solution.",
                             "constraints": {
                                 "required": false,
