@@ -18,6 +18,7 @@
     },
     "_ArtifactsLocationSasToken": {
       "type": "securestring",
+      "defaultValue": "",
       "metadata": {
         "description": "SaS token if needed for script location."
       }

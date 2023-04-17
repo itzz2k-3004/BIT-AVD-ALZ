@@ -13,7 +13,7 @@ param _ArtifactsLocation string = 'https://storeus2public.blob.core.windows.net/
 
 @description('SaS token if needed for script location.')
 @secure()
-param _ArtifactsLocationSasToken string
+param _ArtifactsLocationSasToken string = ''
 
 @description('Alert Name Prefix (Dash will be added after prefix for you.)')
 param AlertNamePrefix string = 'AVD'
