@@ -357,7 +357,7 @@
                 "DistributionGroup": "[steps('AlertsConfig').DistributionGroup]",
                 "Environment": "[steps('AlertsConfig').Environment]",
                 "HostPools": "[steps('AlertsConfig').HostPools]",
-                "Location": "[steps('basics').resourceScope.location.name]",
+                "Location": "[steps('basics').resourceScope.location]",
                 "LogAnalyticsWorkspaceResourceId": "[steps('AlertsConfig').LogAnalyticsWorkspaceResource.id]",
                 "ResourceGroupCreate": "[if(equals(steps('AlertsConfig').ResourceGroupStatus, 'New'), true, false)]",
                 "ResourceGroupName": "[if(equals(steps('AlertsConfig').ResourceGroupStatus, 'New'), steps('AlertsConfig').resourceGroupNameNew, last(split(steps('AlertsConfig').resourceGroupNameExisting, '/')))]",
