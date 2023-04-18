@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "14666046674473796127"
+      "templateHash": "10552891272121623185"
     }
   },
   "parameters": {
@@ -1440,9 +1440,6 @@
         "parameters": {
           "name": {
             "value": "[parameters('ResourceGroupName')]"
-          },
-          "location": {
-            "value": "[parameters('Location')]"
           },
           "enableDefaultTelemetry": {
             "value": false
