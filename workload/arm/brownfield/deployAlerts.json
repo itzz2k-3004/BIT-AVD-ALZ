@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "17759338216598908670"
+      "templateHash": "15719194550084509377"
     }
   },
   "parameters": {
@@ -72,12 +72,6 @@
       "type": "string",
       "metadata": {
         "description": "Resource Group to deploy the Alerts Solution in."
-      }
-    },
-    "ResourceGroupCreate": {
-      "type": "bool",
-      "metadata": {
-        "description": "Boolean value to determine if Resource Group is Existing or needs to be created."
       }
     },
     "SessionHostsResourceGroupIds": {
@@ -1427,7 +1421,6 @@
   },
   "resources": [
     {
-      "condition": "[parameters('ResourceGroupCreate')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "[format('carml_Resource-Group-{0}', parameters('time'))]",
@@ -2024,7 +2017,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "[format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))]",
-      "location": "[deployment().location]",
+      "resourceGroup": "[parameters('ResourceGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -4791,16 +4784,13 @@
             }
           }
         }
-      },
-      "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]"
-      ]
+      }
     },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "[format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))]",
-      "location": "[deployment().location]",
+      "resourceGroup": "[parameters('ResourceGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -5109,10 +5099,7 @@
             }
           }
         }
-      },
-      "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]"
-      ]
+      }
     },
     {
       "copy": {
@@ -5137,10 +5124,10 @@
             "value": false
           },
           "delegatedManagedIdentityResourceId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.resourceId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.resourceId.value]"
           },
           "principalId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
           },
           "roleDefinitionIdOrName": {
             "value": "[format('/providers/Microsoft.Authorization/roleDefinitions/{0}', variables('RoleAssignments').DesktopVirtualizationRead.GUID)]"
@@ -5702,7 +5689,7 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]"
       ]
     },
     {
@@ -5724,10 +5711,10 @@
             "value": false
           },
           "delegatedManagedIdentityResourceId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
           },
           "principalId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
           },
           "roleDefinitionIdOrName": {
             "value": "[format('/providers/Microsoft.Authorization/roleDefinitions/{0}', variables('RoleAssignments').DesktopVirtualizationRead.GUID)]"
@@ -6295,7 +6282,7 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName')))]"
       ]
     },
     {
@@ -6314,10 +6301,10 @@
             "value": false
           },
           "delegatedManagedIdentityResourceId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
           },
           "principalId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
           },
           "roleDefinitionIdOrName": {
             "value": "[format('/providers/Microsoft.Authorization/roleDefinitions/{0}', variables('RoleAssignments').LogAnalyticsContributor.GUID)]"
@@ -6885,7 +6872,7 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName')))]"
       ]
     },
     {
@@ -6907,10 +6894,10 @@
             "value": false
           },
           "delegatedManagedIdentityResourceId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
           },
           "principalId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
           },
           "roleDefinitionIdOrName": {
             "value": "[format('/providers/Microsoft.Authorization/roleDefinitions/{0}', variables('RoleAssignments').StoreAcctContrib.GUID)]"
@@ -7478,14 +7465,14 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName')))]"
       ]
     },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "carml_MonitoringResourcesDeployment",
-      "location": "[deployment().location]",
+      "resourceGroup": "[parameters('ResourceGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -7553,7 +7540,7 @@
             "value": "[parameters('Tags')]"
           },
           "UsrAssignedId": {
-            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
           }
         },
         "template": {
@@ -14716,7 +14703,7 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
         "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]",
         "roleAssignment_AutoAcctDesktopRead",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[2], split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[4]), 'Microsoft.Resources/deployments', format('carml_LogContrib_{0}', split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[4]))]",
