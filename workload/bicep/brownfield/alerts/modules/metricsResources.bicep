@@ -41,6 +41,7 @@ module actionGroup '../../../../../carml/1.3.0/Microsoft.Insights/actionGroups/d
     ]
     enabled: true
     location: 'global'
+    enableDefaultTelemetry: false
     name: ActionGroupName
     groupShortName: 'EmailAlerts-AVDAlerts'
     tags: contains(Tags, 'Microsoft.Insights/actionGroups') ? Tags['Microsoft.Insights/actionGroups'] : {}
@@ -50,6 +51,7 @@ module actionGroup '../../../../../carml/1.3.0/Microsoft.Insights/actionGroups/d
 module deploymentScript_HP2VM '../../../../../carml/1.3.0/Microsoft.Resources/deploymentScripts/deploy.bicep' = {
   name: 'carml_ds-PS-GetHostPoolVMAssociation'
   params: {
+    enableDefaultTelemetry: false
     arguments: '-AVDResourceIDs ${HostPoolsAsString}'
     azPowerShellVersion: '7.1'
     name: 'ds_GetHostPoolVMAssociation'
@@ -122,6 +124,7 @@ module fileServicesMetric 'fileservicsmetric.bicep' = [for i in range(0, length(
 module logAlertQueries '../../../../../carml/1.3.0/Microsoft.Insights/scheduledQueryRules/deploy.bicep' = [for i in range(0, length(LogAlerts)): {
   name: 'carml_${LogAlerts[i].name}'
   params: {
+    enableDefaultTelemetry: false
     name: LogAlerts[i].name
     autoMitigate: false
     criterias: LogAlerts[i].criteria
@@ -159,6 +162,7 @@ module logAlertHostPoolQueries 'hostPoolAlerts.bicep' = [for hostpool in HostPoo
 module activityLogAlerts '../../../../../carml/1.3.0/Microsoft.Insights/activityLogAlerts/deploy.bicep' = [for i in range(0, length(ActivityLogAlerts)): if (CloudEnvironment == 'AzureCloud') {
   name: 'carml_${LogAlerts[i].name}'
   params: {
+    enableDefaultTelemetry: false
     name: ActivityLogAlerts[i].name
     enabled: false
     location: 'global'

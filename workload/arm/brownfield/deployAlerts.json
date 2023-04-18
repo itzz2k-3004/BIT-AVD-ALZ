@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "10552891272121623185"
+      "templateHash": "17759338216598908670"
     }
   },
   "parameters": {
@@ -1441,6 +1441,9 @@
           "name": {
             "value": "[parameters('ResourceGroupName')]"
           },
+          "location": {
+            "value": "[parameters('Location')]"
+          },
           "enableDefaultTelemetry": {
             "value": false
           },
@@ -2033,6 +2036,9 @@
           },
           "location": {
             "value": "[parameters('Location')]"
+          },
+          "enableDefaultTelemetry": {
+            "value": false
           },
           "diagnosticLogCategoriesToEnable": {
             "value": [
@@ -4807,6 +4813,9 @@
           "name": {
             "value": "[variables('UsrManagedIdentityName')]"
           },
+          "enableDefaultTelemetry": {
+            "value": false
+          },
           "tags": "[if(contains(parameters('Tags'), 'Microsoft.ManagedIdentity/userAssignedIdentities'), createObject('value', parameters('Tags')['Microsoft.ManagedIdentity/userAssignedIdentities']), createObject('value', createObject()))]"
         },
         "template": {
@@ -5123,6 +5132,9 @@
         "parameters": {
           "location": {
             "value": "[parameters('Location')]"
+          },
+          "enableDefaultTelemetry": {
+            "value": false
           },
           "delegatedManagedIdentityResourceId": {
             "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.resourceId.value]"
@@ -5708,6 +5720,9 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "enableDefaultTelemetry": {
+            "value": false
+          },
           "delegatedManagedIdentityResourceId": {
             "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
           },
@@ -6295,6 +6310,9 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "enableDefaultTelemetry": {
+            "value": false
+          },
           "delegatedManagedIdentityResourceId": {
             "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
           },
@@ -6885,6 +6903,9 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "enableDefaultTelemetry": {
+            "value": false
+          },
           "delegatedManagedIdentityResourceId": {
             "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
           },
@@ -7542,7 +7563,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.16.2.56959",
-              "templateHash": "13426873897846645973"
+              "templateHash": "15162969491159759159"
             }
           },
           "parameters": {
@@ -7641,6 +7662,9 @@
                   },
                   "location": {
                     "value": "global"
+                  },
+                  "enableDefaultTelemetry": {
+                    "value": false
                   },
                   "name": {
                     "value": "[parameters('ActionGroupName')]"
@@ -8137,6 +8161,9 @@
                 },
                 "mode": "Incremental",
                 "parameters": {
+                  "enableDefaultTelemetry": {
+                    "value": false
+                  },
                   "arguments": {
                     "value": "[format('-AVDResourceIDs {0}', variables('HostPoolsAsString'))]"
                   },
@@ -8486,7 +8513,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.16.2.56959",
-                      "templateHash": "2577394920076025031"
+                      "templateHash": "7182752189887509423"
                     }
                   },
                   "parameters": {
@@ -8528,6 +8555,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[replace(parameters('MetricAlerts').virtualMachines[range(0, length(parameters('MetricAlerts').virtualMachines))[copyIndex()]].name, 'xHostPoolNamex', parameters('HostPoolInfo').HostPoolName)]"
                           },
@@ -9150,7 +9180,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.16.2.56959",
-                      "templateHash": "10185175447617368081"
+                      "templateHash": "9341371730601628228"
                     }
                   },
                   "parameters": {
@@ -9191,6 +9221,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[format('{0}-{1}', parameters('MetricAlertsStorageAcct')[range(0, length(parameters('MetricAlertsStorageAcct')))[copyIndex()]].name, split(parameters('StorageAccountResourceID'), '/')[8])]"
                           },
@@ -9811,7 +9844,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.16.2.56959",
-                      "templateHash": "13495888388429648281"
+                      "templateHash": "14745468030053467699"
                     }
                   },
                   "parameters": {
@@ -9852,6 +9885,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[format('{0}-{1}', parameters('MetricAlertsANF')[range(0, length(parameters('MetricAlertsANF')))[copyIndex()]].name, split(parameters('ANFVolumeResourceID'), '/')[12])]"
                           },
@@ -10472,7 +10508,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.16.2.56959",
-                      "templateHash": "12993845935056044323"
+                      "templateHash": "14974362187000670537"
                     }
                   },
                   "parameters": {
@@ -10516,6 +10552,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[format('{0}-{1}', parameters('MetricAlertsFileShares')[range(0, length(parameters('MetricAlertsFileShares')))[copyIndex()]].name, split(variables('FileServicesResourceID'), '/')[8])]"
                           },
@@ -11106,6 +11145,9 @@
                 },
                 "mode": "Incremental",
                 "parameters": {
+                  "enableDefaultTelemetry": {
+                    "value": false
+                  },
                   "name": {
                     "value": "[parameters('LogAlerts')[range(0, length(parameters('LogAlerts')))[copyIndex()]].name]"
                   },
@@ -11703,7 +11745,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.16.2.56959",
-                      "templateHash": "3718831503759066960"
+                      "templateHash": "2382791058480143469"
                     }
                   },
                   "parameters": {
@@ -11744,6 +11786,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[replace(parameters('LogAlertsHostPool')[range(0, length(parameters('LogAlertsHostPool')))[copyIndex()]].name, 'xHostPoolNamex', parameters('HostPoolName'))]"
                           },
@@ -12328,6 +12373,9 @@
                 },
                 "mode": "Incremental",
                 "parameters": {
+                  "enableDefaultTelemetry": {
+                    "value": false
+                  },
                   "name": {
                     "value": "[parameters('ActivityLogAlerts')[range(0, length(parameters('ActivityLogAlerts')))[copyIndex()]].name]"
                   },
@@ -12873,7 +12921,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.16.2.56959",
-                      "templateHash": "12976186324167358690"
+                      "templateHash": "10258566831232503426"
                     }
                   },
                   "parameters": {
@@ -12931,6 +12979,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[parameters('RunbookNameGetStorage')]"
                           },
@@ -13134,6 +13185,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[parameters('LogicAppName')]"
                           },
@@ -13790,7 +13844,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.16.2.56959",
-                      "templateHash": "8588622077246709613"
+                      "templateHash": "10774928460052734173"
                     }
                   },
                   "parameters": {
@@ -13848,6 +13902,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[parameters('RunbookNameGetHostPool')]"
                           },
@@ -14051,6 +14108,9 @@
                         },
                         "mode": "Incremental",
                         "parameters": {
+                          "enableDefaultTelemetry": {
+                            "value": false
+                          },
                           "name": {
                             "value": "[parameters('LogicAppName')]"
                           },

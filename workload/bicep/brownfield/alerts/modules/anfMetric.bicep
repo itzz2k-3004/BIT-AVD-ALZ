@@ -9,6 +9,7 @@ param Tags object
 module metricAlerts_VirtualMachines '../../../../../carml/1.3.0/Microsoft.Insights/metricAlerts/deploy.bicep' = [for i in range(0, length(MetricAlertsANF)): {
   name: 'carml_${MetricAlertsANF[i].name}-${split(ANFVolumeResourceID, '/')[12]}'
   params: {
+    enableDefaultTelemetry: false
     name: '${MetricAlertsANF[i].name}-${split(ANFVolumeResourceID, '/')[12]}'
     criterias: MetricAlertsANF[i].criteria
     location: 'global'

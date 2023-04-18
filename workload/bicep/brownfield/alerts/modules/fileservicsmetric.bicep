@@ -11,6 +11,7 @@ var FileServicesResourceID = '${StorageAccountResourceID}/fileServices/default'
 module metricAlerts_VirtualMachines '../../../../../carml/1.3.0/Microsoft.Insights/metricAlerts/deploy.bicep' = [for i in range(0, length(MetricAlertsFileShares)): {
   name: 'carml_${MetricAlertsFileShares[i].name}-${split(FileServicesResourceID, '/')[8]}'
   params: {
+    enableDefaultTelemetry: false
     name: '${MetricAlertsFileShares[i].name}-${split(FileServicesResourceID, '/')[8]}'
     criterias: MetricAlertsFileShares[i].criteria
     location: 'global'

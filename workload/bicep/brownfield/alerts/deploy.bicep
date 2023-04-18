@@ -1508,6 +1508,7 @@ module resourceGroupAVDMetricsCreate '../../../../carml/1.3.0/Microsoft.Resource
   name: 'carml_Resource-Group-${time}'
   params: {
       name: ResourceGroupName
+      location: Location
       enableDefaultTelemetry: false
       tags: contains(Tags, 'Microsoft.Resources/resourceGroups') ? Tags['Microsoft.Resources/resourceGroups'] : {}
   }
@@ -1523,6 +1524,7 @@ module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/a
   params: {
     name: AutomationAccountName
     location: Location
+    enableDefaultTelemetry: false
     diagnosticLogCategoriesToEnable: [
       'JobLogs'
       'JobStreams'
@@ -1541,6 +1543,7 @@ module identityUserManaged '../../../../carml/1.3.0/Microsoft.ManagedIdentity/us
   params:{
     location: Location
     name: UsrManagedIdentityName
+    enableDefaultTelemetry: false
     tags: contains(Tags, 'Microsoft.ManagedIdentity/userAssignedIdentities') ? Tags['Microsoft.ManagedIdentity/userAssignedIdentities'] : {}
   }
 }
@@ -1550,6 +1553,7 @@ module roleAssignment_UsrIdDesktopRead '../../../../carml/1.3.0/Microsoft.Author
   scope: subscription(HostPoolId)
   params: {
     location: Location
+    enableDefaultTelemetry: false
     delegatedManagedIdentityResourceId: identityUserManaged.outputs.resourceId
     principalId: identityUserManaged.outputs.principalId
     roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.DesktopVirtualizationRead.GUID}'
@@ -1565,6 +1569,7 @@ module roleAssignment_AutoAcctDesktopRead '../../../../carml/1.3.0/Microsoft.Aut
   scope: resourceGroup(RG)
   name: 'carml_DsktpRead_${RG}'
   params: {
+    enableDefaultTelemetry: false
     delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
     principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
     roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.DesktopVirtualizationRead.GUID}'
@@ -1580,6 +1585,7 @@ module roleAssignment_LogAnalytics '../../../../carml/1.3.0/Microsoft.Authorizat
   scope: resourceGroup(split(LogAnalyticsWorkspaceResourceId, '/')[2], split(LogAnalyticsWorkspaceResourceId, '/')[4])
   name: 'carml_LogContrib_${split(LogAnalyticsWorkspaceResourceId, '/')[4]}'
   params: {
+    enableDefaultTelemetry: false
     delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
     principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
     roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.LogAnalyticsContributor.GUID}'
@@ -1595,6 +1601,7 @@ module roleAssignment_Storage '../../../../carml/1.3.0/Microsoft.Authorization/r
   scope: resourceGroup(StorAcctRG)
   name: 'carml_StorAcctContrib_${StorAcctRG}'
   params: {
+    enableDefaultTelemetry: false
     delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
     principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
     roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.StoreAcctContrib.GUID}'

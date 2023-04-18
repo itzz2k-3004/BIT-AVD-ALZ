@@ -15,6 +15,7 @@ resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' 
 module runbookGetHostPoolInfo '../../../../../carml/1.3.0/Microsoft.Automation/automationAccounts/runbooks/deploy.bicep' = {
   name: 'carml_${RunbookNameGetHostPool}'
   params: {
+    enableDefaultTelemetry: false
     name: RunbookNameGetHostPool
     automationAccountName: automationAccount.name
     description: 'AVD Metrics Runbook for collecting related Host Pool statistics to store in Log Analytics for specified Alert Queries'
@@ -41,6 +42,7 @@ resource webhookGetHostPoolInfo 'Microsoft.Automation/automationAccounts/webhook
 module logicAppGetHostPoolInfo '../../../../../carml/1.2.1.old/Microsoft.Logic/workflows/deploy.bicep' = {
   name: 'carml-1.2.1_${LogicAppName}'
   params: {
+    enableDefaultTelemetry: false
     name: LogicAppName
     tags: contains(Tags, 'Microsoft.Logic/workflows') ? Tags['Microsoft.Logic/workflows'] : {}
     location: Location

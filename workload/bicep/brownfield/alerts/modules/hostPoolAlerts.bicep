@@ -10,6 +10,7 @@ param Tags object
 module logAlertHostPoolQueries '../../../../../carml/1.3.0/Microsoft.Insights/scheduledQueryRules/deploy.bicep' = [for i in range(0, length(LogAlertsHostPool)): {
   name: 'carml_${replace(LogAlertsHostPool[i].name, 'xHostPoolNamex', HostPoolName)}'
   params: {
+    enableDefaultTelemetry: false
     name: replace(LogAlertsHostPool[i].name, 'xHostPoolNamex', HostPoolName)
     autoMitigate: AutoMitigate
     criterias: {
