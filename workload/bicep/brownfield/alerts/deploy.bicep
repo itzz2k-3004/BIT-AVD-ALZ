@@ -41,6 +41,13 @@ param LogAnalyticsWorkspaceResourceId string
 @description('Resource Group to deploy the Alerts Solution in.')
 param ResourceGroupName string
 
+@description('Flag to determine if a new resource group needs to be created.')
+@allowed([
+  'New'
+  'Existing'
+])
+param ResourceGroupStatus string
+
 @description('The Resource Group ID for the AVD session host VMs.')
 param SessionHostsResourceGroupIds array = []
 
@@ -64,7 +71,8 @@ var HostPoolRGsAll = [for item in HostPools : split(item, '/')[4]]
 var HostPoolRGs = union(HostPoolRGsAll,[])
 var LogicAppName = 'la-avdmetrics-${Environment}-${Location}'
 
-//var ResourceGroupName = 'rg-avdmetrics-${Environment}-${Location}'
+var ResourceGroupCreate = ResourceGroupStatus == 'New' ? true : false
+
 var Runbooks = {
   AvdStorageLogData: {
     Name: 'AVD_Storage_Log_Data'
@@ -1570,7 +1578,7 @@ var varTimeZones = {
 // =========== //
 
 // AVD Shared Services Resource Group
-module resourceGroupAVDMetricsCreate '../../../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = {
+module resourceGroupAVDMetricsCreate '../../../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (ResourceGroupCreate) {
   name: 'carml_Resource-Group-${time}'
   params: {
       name: ResourceGroupName
@@ -1580,9 +1588,13 @@ module resourceGroupAVDMetricsCreate '../../../../carml/1.3.0/Microsoft.Resource
   }
 }
 
+resource resourceGroupAVDMetricsExisting 'Microsoft.Resources/resourceGroups@2022-09-01' existing = {
+  name: ResourceGroupName
+}
+
 module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/automationAccounts/deploy.bicep' = {
   name: 'carml_AutomtnAcct-${AutomationAccountName}'
-  scope: resourceGroup(ResourceGroupName)
+  scope: ResourceGroupCreate ? resourceGroup(resourceGroupAVDMetricsCreate.name) : resourceGroup(resourceGroupAVDMetricsExisting.name)
   params: {
     name: AutomationAccountName
     location: Location
@@ -1636,7 +1648,7 @@ module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/a
 
 module identityUserManaged '../../../../carml/1.3.0/Microsoft.ManagedIdentity/userAssignedIdentities/deploy.bicep' = {
   name: 'carml_UserMgId_${UsrManagedIdentityName}'
-  scope: resourceGroup(ResourceGroupName)
+  scope: ResourceGroupCreate ? resourceGroup(resourceGroupAVDMetricsCreate.name) : resourceGroup(resourceGroupAVDMetricsExisting.name)
   params:{
     location: Location
     name: UsrManagedIdentityName
@@ -1712,7 +1724,7 @@ module roleAssignment_Storage '../../../../carml/1.3.0/Microsoft.Authorization/r
 
 module metricsResources './modules/metricsResources.bicep' = {
   name: 'carml_MonitoringResourcesDeployment'
-  scope: resourceGroup(ResourceGroupName)
+  scope: ResourceGroupCreate ? resourceGroup(resourceGroupAVDMetricsCreate.name) : resourceGroup(resourceGroupAVDMetricsExisting.name)
   params: {
     _ArtifactsLocation: _ArtifactsLocation
     _ArtifactsLocationSasToken: _ArtifactsLocationSasToken
