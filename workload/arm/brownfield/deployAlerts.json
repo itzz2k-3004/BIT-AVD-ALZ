@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "2670915754427933627"
+      "templateHash": "1256035990069148030"
     }
   },
   "parameters": {
@@ -4897,7 +4897,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "[format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))]",
-      "subscriptionId": "[subscription().id]",
       "resourceGroup": "[parameters('ResourceGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -5232,10 +5231,10 @@
             "value": false
           },
           "delegatedManagedIdentityResourceId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().id, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.resourceId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.resourceId.value]"
           },
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().id, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
           },
           "roleDefinitionIdOrName": {
             "value": "[format('/providers/Microsoft.Authorization/roleDefinitions/{0}', variables('RoleAssignments').DesktopVirtualizationRead.GUID)]"
@@ -5797,7 +5796,7 @@
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().id, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]"
       ]
     },
     {
@@ -7648,7 +7647,7 @@
             "value": "[parameters('Tags')]"
           },
           "UsrAssignedId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().id, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
           }
         },
         "template": {
@@ -13669,7 +13668,7 @@
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().id, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
         "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]",
         "roleAssignment_AutoAcctDesktopRead",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[2], split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[4]), 'Microsoft.Resources/deployments', format('carml_LogContrib_{0}', split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[4]))]",

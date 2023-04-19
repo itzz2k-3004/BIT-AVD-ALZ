@@ -1636,7 +1636,7 @@ module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/a
 
 module identityUserManaged '../../../../carml/1.3.0/Microsoft.ManagedIdentity/userAssignedIdentities/deploy.bicep' = {
   name: 'carml_UserMgId_${UsrManagedIdentityName}'
-  scope: resourceGroup(subscription().id,ResourceGroupName)
+  scope: resourceGroup(ResourceGroupName)
   params:{
     location: Location
     name: UsrManagedIdentityName
