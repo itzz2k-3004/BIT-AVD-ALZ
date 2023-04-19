@@ -1651,9 +1651,9 @@ module roleAssignment_UsrIdDesktopRead '../../../../carml/1.3.0/Microsoft.Author
   params: {
     location: Location
     enableDefaultTelemetry: false
-    delegatedManagedIdentityResourceId: identityUserManaged.outputs.resourceId
+    //delegatedManagedIdentityResourceId: identityUserManaged.outputs.resourceId
     principalId: identityUserManaged.outputs.principalId
-    roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.DesktopVirtualizationRead.GUID}'
+    roleDefinitionIdOrName:  'Desktop Virtualization Reader'
     principalType: 'ServicePrincipal'
     subscriptionId: HostPoolId
   }
@@ -1667,9 +1667,9 @@ module roleAssignment_AutoAcctDesktopRead '../../../../carml/1.3.0/Microsoft.Aut
   name: 'carml_DsktpRead_${RG}'
   params: {
     enableDefaultTelemetry: false
-    delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
+    //delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
     principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
-    roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.DesktopVirtualizationRead.GUID}'
+    roleDefinitionIdOrName:  'Desktop Virtualization Reader'
     principalType: 'ServicePrincipal'
     resourceGroupName: RG
   }
@@ -1683,7 +1683,7 @@ module roleAssignment_LogAnalytics '../../../../carml/1.3.0/Microsoft.Authorizat
   name: 'carml_LogContrib_${split(LogAnalyticsWorkspaceResourceId, '/')[4]}'
   params: {
     enableDefaultTelemetry: false
-    delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
+    //delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
     principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
     roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.LogAnalyticsContributor.GUID}'
     principalType: 'ServicePrincipal'
@@ -1699,7 +1699,7 @@ module roleAssignment_Storage '../../../../carml/1.3.0/Microsoft.Authorization/r
   name: 'carml_StorAcctContrib_${StorAcctRG}'
   params: {
     enableDefaultTelemetry: false
-    delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
+    //delegatedManagedIdentityResourceId: identityAutomationAccount.outputs.resourceId
     principalId: identityAutomationAccount.outputs.systemAssignedPrincipalId
     roleDefinitionIdOrName: '/providers/Microsoft.Authorization/roleDefinitions/${RoleAssignments.StoreAcctContrib.GUID}'
     principalType: 'ServicePrincipal'

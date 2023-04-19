@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "1256035990069148030"
+      "templateHash": "12036245994539556981"
     }
   },
   "parameters": {
@@ -5230,14 +5230,11 @@
           "enableDefaultTelemetry": {
             "value": false
           },
-          "delegatedManagedIdentityResourceId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.resourceId.value]"
-          },
           "principalId": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
           },
           "roleDefinitionIdOrName": {
-            "value": "[format('/providers/Microsoft.Authorization/roleDefinitions/{0}', variables('RoleAssignments').DesktopVirtualizationRead.GUID)]"
+            "value": "Desktop Virtualization Reader"
           },
           "principalType": {
             "value": "ServicePrincipal"
@@ -5817,14 +5814,11 @@
           "enableDefaultTelemetry": {
             "value": false
           },
-          "delegatedManagedIdentityResourceId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
-          },
           "principalId": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
           },
           "roleDefinitionIdOrName": {
-            "value": "[format('/providers/Microsoft.Authorization/roleDefinitions/{0}', variables('RoleAssignments').DesktopVirtualizationRead.GUID)]"
+            "value": "Desktop Virtualization Reader"
           },
           "principalType": {
             "value": "ServicePrincipal"
@@ -6406,9 +6400,6 @@
         "parameters": {
           "enableDefaultTelemetry": {
             "value": false
-          },
-          "delegatedManagedIdentityResourceId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
           },
           "principalId": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
@@ -6999,9 +6990,6 @@
         "parameters": {
           "enableDefaultTelemetry": {
             "value": false
-          },
-          "delegatedManagedIdentityResourceId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.resourceId.value]"
           },
           "principalId": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
