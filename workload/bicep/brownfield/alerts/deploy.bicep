@@ -73,16 +73,6 @@ var LogicAppName = 'la-avdmetrics-${Environment}-${Location}'
 
 var ResourceGroupCreate = ResourceGroupStatus == 'New' ? true : false
 
-var Runbooks = {
-  AvdStorageLogData: {
-    Name: 'AVD_Storage_Log_Data'
-    Description: 'AVD Metrics Runbook for collecting related Host Pool statistics to store in Log Analytics for specified Alert Queries'
-  }
-  AvdHostPoolLogData: {
-    Name: 'AVD_HostPool_Log_Data'
-    Description: 'AVD Metrics Runbook for collecting related Host Pool statistics to store in Log Analytics for specified Alert Queries'
-  }
-}
 var RunbookNameGetStorage = 'AvdStorageLogData'
 var RunbookNameGetHostPool = 'AvdHostPoolLogData'
 var RunbookScriptGetStorage = 'Get-StorAcctInfov2.ps1'
@@ -1594,7 +1584,7 @@ resource resourceGroupAVDMetricsExisting 'Microsoft.Resources/resourceGroups@202
 
 module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/automationAccounts/deploy.bicep' = {
   name: 'carml_AutomtnAcct-${AutomationAccountName}'
-  scope: ResourceGroupCreate ? resourceGroup(resourceGroupAVDMetricsCreate.name) : resourceGroup(resourceGroupAVDMetricsExisting.name)
+  scope: resourceGroup(ResourceGroupCreate ? resourceGroupAVDMetricsCreate.name : resourceGroupAVDMetricsExisting.name)
   params: {
     name: AutomationAccountName
     location: Location
@@ -1606,40 +1596,6 @@ module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/a
     diagnosticLogsRetentionInDays: 30
     diagnosticSettingsName: 'diag-${AutomationAccountName}'
     diagnosticWorkspaceId: LogAnalyticsWorkspaceResourceId
-    schedules: [
-      {
-        name: 'AVDMetricsCheck-15'
-        frequency: 'Hour'
-        interval: 1
-        startTime: dateTimeAdd(time, 'PT15M')
-        TimeZone: varTimeZone
-        advancedSchedule: {}
-      }
-      {
-        name: 'AVDMetricsCheck-30'
-        frequency: 'Hour'
-        interval: 1
-        startTime: dateTimeAdd(time, 'PT30M')
-        TimeZone: varTimeZone
-        advancedSchedule: {}
-      }
-      {
-        name: 'AVDMetricsCheck-45'
-        frequency: 'Hour'
-        interval: 1
-        startTime: dateTimeAdd(time, 'PT45M')
-        TimeZone: varTimeZone
-        advancedSchedule: {}
-      }
-      {
-        name: 'AVDMetricsCheck-0'
-        frequency: 'Hour'
-        interval: 1
-        startTime: dateTimeAdd(time, 'PT60M')
-        TimeZone: varTimeZone
-        advancedSchedule: {}
-      }
-    ]
     skuName: 'Free'
     systemAssignedIdentity: true
     tags: contains(Tags, 'Microsoft.Automation/automationAccounts') ? Tags['Microsoft.Automation/automationAccounts'] : {}
@@ -1648,7 +1604,7 @@ module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/a
 
 module identityUserManaged '../../../../carml/1.3.0/Microsoft.ManagedIdentity/userAssignedIdentities/deploy.bicep' = {
   name: 'carml_UserMgId_${UsrManagedIdentityName}'
-  scope: ResourceGroupCreate ? resourceGroup(resourceGroupAVDMetricsCreate.name) : resourceGroup(resourceGroupAVDMetricsExisting.name)
+  scope: resourceGroup(ResourceGroupCreate ? resourceGroupAVDMetricsCreate.name : resourceGroupAVDMetricsExisting.name)
   params:{
     location: Location
     name: UsrManagedIdentityName
@@ -1724,7 +1680,7 @@ module roleAssignment_Storage '../../../../carml/1.3.0/Microsoft.Authorization/r
 
 module metricsResources './modules/metricsResources.bicep' = {
   name: 'carml_MonitoringResourcesDeployment'
-  scope: ResourceGroupCreate ? resourceGroup(resourceGroupAVDMetricsCreate.name) : resourceGroup(resourceGroupAVDMetricsExisting.name)
+  scope: resourceGroup(ResourceGroupCreate ? resourceGroupAVDMetricsCreate.name : resourceGroupAVDMetricsExisting.name)
   params: {
     _ArtifactsLocation: _ArtifactsLocation
     _ArtifactsLocationSasToken: _ArtifactsLocationSasToken
