@@ -39,41 +39,42 @@ resource webhookGetStorageInfo 'Microsoft.Automation/automationAccounts/webhooks
   }
 }
 
-module logicAppGetStorageInfo '../../../../../carml/1.2.1.old/Microsoft.Logic/workflows/deploy.bicep' = {
-  name: 'carml-1.2.1_${LogicAppName}'
-  params: {
-    enableDefaultTelemetry: false
-    name: LogicAppName
-    tags: contains(Tags, 'Microsoft.Logic/workflows') ? Tags['Microsoft.Logic/workflows'] : {}
-    location: Location
-    state: 'Enabled'
-    workflowActions: {
-      HTTP: {
-        type: 'Http'
-        inputs: {
-          method: 'POST'
-          uri: webhookGetStorageInfo.properties.uri
-          body: {
-            CloudEnvironment: CloudEnvironment
-            StorageAccountResourceIDs: StorageAccountResourceIds
-          }
-        }
-      }
-    }
-    workflowTriggers: {
-      Recurrence: {
-        type: 'Recurrence'
-        recurrence: {
-          frequency: 'Minute'
-          interval: 5
-        }
-      }
-    }
-  }
+resource logicAppGetStorageInfo 'Microsoft.Logic/workflows@2016-06-01' = {
+  name: LogicAppName
+  tags: contains(Tags, 'Microsoft.Logic/workflows') ? Tags['Microsoft.Logic/workflows'] : {}
   dependsOn: [
     automationAccount
     runbookGetStorageInfo
   ]
+  location: Location
+  properties: {
+    state: 'Enabled'
+    definition: {
+      '$schema': 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#'
+      actions: {
+        HTTP: {
+          type: 'Http'
+          inputs: {
+            method: 'POST'
+            uri: webhookGetStorageInfo.properties.uri
+            body: {
+              CloudEnvironment: CloudEnvironment
+              StorageAccountResourceIDs: StorageAccountResourceIds
+            }
+          }
+        }
+      }
+      triggers: {
+        Recurrence: {
+          type: 'Recurrence'
+          recurrence: {
+            frequency: 'Minute'
+            interval: 5
+          }
+        }
+      }
+    }
+  }
 }
 
 output RunbookURI string = RunbookURI

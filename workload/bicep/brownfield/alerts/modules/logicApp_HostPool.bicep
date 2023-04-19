@@ -39,40 +39,41 @@ resource webhookGetHostPoolInfo 'Microsoft.Automation/automationAccounts/webhook
   }
 }
 
-module logicAppGetHostPoolInfo '../../../../../carml/1.2.1.old/Microsoft.Logic/workflows/deploy.bicep' = {
-  name: 'carml-1.2.1_${LogicAppName}'
-  params: {
-    enableDefaultTelemetry: false
-    name: LogicAppName
-    tags: contains(Tags, 'Microsoft.Logic/workflows') ? Tags['Microsoft.Logic/workflows'] : {}
-    location: Location
-    state: 'Enabled'
-    workflowActions: {
-      HTTP: {
-        type: 'Http'
-        inputs: {
-          method: 'POST'
-          uri: webhookGetHostPoolInfo.properties.uri
-          body: {
-            CloudEnvironment: CloudEnvironment
-            SubscriptionId: SubscriptionId
-          }
-        }
-      }
-    }
-    workflowTriggers: {
-      Recurrence: {
-        type: 'Recurrence'
-        recurrence: {
-          frequency: 'Minute'
-          interval: 5
-        }
-      }
-    }
-  }
+resource logicAppGetHostPoolInfo 'Microsoft.Logic/workflows@2016-06-01' = {
+  name: LogicAppName
+  tags: contains(Tags, 'Microsoft.Logic/workflows') ? Tags['Microsoft.Logic/workflows'] : {}
   dependsOn: [
     automationAccount
     runbookGetHostPoolInfo
   ]
+  location: Location
+  properties: {
+    state: 'Enabled'
+    definition: {
+      '$schema': 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#'
+      actions: {
+        HTTP: {
+          type: 'Http'
+          inputs: {
+            method: 'POST'
+            uri: webhookGetHostPoolInfo.properties.uri
+            body: {
+              CloudEnvironment: CloudEnvironment
+              SubscriptionId: SubscriptionId
+            }
+          }
+        }
+      }
+      triggers: {
+        Recurrence: {
+          type: 'Recurrence'
+          recurrence: {
+            frequency: 'Minute'
+            interval: 5
+          }
+        }
+      }
+    }
+  }
 }
 
