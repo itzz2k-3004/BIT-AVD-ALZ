@@ -359,7 +359,7 @@
                 "HostPools": "[steps('AlertsConfig').HostPools]",
                 "LogAnalyticsWorkspaceResourceId": "[steps('AlertsConfig').LogAnalyticsWorkspaceResource.id]",
                 "ResourceGroupName": "[if(equals(steps('AlertsConfig').ResourceGroupStatus, 'New'), steps('AlertsConfig').resourceGroupNameNew, last(split(steps('AlertsConfig').resourceGroupNameExisting, '/')))]",
-                "ResourceGroupStatus": "[steps('basic').ResourceGroupStatus]",
+                "ResourceGroupStatus": "[steps('AlertsConfig').ResourceGroupStatus]",
                 "SessionHostsResourceGroupIds": "[steps('AlertsConfig').SessionHostsResourceGroupIds]",
                 "StorageAccountResourceIds": "[steps('AlertsConfig').AzFilesStorageSection.StorageAccountResourceIds]",
                 "ANFVolumeResourceIds": "[steps('AlertsConfig').ANFStorageSection.ANFVolumeResourceIds]",
