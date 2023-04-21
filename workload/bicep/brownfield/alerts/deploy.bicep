@@ -1569,7 +1569,7 @@ var varTimeZones = {
 
 // AVD Shared Services Resource Group
 module resourceGroupAVDMetricsCreate '../../../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (ResourceGroupCreate) {
-  name: 'carml_Resource-Group-${time}'
+  name: ResourceGroupName
   params: {
       name: ResourceGroupName
       location: Location

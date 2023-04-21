@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "7537627708857593740"
+      "templateHash": "13578787597652528564"
     }
   },
   "parameters": {
@@ -1493,7 +1493,7 @@
       "condition": "[variables('ResourceGroupCreate')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "[format('carml_Resource-Group-{0}', parameters('time'))]",
+      "name": "[parameters('ResourceGroupName')]",
       "location": "[deployment().location]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -4859,14 +4859,14 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]"
+        "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('ResourceGroupName'))]"
       ]
     },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "[format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))]",
-      "resourceGroup": "[if(variables('ResourceGroupCreate'), format('carml_Resource-Group-{0}', parameters('time')), parameters('ResourceGroupName'))]",
+      "resourceGroup": "[if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -5177,7 +5177,7 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]"
+        "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('ResourceGroupName'))]"
       ]
     },
     {
@@ -5203,7 +5203,7 @@
             "value": false
           },
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), format('carml_Resource-Group-{0}', parameters('time')), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
           },
           "roleDefinitionIdOrName": {
             "value": "Desktop Virtualization Reader"
@@ -5765,7 +5765,7 @@
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), format('carml_Resource-Group-{0}', parameters('time')), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]"
       ]
     },
     {
@@ -7539,7 +7539,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "carml_MonitoringResourcesDeployment",
-      "resourceGroup": "[if(variables('ResourceGroupCreate'), format('carml_Resource-Group-{0}', parameters('time')), parameters('ResourceGroupName'))]",
+      "resourceGroup": "[if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -7607,7 +7607,7 @@
             "value": "[parameters('Tags')]"
           },
           "UsrAssignedId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), format('carml_Resource-Group-{0}', parameters('time')), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
           }
         },
         "template": {
@@ -13628,8 +13628,8 @@
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), format('carml_Resource-Group-{0}', parameters('time')), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
+        "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('ResourceGroupName'))]"
       ]
     }
   ]
