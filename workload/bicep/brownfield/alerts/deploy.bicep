@@ -1029,7 +1029,7 @@ var LogAlertsHostPool = [
   }
 ]
 
-var LogAlerts = [
+var LogAlertsStorage = [
   { // Based on Runbook script Output to LAW
     name: '${AlertNamePrefix}-Storage-Low Space on Azure File Share-15 Percent Remaining'
     displayName: '${AlertNamePrefix}-Storage-Low Space on Azure File Share-15% Remaining'
@@ -1453,7 +1453,7 @@ var MetricAlerts = {
   ] */
 }
 
-var ActivityLogAlerts = [
+var LogAlertsSvcHealth = [
   {
     name: '${AlertNamePrefix}-SerivceHealth-Service Issue'
     displayName: '${AlertNamePrefix}-SerivceHealth-Serivice Issue'
@@ -1686,14 +1686,14 @@ module metricsResources './modules/metricsResources.bicep' = {
   params: {
     _ArtifactsLocation: _ArtifactsLocation
     _ArtifactsLocationSasToken: _ArtifactsLocationSasToken
-    ActivityLogAlerts: ActivityLogAlerts
     AutomationAccountName: AutomationAccountName
     DistributionGroup: DistributionGroup
     HostPools: HostPools
     Location: Location
     LogAnalyticsWorkspaceResourceId: LogAnalyticsWorkspaceResourceId
-    LogAlerts: LogAlerts
     LogAlertsHostPool: LogAlertsHostPool
+    LogAlertsStorage: LogAlertsStorage
+    LogAlertsSvcHealth: LogAlertsSvcHealth
     LogicAppName: LogicAppName
     MetricAlerts: MetricAlerts
     RunbookNameGetStorage: RunbookNameGetStorage
@@ -1706,5 +1706,10 @@ module metricsResources './modules/metricsResources.bicep' = {
     Tags: Tags
     UsrAssignedId: identityUserManaged.outputs.principalId
   }
-  dependsOn: ResourceGroupCreate ? [resourceGroupAVDMetricsCreate] : [resourceGroupAVDMetricsExisting]
+  dependsOn: [
+    roleAssignment_AutoAcctDesktopRead
+    roleAssignment_LogAnalytics
+    roleAssignment_Storage
+    roleAssignment_UsrIdDesktopRead
+  ]
 }

@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "13578787597652528564"
+      "templateHash": "658089038270692038"
     }
   },
   "parameters": {
@@ -1008,7 +1008,7 @@
         }
       }
     ],
-    "LogAlerts": [
+    "LogAlertsStorage": [
       {
         "name": "[format('{0}-Storage-Low Space on Azure File Share-15 Percent Remaining', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-Storage-Low Space on Azure File Share-15% Remaining', parameters('AlertNamePrefix'))]",
@@ -1379,7 +1379,7 @@
         }
       ]
     },
-    "ActivityLogAlerts": [
+    "LogAlertsSvcHealth": [
       {
         "name": "[format('{0}-SerivceHealth-Service Issue', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-SerivceHealth-Serivice Issue', parameters('AlertNamePrefix'))]",
@@ -7552,9 +7552,6 @@
           "_ArtifactsLocationSasToken": {
             "value": "[parameters('_ArtifactsLocationSasToken')]"
           },
-          "ActivityLogAlerts": {
-            "value": "[variables('ActivityLogAlerts')]"
-          },
           "AutomationAccountName": {
             "value": "[variables('AutomationAccountName')]"
           },
@@ -7570,11 +7567,14 @@
           "LogAnalyticsWorkspaceResourceId": {
             "value": "[parameters('LogAnalyticsWorkspaceResourceId')]"
           },
-          "LogAlerts": {
-            "value": "[variables('LogAlerts')]"
-          },
           "LogAlertsHostPool": {
             "value": "[variables('LogAlertsHostPool')]"
+          },
+          "LogAlertsStorage": {
+            "value": "[variables('LogAlertsStorage')]"
+          },
+          "LogAlertsSvcHealth": {
+            "value": "[variables('LogAlertsSvcHealth')]"
           },
           "LogicAppName": {
             "value": "[variables('LogicAppName')]"
@@ -7617,7 +7617,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.16.2.56959",
-              "templateHash": "2618847884230867066"
+              "templateHash": "18033256874616076334"
             }
           },
           "parameters": {
@@ -7629,9 +7629,6 @@
             },
             "ActionGroupName": {
               "type": "string"
-            },
-            "ActivityLogAlerts": {
-              "type": "array"
             },
             "ANFVolumeResourceIds": {
               "type": "array"
@@ -7651,10 +7648,13 @@
             "LogAnalyticsWorkspaceResourceId": {
               "type": "string"
             },
-            "LogAlerts": {
+            "LogAlertsStorage": {
               "type": "array"
             },
             "LogAlertsHostPool": {
+              "type": "array"
+            },
+            "LogAlertsSvcHealth": {
               "type": "array"
             },
             "LogicAppName": {
@@ -11188,11 +11188,11 @@
             {
               "copy": {
                 "name": "logAlertQueries",
-                "count": "[length(range(0, length(parameters('LogAlerts'))))]"
+                "count": "[length(range(0, length(parameters('LogAlertsStorage'))))]"
               },
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
-              "name": "[format('carml_{0}', parameters('LogAlerts')[range(0, length(parameters('LogAlerts')))[copyIndex()]].name)]",
+              "name": "[parameters('LogAlertsStorage')[range(0, length(parameters('LogAlertsStorage')))[copyIndex()]].name]",
               "properties": {
                 "expressionEvaluationOptions": {
                   "scope": "inner"
@@ -11203,13 +11203,13 @@
                     "value": false
                   },
                   "name": {
-                    "value": "[parameters('LogAlerts')[range(0, length(parameters('LogAlerts')))[copyIndex()]].name]"
+                    "value": "[parameters('LogAlertsStorage')[range(0, length(parameters('LogAlertsStorage')))[copyIndex()]].name]"
                   },
                   "autoMitigate": {
                     "value": false
                   },
                   "criterias": {
-                    "value": "[parameters('LogAlerts')[range(0, length(parameters('LogAlerts')))[copyIndex()]].criteria]"
+                    "value": "[parameters('LogAlertsStorage')[range(0, length(parameters('LogAlertsStorage')))[copyIndex()]].criteria]"
                   },
                   "scopes": {
                     "value": [
@@ -11230,20 +11230,20 @@
                     ]
                   },
                   "alertDescription": {
-                    "value": "[parameters('LogAlerts')[range(0, length(parameters('LogAlerts')))[copyIndex()]].description]"
+                    "value": "[parameters('LogAlertsStorage')[range(0, length(parameters('LogAlertsStorage')))[copyIndex()]].description]"
                   },
                   "enabled": {
                     "value": false
                   },
                   "evaluationFrequency": {
-                    "value": "[parameters('LogAlerts')[range(0, length(parameters('LogAlerts')))[copyIndex()]].evaluationFrequency]"
+                    "value": "[parameters('LogAlertsStorage')[range(0, length(parameters('LogAlertsStorage')))[copyIndex()]].evaluationFrequency]"
                   },
                   "severity": {
-                    "value": "[parameters('LogAlerts')[range(0, length(parameters('LogAlerts')))[copyIndex()]].severity]"
+                    "value": "[parameters('LogAlertsStorage')[range(0, length(parameters('LogAlertsStorage')))[copyIndex()]].severity]"
                   },
                   "tags": "[if(contains(parameters('Tags'), 'Microsoft.Insights/scheduledQueryRules'), createObject('value', parameters('Tags')['Microsoft.Insights/scheduledQueryRules']), createObject('value', createObject()))]",
                   "windowSize": {
-                    "value": "[parameters('LogAlerts')[range(0, length(parameters('LogAlerts')))[copyIndex()]].windowSize]"
+                    "value": "[parameters('LogAlertsStorage')[range(0, length(parameters('LogAlertsStorage')))[copyIndex()]].windowSize]"
                   }
                 },
                 "template": {
@@ -12415,12 +12415,12 @@
             {
               "copy": {
                 "name": "activityLogAlerts",
-                "count": "[length(range(0, length(parameters('ActivityLogAlerts'))))]"
+                "count": "[length(range(0, length(parameters('LogAlertsSvcHealth'))))]"
               },
               "condition": "[equals(variables('CloudEnvironment'), 'AzureCloud')]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
-              "name": "[format('carml_{0}', parameters('LogAlerts')[range(0, length(parameters('ActivityLogAlerts')))[copyIndex()]].name)]",
+              "name": "[format('carml_{0}', parameters('LogAlertsSvcHealth')[range(0, length(parameters('LogAlertsSvcHealth')))[copyIndex()]].name)]",
               "properties": {
                 "expressionEvaluationOptions": {
                   "scope": "inner"
@@ -12431,7 +12431,7 @@
                     "value": false
                   },
                   "name": {
-                    "value": "[parameters('ActivityLogAlerts')[range(0, length(parameters('ActivityLogAlerts')))[copyIndex()]].name]"
+                    "value": "[parameters('LogAlertsSvcHealth')[range(0, length(parameters('LogAlertsSvcHealth')))[copyIndex()]].name]"
                   },
                   "enabled": {
                     "value": false
@@ -12454,7 +12454,7 @@
                             "equals": "ServiceHealth"
                           },
                           {
-                            "anyOf": "[parameters('ActivityLogAlerts')[range(0, length(parameters('ActivityLogAlerts')))[copyIndex()]].anyof]"
+                            "anyOf": "[parameters('LogAlertsSvcHealth')[range(0, length(parameters('LogAlertsSvcHealth')))[copyIndex()]].anyof]"
                           },
                           {
                             "field": "properties.impactedServices[*].ServiceName",
@@ -12484,7 +12484,7 @@
                     ]
                   },
                   "alertDescription": {
-                    "value": "[parameters('ActivityLogAlerts')[range(0, length(parameters('ActivityLogAlerts')))[copyIndex()]].description]"
+                    "value": "[parameters('LogAlertsSvcHealth')[range(0, length(parameters('LogAlertsSvcHealth')))[copyIndex()]].description]"
                   }
                 },
                 "template": {
@@ -13629,7 +13629,11 @@
       },
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
-        "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('ResourceGroupName'))]"
+        "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('ResourceGroupName'))]",
+        "roleAssignment_AutoAcctDesktopRead",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[2], split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[4]), 'Microsoft.Resources/deployments', format('carml_LogContrib_{0}', split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[4]))]",
+        "roleAssignment_Storage",
+        "roleAssignment_UsrIdDesktopRead"
       ]
     }
   ]

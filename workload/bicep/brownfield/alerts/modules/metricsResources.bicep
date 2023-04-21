@@ -2,7 +2,6 @@ param _ArtifactsLocation string
 @secure()
 param _ArtifactsLocationSasToken string
 param ActionGroupName string
-param ActivityLogAlerts array
 param ANFVolumeResourceIds array
 param AutomationAccountName string
 param DistributionGroup string
@@ -12,8 +11,9 @@ param DistributionGroup string
 param HostPools array
 param Location string
 param LogAnalyticsWorkspaceResourceId string
-param LogAlerts array
+param LogAlertsStorage array
 param LogAlertsHostPool array
+param LogAlertsSvcHealth array
 //param LogAnalyticsWorkspaceName string
 param LogicAppName string
 param MetricAlerts object
@@ -121,13 +121,13 @@ module fileServicesMetric 'fileservicsmetric.bicep' = [for i in range(0, length(
   }
 }]
 
-module logAlertQueries '../../../../../carml/1.3.0/Microsoft.Insights/scheduledQueryRules/deploy.bicep' = [for i in range(0, length(LogAlerts)): {
-  name: 'carml_${LogAlerts[i].name}'
+module logAlertQueries '../../../../../carml/1.3.0/Microsoft.Insights/scheduledQueryRules/deploy.bicep' = [for i in range(0, length(LogAlertsStorage)): {
+  name: LogAlertsStorage[i].name
   params: {
     enableDefaultTelemetry: false
-    name: LogAlerts[i].name
+    name: LogAlertsStorage[i].name
     autoMitigate: false
-    criterias: LogAlerts[i].criteria
+    criterias: LogAlertsStorage[i].criteria
     scopes: [ LogAnalyticsWorkspaceResourceId ]
     location: Location
     actions: [ {
@@ -136,12 +136,12 @@ module logAlertQueries '../../../../../carml/1.3.0/Microsoft.Insights/scheduledQ
         ]
         customProperties: {}
       } ]
-    alertDescription: LogAlerts[i].description
+    alertDescription: LogAlertsStorage[i].description
     enabled: false
-    evaluationFrequency: LogAlerts[i].evaluationFrequency
-    severity: LogAlerts[i].severity
+    evaluationFrequency: LogAlertsStorage[i].evaluationFrequency
+    severity: LogAlertsStorage[i].severity
     tags: contains(Tags, 'Microsoft.Insights/scheduledQueryRules') ? Tags['Microsoft.Insights/scheduledQueryRules'] : {}
-    windowSize: LogAlerts[i].windowSize
+    windowSize: LogAlertsStorage[i].windowSize
   }
 }]
 
@@ -159,11 +159,11 @@ module logAlertHostPoolQueries 'hostPoolAlerts.bicep' = [for hostpool in HostPoo
 }]
 
 // Currently only deploys IF Cloud Environment is Azure Commercial Cloud
-module activityLogAlerts '../../../../../carml/1.3.0/Microsoft.Insights/activityLogAlerts/deploy.bicep' = [for i in range(0, length(ActivityLogAlerts)): if (CloudEnvironment == 'AzureCloud') {
-  name: 'carml_${LogAlerts[i].name}'
+module activityLogAlerts '../../../../../carml/1.3.0/Microsoft.Insights/activityLogAlerts/deploy.bicep' = [for i in range(0, length(LogAlertsSvcHealth)): if (CloudEnvironment == 'AzureCloud') {
+  name: 'carml_${LogAlertsSvcHealth[i].name}'
   params: {
     enableDefaultTelemetry: false
-    name: ActivityLogAlerts[i].name
+    name: LogAlertsSvcHealth[i].name
     enabled: false
     location: 'global'
     tags: contains(Tags, 'Microsoft.Insights/activityLogAlerts') ? Tags['Microsoft.Insights/activityLogAlerts'] : {}
@@ -178,7 +178,7 @@ module activityLogAlerts '../../../../../carml/1.3.0/Microsoft.Insights/activity
             equals: 'ServiceHealth'
           }
           {
-            anyOf: ActivityLogAlerts[i].anyof
+            anyOf: LogAlertsSvcHealth[i].anyof
           }
           {
             field: 'properties.impactedServices[*].ServiceName'
@@ -204,7 +204,7 @@ module activityLogAlerts '../../../../../carml/1.3.0/Microsoft.Insights/activity
         ]
       }
     ]
-    alertDescription: ActivityLogAlerts[i].description
+    alertDescription: LogAlertsSvcHealth[i].description
   }
 }]
 
