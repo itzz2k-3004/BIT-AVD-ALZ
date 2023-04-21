@@ -34,7 +34,7 @@ var AVDResIDsString = string(HostPools)
 var HostPoolsAsString = replace(replace(AVDResIDsString, '[', ''), ']', '')
 
 module actionGroup '../../../../../carml/1.3.0/Microsoft.Insights/actionGroups/deploy.bicep' = {
-  name: 'carml_${ActionGroupName}'
+  name: ActionGroupName
   params: {
     emailReceivers: [
       DistributionGroup
@@ -159,7 +159,7 @@ module logAlertHostPoolQueries 'hostPoolAlerts.bicep' = [for hostpool in HostPoo
 }]
 
 // Currently only deploys IF Cloud Environment is Azure Commercial Cloud
-module activityLogAlerts '../../../../../carml/1.3.0/Microsoft.Insights/activityLogAlerts/deploy.bicep' = [for i in range(0, length(LogAlertsSvcHealth)): if (CloudEnvironment == 'AzureCloud') {
+module logAlertSvcHealth '../../../../../carml/1.3.0/Microsoft.Insights/activityLogAlerts/deploy.bicep' = [for i in range(0, length(LogAlertsSvcHealth)): if (CloudEnvironment == 'AzureCloud') {
   name: 'carml_${LogAlertsSvcHealth[i].name}'
   params: {
     enableDefaultTelemetry: false
@@ -209,7 +209,7 @@ module activityLogAlerts '../../../../../carml/1.3.0/Microsoft.Insights/activity
 }]
 
 module logicApp_Storage './logicApp_Storage.bicep' = if (length(StorageAccountResourceIds) > 0) {
-  name: 'LogicApp_Storage'
+  name: 'linked_LogicApp_Storage'
   params: {
     AutomationAccountName: AutomationAccountName
     CloudEnvironment: CloudEnvironment
@@ -224,7 +224,7 @@ module logicApp_Storage './logicApp_Storage.bicep' = if (length(StorageAccountRe
 }
 
 module logicApp_HostPool './logicApp_HostPool.bicep' = {
-  name: 'LogicApp_HostPool'
+  name: 'linked_LogicApp_HostPool'
   params: {
     AutomationAccountName: AutomationAccountName
     CloudEnvironment: CloudEnvironment

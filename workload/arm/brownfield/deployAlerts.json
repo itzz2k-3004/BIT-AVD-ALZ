@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "658089038270692038"
+      "templateHash": "5764007423020198936"
     }
   },
   "parameters": {
@@ -7617,7 +7617,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.16.2.56959",
-              "templateHash": "18033256874616076334"
+              "templateHash": "14069011092556194323"
             }
           },
           "parameters": {
@@ -7699,7 +7699,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
-              "name": "[format('carml_{0}', parameters('ActionGroupName'))]",
+              "name": "[parameters('ActionGroupName')]",
               "properties": {
                 "expressionEvaluationOptions": {
                   "scope": "inner"
@@ -8554,7 +8554,7 @@
                     "value": "[parameters('Location')]"
                   },
                   "ActionGroupId": {
-                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName'))), '2022-09-01').outputs.resourceId.value]"
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName')), '2022-09-01').outputs.resourceId.value]"
                   },
                   "Tags": {
                     "value": "[parameters('Tags')]"
@@ -9186,7 +9186,7 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName')))]",
+                "[resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName'))]",
                 "[resourceId('Microsoft.Resources/deployments', 'carml_ds-PS-GetHostPoolVMAssociation')]"
               ]
             },
@@ -9221,7 +9221,7 @@
                     "value": "[parameters('MetricAlerts').storageAccounts]"
                   },
                   "ActionGroupID": {
-                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName'))), '2022-09-01').outputs.resourceId.value]"
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName')), '2022-09-01').outputs.resourceId.value]"
                   },
                   "Tags": {
                     "value": "[parameters('Tags')]"
@@ -9851,7 +9851,7 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName')))]"
+                "[resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName'))]"
               ]
             },
             {
@@ -9885,7 +9885,7 @@
                     "value": "[parameters('MetricAlerts').anf]"
                   },
                   "ActionGroupID": {
-                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName'))), '2022-09-01').outputs.resourceId.value]"
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName')), '2022-09-01').outputs.resourceId.value]"
                   },
                   "Tags": {
                     "value": "[parameters('Tags')]"
@@ -10515,7 +10515,7 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName')))]"
+                "[resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName'))]"
               ]
             },
             {
@@ -10549,7 +10549,7 @@
                     "value": "[parameters('MetricAlerts').fileShares]"
                   },
                   "ActionGroupID": {
-                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName'))), '2022-09-01').outputs.resourceId.value]"
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName')), '2022-09-01').outputs.resourceId.value]"
                   },
                   "Tags": {
                     "value": "[parameters('Tags')]"
@@ -11182,7 +11182,7 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName')))]"
+                "[resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName'))]"
               ]
             },
             {
@@ -11223,7 +11223,7 @@
                     "value": [
                       {
                         "actionGroups": [
-                          "[reference(resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName'))), '2022-09-01').outputs.resourceId.value]"
+                          "[reference(resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName')), '2022-09-01').outputs.resourceId.value]"
                         ],
                         "customProperties": {}
                       }
@@ -11753,7 +11753,7 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName')))]"
+                "[resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName'))]"
               ]
             },
             {
@@ -11774,7 +11774,7 @@
                     "value": false
                   },
                   "ActionGroupId": {
-                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName'))), '2022-09-01').outputs.resourceId.value]"
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName')), '2022-09-01').outputs.resourceId.value]"
                   },
                   "HostPoolName": {
                     "value": "[split(parameters('HostPools')[copyIndex()], '/')[8]]"
@@ -12409,12 +12409,12 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName')))]"
+                "[resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName'))]"
               ]
             },
             {
               "copy": {
-                "name": "activityLogAlerts",
+                "name": "logAlertSvcHealth",
                 "count": "[length(range(0, length(parameters('LogAlertsSvcHealth'))))]"
               },
               "condition": "[equals(variables('CloudEnvironment'), 'AzureCloud')]",
@@ -12477,7 +12477,7 @@
                       {
                         "actionGroups": [
                           {
-                            "actionGroupId": "[reference(resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName'))), '2022-09-01').outputs.resourceId.value]"
+                            "actionGroupId": "[reference(resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName')), '2022-09-01').outputs.resourceId.value]"
                           }
                         ]
                       }
@@ -12926,14 +12926,14 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', format('carml_{0}', parameters('ActionGroupName')))]"
+                "[resourceId('Microsoft.Resources/deployments', parameters('ActionGroupName'))]"
               ]
             },
             {
               "condition": "[greater(length(parameters('StorageAccountResourceIds')), 0)]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
-              "name": "LogicApp_Storage",
+              "name": "linked_LogicApp_Storage",
               "properties": {
                 "expressionEvaluationOptions": {
                   "scope": "inner"
@@ -13285,7 +13285,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
-              "name": "LogicApp_HostPool",
+              "name": "linked_LogicApp_HostPool",
               "properties": {
                 "expressionEvaluationOptions": {
                   "scope": "inner"
