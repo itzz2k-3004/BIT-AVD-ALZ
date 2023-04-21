@@ -43,7 +43,7 @@ module actionGroup '../../../../../carml/1.3.0/Microsoft.Insights/actionGroups/d
     location: 'global'
     enableDefaultTelemetry: false
     name: ActionGroupName
-    groupShortName: 'EmailAlerts-AVDAlerts'
+    groupShortName: 'Email-Notification-AVDAlerts'
     tags: contains(Tags, 'Microsoft.Insights/actionGroups') ? Tags['Microsoft.Insights/actionGroups'] : {}
   }
 }
