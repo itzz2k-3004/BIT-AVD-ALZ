@@ -34,6 +34,7 @@ This module deploys a scheduled query rule.
 | `actions` | array | `[]` |  | Actions to invoke when the alert fires. |
 | `alertDescription` | string | `''` |  | The description of the scheduled query rule. |
 | `autoMitigate` | bool | `True` |  | The flag that indicates whether the alert should be automatically resolved or not. Relevant only for rules of the kind LogAlert. |
+| `displayname` | string | `name` |  | Alert display name. If not provided the name value will be used. |
 | `enabled` | bool | `True` |  | The flag which indicates whether this scheduled query rule is enabled. |
 | `enableDefaultTelemetry` | bool | `True` |  | Enable telemetry via a Globally Unique Identifier (GUID). |
 | `evaluationFrequency` | string | `''` |  | How often the scheduled query rule is evaluated represented in ISO 8601 duration format. Relevant and required only for rules of the kind LogAlert. |
