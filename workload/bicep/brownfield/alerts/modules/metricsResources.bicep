@@ -24,7 +24,7 @@ param RunbookScriptGetHostPool string
 param StorageAccountResourceIds array
 param Tags object
 param Timestamp string = utcNow('u')
-param UsrAssignedId string
+param UsrAssignedResourceId string
 
 // var Environment = environment().name
 var SubscriptionId = subscription().subscriptionId
@@ -57,7 +57,7 @@ module deploymentScript_HP2VM '../../../../../carml/1.3.0/Microsoft.Resources/de
     name: 'ds_GetHostPoolVMAssociation'
     primaryScriptUri: '${_ArtifactsLocation}dsHostPoolVMMap.ps1${_ArtifactsLocationSasToken}'
     userAssignedIdentities: {
-      '${UsrAssignedId}': {}
+      '${UsrAssignedResourceId}' : {}
     }
     kind: 'AzurePowerShell'
     location: Location

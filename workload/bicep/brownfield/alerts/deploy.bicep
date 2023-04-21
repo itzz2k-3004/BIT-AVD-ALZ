@@ -1704,7 +1704,7 @@ module metricsResources './modules/metricsResources.bicep' = {
     ActionGroupName: ActionGroupName
     ANFVolumeResourceIds: ANFVolumeResourceIds
     Tags: Tags
-    UsrAssignedId: identityUserManaged.outputs.principalId
+    UsrAssignedResourceId: identityUserManaged.outputs.resourceId
   }
   dependsOn: [
     identityAutomationAccount

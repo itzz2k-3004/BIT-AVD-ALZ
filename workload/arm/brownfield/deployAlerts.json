@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "1428339997808454018"
+      "templateHash": "4498624817187750383"
     }
   },
   "parameters": {
@@ -7606,8 +7606,8 @@
           "Tags": {
             "value": "[parameters('Tags')]"
           },
-          "UsrAssignedId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.principalId.value]"
+          "UsrAssignedResourceId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName'))), '2022-09-01').outputs.resourceId.value]"
           }
         },
         "template": {
@@ -7617,7 +7617,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.16.2.56959",
-              "templateHash": "7504227598765309759"
+              "templateHash": "11185751691483776017"
             }
           },
           "parameters": {
@@ -7685,7 +7685,7 @@
               "type": "string",
               "defaultValue": "[utcNow('u')]"
             },
-            "UsrAssignedId": {
+            "UsrAssignedResourceId": {
               "type": "string"
             }
           },
@@ -8232,7 +8232,7 @@
                   },
                   "userAssignedIdentities": {
                     "value": {
-                      "[format('{0}', parameters('UsrAssignedId'))]": {}
+                      "[format('{0}', parameters('UsrAssignedResourceId'))]": {}
                     }
                   },
                   "kind": {
