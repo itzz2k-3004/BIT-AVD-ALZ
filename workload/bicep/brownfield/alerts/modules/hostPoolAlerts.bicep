@@ -27,9 +27,7 @@ module logAlertHostPoolQueries '../../../../../carml/1.3.0/Microsoft.Insights/sc
     scopes: [LogAnalyticsWorkspaceResourceId]
     location: Location
     actions: [ {
-      actionGroups: [
-        ActionGroupId
-      ]
+      actionGroups: ActionGroupId
       customProperties: {}
     } ]
     alertDescription: replace(LogAlertsHostPool[i].description, 'xHostPoolNamex', HostPoolName)
