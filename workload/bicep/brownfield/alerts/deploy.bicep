@@ -1584,7 +1584,7 @@ resource resourceGroupAVDMetricsExisting 'Microsoft.Resources/resourceGroups@202
 
 module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/automationAccounts/deploy.bicep' = {
   name: 'carml_AutomtnAcct-${AutomationAccountName}'
-  scope: resourceGroup(ResourceGroupCreate ? resourceGroupAVDMetricsCreate.name : resourceGroupAVDMetricsExisting.name)
+  scope: resourceGroup(ResourceGroupName)
   params: {
     name: AutomationAccountName
     location: Location
