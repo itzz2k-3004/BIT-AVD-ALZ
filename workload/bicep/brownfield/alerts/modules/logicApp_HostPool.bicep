@@ -13,7 +13,7 @@ resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' 
 }
 
 module runbookGetHostPoolInfo '../../../../../carml/1.3.0/Microsoft.Automation/automationAccounts/runbooks/deploy.bicep' = {
-  name: 'carml_${RunbookNameGetHostPool}'
+  name: RunbookNameGetHostPool
   params: {
     enableDefaultTelemetry: false
     name: RunbookNameGetHostPool
@@ -34,7 +34,7 @@ resource webhookGetHostPoolInfo 'Microsoft.Automation/automationAccounts/webhook
     isEnabled: true
     expiryTime: dateTimeAdd(Timestamp, 'P5Y')
     runbook: {
-      name: runbookGetHostPoolInfo.name
+      name: runbookGetHostPoolInfo.outputs.name
     }
   }
   dependsOn: [
