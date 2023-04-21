@@ -1600,6 +1600,7 @@ module identityAutomationAccount '../../../../carml/1.3.0/Microsoft.Automation/a
     systemAssignedIdentity: true
     tags: contains(Tags, 'Microsoft.Automation/automationAccounts') ? Tags['Microsoft.Automation/automationAccounts'] : {}
   }
+  dependsOn: ResourceGroupCreate ? [resourceGroupAVDMetricsCreate] : [resourceGroupAVDMetricsExisting]
 }
 
 module identityUserManaged '../../../../carml/1.3.0/Microsoft.ManagedIdentity/userAssignedIdentities/deploy.bicep' = {
@@ -1611,6 +1612,7 @@ module identityUserManaged '../../../../carml/1.3.0/Microsoft.ManagedIdentity/us
     enableDefaultTelemetry: false
     tags: contains(Tags, 'Microsoft.ManagedIdentity/userAssignedIdentities') ? Tags['Microsoft.ManagedIdentity/userAssignedIdentities'] : {}
   }
+  dependsOn: ResourceGroupCreate ? [resourceGroupAVDMetricsCreate] : [resourceGroupAVDMetricsExisting]
 }
 
 module roleAssignment_UsrIdDesktopRead '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/subscription/deploy.bicep' = [for HostPoolId in HostPoolSubIds : {
@@ -1704,7 +1706,5 @@ module metricsResources './modules/metricsResources.bicep' = {
     Tags: Tags
     UsrAssignedId: identityUserManaged.outputs.principalId
   }
-  dependsOn: [
-    resourceGroupAVDMetricsCreate
-  ]
+  dependsOn: ResourceGroupCreate ? [resourceGroupAVDMetricsCreate] : [resourceGroupAVDMetricsExisting]
 }

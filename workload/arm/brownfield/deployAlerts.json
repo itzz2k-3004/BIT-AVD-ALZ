@@ -15,7 +15,7 @@
       "metadata": {
         "description": "Location of needed scripts to deploy solution."
       }
-    },
+    }, //
     "_ArtifactsLocationSasToken": {
       "type": "securestring",
       "defaultValue": "",
