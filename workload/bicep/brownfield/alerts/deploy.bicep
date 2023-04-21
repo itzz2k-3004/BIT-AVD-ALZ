@@ -1707,6 +1707,7 @@ module metricsResources './modules/metricsResources.bicep' = {
     UsrAssignedId: identityUserManaged.outputs.principalId
   }
   dependsOn: [
+    identityAutomationAccount
     roleAssignment_AutoAcctDesktopRead
     roleAssignment_LogAnalytics
     roleAssignment_Storage

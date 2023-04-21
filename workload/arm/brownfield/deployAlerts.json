@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "5764007423020198936"
+      "templateHash": "1428339997808454018"
     }
   },
   "parameters": {
@@ -7617,7 +7617,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.16.2.56959",
-              "templateHash": "14069011092556194323"
+              "templateHash": "7504227598765309759"
             }
           },
           "parameters": {
@@ -11187,7 +11187,7 @@
             },
             {
               "copy": {
-                "name": "logAlertQueries",
+                "name": "logAlertStorage",
                 "count": "[length(range(0, length(parameters('LogAlertsStorage'))))]"
               },
               "type": "Microsoft.Resources/deployments",
@@ -13628,6 +13628,7 @@
         }
       },
       "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('ResourceGroupName')), 'Microsoft.Resources/deployments', format('carml_AutomtnAcct-{0}', variables('AutomationAccountName')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), parameters('ResourceGroupName'), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
         "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('ResourceGroupName'))]",
         "roleAssignment_AutoAcctDesktopRead",

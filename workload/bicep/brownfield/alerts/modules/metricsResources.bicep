@@ -78,6 +78,9 @@ module metricAlertsVMs 'metricAlertsVMs.bicep' = [for i in range(0, length(HostP
     ActionGroupId: actionGroup.outputs.resourceId
     Tags: Tags
   }
+  dependsOn: [
+    deploymentScript_HP2VM
+  ]
 }]
 
 module storAccountMetric 'storAccountMetric.bicep' = [for i in range(0, length(StorageAccountResourceIds)): if (length(StorageAccountResourceIds) > 0) {
@@ -121,7 +124,7 @@ module fileServicesMetric 'fileservicsmetric.bicep' = [for i in range(0, length(
   }
 }]
 
-module logAlertQueries '../../../../../carml/1.3.0/Microsoft.Insights/scheduledQueryRules/deploy.bicep' = [for i in range(0, length(LogAlertsStorage)): {
+module logAlertStorage '../../../../../carml/1.3.0/Microsoft.Insights/scheduledQueryRules/deploy.bicep' = [for i in range(0, length(LogAlertsStorage)): {
   name: LogAlertsStorage[i].name
   params: {
     enableDefaultTelemetry: false
