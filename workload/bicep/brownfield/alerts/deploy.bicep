@@ -105,7 +105,7 @@ var RoleAssignments = {
 
 var LogAlertsHostPool = [
   { // Based on Runbook script Output to LAW
-    name: '${AlertNamePrefix}-HostPool-Capacity-85Percent (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-Cap-85Prcnt-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-Capacity 85% (xHostPoolNamex)'
     description: '${AlertDescriptionHeader}This alert is based on the Action Account and Runbook that populates the Log Analytics specificed with the AVD Metrics Deployment Solution.\n-->Last Number in the string is the Percentage Remaining for the Host Pool\nOutput is:\nHostPoolName|ResourceGroup|Type|MaxSessionLimit|NumberHosts|TotalUsers|DisconnectedUser|ActiveUsers|SessionsAvailable|HostPoolPercentageLoad'
     severity: 2
@@ -190,7 +190,7 @@ var LogAlertsHostPool = [
     }
   }
   { // Based on Runbook script Output to LAW
-    name: '${AlertNamePrefix}-HostPool-Capacity-50Percent (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-Cap-50Prcnt-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-Capacity 50% (xHostPoolNamex)'
     description: '${AlertDescriptionHeader}This alert is based on the Action Account and Runbook that populates the Log Analytics specificed with the AVD Metrics Deployment Solution.\n-->Last Number in the string is the Percentage Remaining for the Host Pool\nOutput is:\nHostPoolName|ResourceGroup|Type|MaxSessionLimit|NumberHosts|TotalUsers|DisconnectedUser|ActiveUsers|SessionsAvailable|HostPoolPercentageLoad'
     severity: 3
@@ -275,7 +275,7 @@ var LogAlertsHostPool = [
     }
   }
   { // Based on Runbook script Output to LAW
-    name: '${AlertNamePrefix}-HostPool-Capacity-95Percent (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-Cap-95Prcnt-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-Capacity 95% (xHostPoolNamex)'
     description: '${AlertDescriptionHeader}This alert is based on the Action Account and Runbook that populates the Log Analytics specificed with the AVD Metrics Deployment Solution.\n-->Last Number in the string is the Percentage Remaining for the Host Pool\nOutput is:\nHostPoolName|ResourceGroup|Type|MaxSessionLimit|NumberHosts|TotalUsers|DisconnectedUser|ActiveUsers|SessionsAvailable|HostPoolPercentageLoad'
     severity: 1
@@ -360,7 +360,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-No Resources Available (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-NoResAvail-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-No Resources Available (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 1
@@ -399,7 +399,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-Disconnected User over 24 Hours (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-DiscUser24Hrs-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-Disconnected User over 24 Hours (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 2
@@ -438,7 +438,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-Disconnected User over 72 Hours (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-DiscUser72Hrs-xHostPoolNamex)'
     displayName: '${AlertNamePrefix}-HostPool-Disconnected User over 72 Hours (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 1
@@ -477,7 +477,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-Local Disk Free Space 10 Percent (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-LocDskFree10Prcnt-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-Local Disk Free Space 10 Percent (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 2
@@ -540,7 +540,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-Local Disk Free Space 5 Percent (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-LocDskFree5Prcnt-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-Local Disk Free Space 5 Percent (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 1
@@ -603,7 +603,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile-LessThan5PercentFree (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-FSLgxProf5PrcntFree-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile Less Than 5% Free Space (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 2
@@ -656,7 +656,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile-LessThan2PercentFree (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-FSLgxProf2PrcntFree-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile Less Than 2% Free Space (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 1
@@ -709,7 +709,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile-NetworkIssue (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-FSLgxProf-NetwrkIssue-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile Failed due to Network Issue (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 1
@@ -763,7 +763,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile-FailedAttachVHD (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-FSLgxProf-FailAttVHD-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile Disk Failed to Attach (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 1
@@ -816,7 +816,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile-SerivceDisabled (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-FSLgxProf-SvcDisabled-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile Service Disabled (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 1
@@ -869,7 +869,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile-DiskCompactFailed (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-FSLgxProf-DskCompFailed-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile Disk Compaction Failed (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 2
@@ -922,7 +922,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile-DiskInUse (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-FSLgxProf-DskInUse-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-FSLogix Profile Disk Attached to another VM (xHostPoolNamex)'
     description: AlertDescriptionHeader
     severity: 2
@@ -975,7 +975,7 @@ var LogAlertsHostPool = [
     }
   }
   {
-    name: '${AlertNamePrefix}-HostPool-VM-Health Check Failure (xHostPoolNamex)'
+    name: '${AlertNamePrefix}-HP-VM-HlthChkFailure-xHostPoolNamex'
     displayName: '${AlertNamePrefix}-HostPool-VM-Health Check Failure (xHostPoolNamex)'
     description: '${AlertDescriptionHeader}VM is available for use but one of the dependent resources is in a failed state for hostpool xHostPoolNamex'
     severity: 1

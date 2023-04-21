@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "3624106166763049784"
+      "templateHash": "14253722347363372355"
     }
   },
   "parameters": {
@@ -171,7 +171,7 @@
     },
     "LogAlertsHostPool": [
       {
-        "name": "[format('{0}-HostPool-Capacity-85Percent (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-Cap-85Prcnt-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-Capacity 85% (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[format('{0}This alert is based on the Action Account and Runbook that populates the Log Analytics specificed with the AVD Metrics Deployment Solution.\n-->Last Number in the string is the Percentage Remaining for the Host Pool\nOutput is:\nHostPoolName|ResourceGroup|Type|MaxSessionLimit|NumberHosts|TotalUsers|DisconnectedUser|ActiveUsers|SessionsAvailable|HostPoolPercentageLoad', variables('AlertDescriptionHeader'))]",
         "severity": 2,
@@ -239,7 +239,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-Capacity-50Percent (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-Cap-50Prcnt-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-Capacity 50% (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[format('{0}This alert is based on the Action Account and Runbook that populates the Log Analytics specificed with the AVD Metrics Deployment Solution.\n-->Last Number in the string is the Percentage Remaining for the Host Pool\nOutput is:\nHostPoolName|ResourceGroup|Type|MaxSessionLimit|NumberHosts|TotalUsers|DisconnectedUser|ActiveUsers|SessionsAvailable|HostPoolPercentageLoad', variables('AlertDescriptionHeader'))]",
         "severity": 3,
@@ -307,7 +307,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-Capacity-95Percent (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-Cap-95Prcnt-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-Capacity 95% (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[format('{0}This alert is based on the Action Account and Runbook that populates the Log Analytics specificed with the AVD Metrics Deployment Solution.\n-->Last Number in the string is the Percentage Remaining for the Host Pool\nOutput is:\nHostPoolName|ResourceGroup|Type|MaxSessionLimit|NumberHosts|TotalUsers|DisconnectedUser|ActiveUsers|SessionsAvailable|HostPoolPercentageLoad', variables('AlertDescriptionHeader'))]",
         "severity": 1,
@@ -375,7 +375,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-No Resources Available (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-NoResAvail-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-No Resources Available (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 1,
@@ -414,7 +414,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-Disconnected User over 24 Hours (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-DiscUser24Hrs-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-Disconnected User over 24 Hours (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 2,
@@ -453,7 +453,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-Disconnected User over 72 Hours (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-DiscUser72Hrs-xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-Disconnected User over 72 Hours (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 1,
@@ -492,7 +492,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-Local Disk Free Space 10 Percent (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-LocDskFree10Prcnt-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-Local Disk Free Space 10 Percent (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 2,
@@ -538,7 +538,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-Local Disk Free Space 5 Percent (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-LocDskFree5Prcnt-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-Local Disk Free Space 5 Percent (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 1,
@@ -584,7 +584,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-FSLogix Profile-LessThan5PercentFree (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-FSLgxProf5PrcntFree-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-FSLogix Profile Less Than 5% Free Space (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 2,
@@ -637,7 +637,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-FSLogix Profile-LessThan2PercentFree (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-FSLgxProf2PrcntFree-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-FSLogix Profile Less Than 2% Free Space (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 1,
@@ -690,7 +690,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-FSLogix Profile-NetworkIssue (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-FSLgxProf-NetwrkIssue-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-FSLogix Profile Failed due to Network Issue (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 1,
@@ -743,7 +743,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-FSLogix Profile-FailedAttachVHD (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-FSLgxProf-FailAttVHD-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-FSLogix Profile Disk Failed to Attach (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 1,
@@ -796,7 +796,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-FSLogix Profile-SerivceDisabled (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-FSLgxProf-SvcDisabled-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-FSLogix Profile Service Disabled (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 1,
@@ -849,7 +849,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-FSLogix Profile-DiskCompactFailed (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-FSLgxProf-DskCompFailed-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-FSLogix Profile Disk Compaction Failed (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 2,
@@ -902,7 +902,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-FSLogix Profile-DiskInUse (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-FSLgxProf-DskInUse-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-FSLogix Profile Disk Attached to another VM (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[variables('AlertDescriptionHeader')]",
         "severity": 2,
@@ -955,7 +955,7 @@
         }
       },
       {
-        "name": "[format('{0}-HostPool-VM-Health Check Failure (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
+        "name": "[format('{0}-HP-VM-HlthChkFailure-xHostPoolNamex', parameters('AlertNamePrefix'))]",
         "displayName": "[format('{0}-HostPool-VM-Health Check Failure (xHostPoolNamex)', parameters('AlertNamePrefix'))]",
         "description": "[format('{0}VM is available for use but one of the dependent resources is in a failed state for hostpool xHostPoolNamex', variables('AlertDescriptionHeader'))]",
         "severity": 1,
