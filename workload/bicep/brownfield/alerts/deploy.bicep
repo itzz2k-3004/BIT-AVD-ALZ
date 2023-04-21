@@ -1706,9 +1706,5 @@ module metricsResources './modules/metricsResources.bicep' = {
   }
   dependsOn: [
     resourceGroupAVDMetricsCreate
-    roleAssignment_AutoAcctDesktopRead
-    roleAssignment_LogAnalytics
-    roleAssignment_Storage
-    roleAssignment_UsrIdDesktopRead
   ]
 }

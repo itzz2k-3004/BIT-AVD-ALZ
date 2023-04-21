@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "8136898356504517506"
+      "templateHash": "14398265507154082378"
     }
   },
   "parameters": {
@@ -7617,7 +7617,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.16.2.56959",
-              "templateHash": "8915882520418129717"
+              "templateHash": "2618847884230867066"
             }
           },
           "parameters": {
@@ -7724,7 +7724,7 @@
                     "value": "[parameters('ActionGroupName')]"
                   },
                   "groupShortName": {
-                    "value": "EmailAlerts-AVDAlerts"
+                    "value": "Email-Notification-AVDAlerts"
                   },
                   "tags": "[if(contains(parameters('Tags'), 'Microsoft.Insights/actionGroups'), createObject('value', parameters('Tags')['Microsoft.Insights/actionGroups']), createObject('value', createObject()))]"
                 },
@@ -13629,11 +13629,7 @@
       },
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, if(variables('ResourceGroupCreate'), format('carml_Resource-Group-{0}', parameters('time')), parameters('ResourceGroupName'))), 'Microsoft.Resources/deployments', format('carml_UserMgId_{0}', variables('UsrManagedIdentityName')))]",
-        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]",
-        "roleAssignment_AutoAcctDesktopRead",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[2], split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[4]), 'Microsoft.Resources/deployments', format('carml_LogContrib_{0}', split(parameters('LogAnalyticsWorkspaceResourceId'), '/')[4]))]",
-        "roleAssignment_Storage",
-        "roleAssignment_UsrIdDesktopRead"
+        "[subscriptionResourceId('Microsoft.Resources/deployments', format('carml_Resource-Group-{0}', parameters('time')))]"
       ]
     }
   ]
