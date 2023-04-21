@@ -1128,7 +1128,7 @@ var LogAlertsStorage = [
 var MetricAlerts = {
   storageAccounts: [
     {
-      name: '${AlertNamePrefix}-Storage-Over 50ms Latency for Storage Acct'
+      name: '${AlertNamePrefix}-StorAcct-Over-50msLatency'
       displayName: '${AlertNamePrefix}-Storage-Over 50ms Latency for Storage Acct'
       description: '${AlertDescriptionHeader}\nThis could indicate a lag or poor performance for user Profiles or Apps using MSIX App Attach.\nThis alert is specific to the Storage Account itself and does not include network latency.\nFor additional details on troubleshooting see:\n"https://learn.microsoft.com/en-us/azure/storage/files/storage-troubleshooting-files-performance#very-high-latency-for-requests"'
       severity: 2
@@ -1150,7 +1150,7 @@ var MetricAlerts = {
       targetResourceType: 'Microsoft.Storage/storageAccounts'
     }
     {
-      name: '${AlertNamePrefix}-Storage-Over 100ms Latency for Storage Acct'
+      name: '${AlertNamePrefix}--StorAcct-Over-100msLatency'
       displayName: '${AlertNamePrefix}-Storage-Over 100ms Latency for Storage Acct'
       description: '${AlertDescriptionHeader}\nThis could indicate a lag or poor performance for user Profiles or Apps using MSIX App Attach.\nThis alert is specific to the Storage Account itself and does not include network latency.\nFor additional details on troubleshooting see:\n"https://learn.microsoft.com/en-us/azure/storage/files/storage-troubleshooting-files-performance#very-high-latency-for-requests"'
       severity: 1
@@ -1172,7 +1172,7 @@ var MetricAlerts = {
       targetResourceType: 'Microsoft.Storage/storageAccounts'
     }
     {
-      name: '${AlertNamePrefix}-Storage-Over 50ms Latency Between Client-Storage'
+      name: '${AlertNamePrefix}-StorAcct-Over-50msLatencyClnt-Stor'
       displayName: '${AlertNamePrefix}-Storage-Over 50ms Latency Between Client-Storage'
       description: '${AlertDescriptionHeader}\nThis could indicate a lag or poor performance for user Profiles or Apps using MSIX App Attach.\nThis is a total latency from end to end between the Host VM and Storage to include network.\nFor additional details on troubleshooting see:\n"https://learn.microsoft.com/en-us/azure/storage/files/storage-troubleshooting-files-performance#very-high-latency-for-requests"'
       severity: 2
@@ -1194,7 +1194,7 @@ var MetricAlerts = {
       targetResourceType: 'Microsoft.Storage/storageAccounts'
     }
     {
-      name: '${AlertNamePrefix}-Storage-Over 100ms Latency Between Client-Storage'
+      name: '${AlertNamePrefix}-StorAcct-Over-100msLatencyClnt-Stor'
       displayName: '${AlertNamePrefix}-Storage-Over 100ms Latency Between Client-Storage'
       description: '${AlertDescriptionHeader}\nThis could indicate a lag or poor performance for user Profiles or Apps using MSIX App Attach.\nThis is a total latency from end to end between the Host VM and Storage to include network.\nFor additional details on troubleshooting see:\n"https://learn.microsoft.com/en-us/azure/storage/files/storage-troubleshooting-files-performance#very-high-latency-for-requests"'
       severity: 1
@@ -1216,7 +1216,7 @@ var MetricAlerts = {
       targetResourceType: 'Microsoft.Storage/storageAccounts'
     }
     {
-      name: '${AlertNamePrefix}-Storage-Azure Files Availability'
+      name: '${AlertNamePrefix}-StorAzFilesAvailBlw-99-Prcnt'
       displayName: '${AlertNamePrefix}-Storage-Azure Files Availability'
       description: '${AlertDescriptionHeader}\nThis could indicate storage is unavailable for user Profiles or Apps using MSIX App Attach.'
       severity: 1
@@ -1240,7 +1240,7 @@ var MetricAlerts = {
   ]
   fileShares: [
     {
-      name: '${AlertNamePrefix}-Storage-Possible Throttling Due to High IOPs'
+      name: '${AlertNamePrefix}-StorPossThrottlingHighIOPs'
       displayName: '${AlertNamePrefix}-Storage-Possible Throttling Due to High IOPs'
       description: '${AlertDescriptionHeader}\nThis indicates you may be maxing out the allowed IOPs.\nhttps://docs.microsoft.com/en-us/azure/storage/files/storage-troubleshooting-files-performance#how-to-create-an-alert-if-a-file-share-is-throttled'
       severity: 2
@@ -1287,7 +1287,7 @@ var MetricAlerts = {
   ]
   anf: [
     {
-      name: '${AlertNamePrefix}-Storage-Low Space on ANF Share-15 Percent Remaining'
+      name: '${AlertNamePrefix}-StorLowSpcANF-15-PrcntRem'
       displayName: '${AlertNamePrefix}-Storage-Low Space on ANF Share-15% Remaining'
       description: AlertDescriptionHeader
       severity: 2
@@ -1310,7 +1310,7 @@ var MetricAlerts = {
       targetResourceType: 'Microsoft.NetApp/netAppAccounts/capacityPools/volumes'
     }
     {
-      name: '${AlertNamePrefix}-Storage-Low Space on ANF Share-5 Percent Remaining'
+      name: '${AlertNamePrefix}-StorLowSpcANF-5-PrcntRem'
       displayName: '${AlertNamePrefix}-Storage-Low Space on ANF Share-5% Remaining'
       description: AlertDescriptionHeader
       severity: 1
@@ -1335,7 +1335,7 @@ var MetricAlerts = {
   ]
   virtualMachines: [
     {
-      name: '${AlertNamePrefix}-HostPool-VM-High CPU 85 Percent (xHostPoolNamex)'
+      name: '${AlertNamePrefix}-HP-VM-HighCPU-85-Prcnt-xHostPoolNamex'
       displayName: '${AlertNamePrefix}-HostPool-VM-High CPU 85% (xHostPoolNamex)'
       description: AlertDescriptionHeader
       severity: 2
@@ -1358,7 +1358,7 @@ var MetricAlerts = {
       targetResourceType: 'microsoft.compute/virtualmachines'
     }
     {
-      name: '${AlertNamePrefix}-HostPool-VM-High CPU 95 Percent (xHostPoolNamex)'
+      name: '${AlertNamePrefix}-HP-VM-HighCPU-95-Prcnt-xHostPoolNamex'
       displayName: '${AlertNamePrefix}-HostPool-VM-High CPU 95% (xHostPoolNamex)'
       description: AlertDescriptionHeader
       severity: 1
@@ -1381,7 +1381,7 @@ var MetricAlerts = {
       targetResourceType: 'microsoft.compute/virtualmachines'
     }
     {
-      name: '${AlertNamePrefix}-HostPool-VM-Available Memory Less Than 2GB (xHostPoolNamex)'
+      name: '${AlertNamePrefix}-HP-VM-AvailMemLess-2GB-xHostPoolNamex'
       displayName: '${AlertNamePrefix}-HostPool-VM-Available Memory Less Than 2GB (xHostPoolNamex)'
       description: AlertDescriptionHeader
       severity: 2
@@ -1404,7 +1404,7 @@ var MetricAlerts = {
       targetResourceType: 'microsoft.compute/virtualmachines'
     }
     {
-      name: '${AlertNamePrefix}-HostPool-VM-Available Memory Less Than 1GB (xHostPoolNamex)'
+      name: '${AlertNamePrefix}-HP-VM-AvailMemLess-1GB-xHostPoolNamex'
       displayName: '${AlertNamePrefix}-HostPool-VM-Available Memory Less Than 1GB (xHostPoolNamex)'
       description: AlertDescriptionHeader
       severity: 1
@@ -1455,7 +1455,7 @@ var MetricAlerts = {
 
 var LogAlertsSvcHealth = [
   {
-    name: '${AlertNamePrefix}-SerivceHealth-Service Issue'
+    name: '${AlertNamePrefix}-SerivceHealth-ServiceIssue'
     displayName: '${AlertNamePrefix}-SerivceHealth-Serivice Issue'
     description: AlertDescriptionHeader
     anyof: [
@@ -1466,7 +1466,7 @@ var LogAlertsSvcHealth = [
     ]
   }
   {
-    name: '${AlertNamePrefix}-SerivceHealth-Planned Maintenance'
+    name: '${AlertNamePrefix}-SerivceHealth-PlannedMaintenance'
     displayName: '${AlertNamePrefix}-SerivceHealth-Planned Maintenance'
     description: AlertDescriptionHeader
     anyOf: [
@@ -1477,7 +1477,7 @@ var LogAlertsSvcHealth = [
     ]
   }
   {
-    name: '${AlertNamePrefix}-SerivceHealth-Health Advisory'
+    name: '${AlertNamePrefix}-SerivceHealth-HealthAdvisory'
     displayName: '${AlertNamePrefix}-SerivceHealth-HealthAdvisory'
     description: AlertDescriptionHeader
     anyOf: [
