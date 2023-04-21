@@ -37,6 +37,9 @@ resource webhookGetHostPoolInfo 'Microsoft.Automation/automationAccounts/webhook
       name: runbookGetHostPoolInfo.name
     }
   }
+  dependsOn: [
+    runbookGetHostPoolInfo
+  ]
 }
 
 resource logicAppGetHostPoolInfo 'Microsoft.Logic/workflows@2016-06-01' = {

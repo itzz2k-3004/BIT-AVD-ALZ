@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "4498624817187750383"
+      "templateHash": "16521567030081528386"
     }
   },
   "parameters": {
@@ -7617,7 +7617,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.16.2.56959",
-              "templateHash": "11185751691483776017"
+              "templateHash": "8491024411028800075"
             }
           },
           "parameters": {
@@ -7708,7 +7708,11 @@
                 "parameters": {
                   "emailReceivers": {
                     "value": [
-                      "[parameters('DistributionGroup')]"
+                      {
+                        "emailAddress": "[parameters('DistributionGroup')]",
+                        "name": "AVD Operations Admin(s)",
+                        "useCommonAlertSchema": true
+                      }
                     ]
                   },
                   "enabled": {

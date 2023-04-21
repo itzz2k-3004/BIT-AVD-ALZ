@@ -37,7 +37,11 @@ module actionGroup '../../../../../carml/1.3.0/Microsoft.Insights/actionGroups/d
   name: ActionGroupName
   params: {
     emailReceivers: [
-      DistributionGroup
+      {
+        emailAddress: DistributionGroup
+        name: 'AVD Operations Admin(s)'
+        useCommonAlertSchema: true
+      }
     ]
     enabled: true
     location: 'global'
