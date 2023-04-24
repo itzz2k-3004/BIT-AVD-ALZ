@@ -14,6 +14,9 @@ param applicationNameTag string = 'Contoso-App'
 @description('Optional. Custom name for the Automation Account.')
 param automationAccountCustomName string = 'aa-avd'
 
+@description('Required. The start time for the peak hours in local Standard time.')
+param beginPeakTime string = '8:00'
+
 @description('Optional. Cost center of owner team. (Defualt: Contoso-CC)')
 param costCenterTag string = 'Contoso-CC'
 
@@ -58,10 +61,13 @@ param enableMonitoringAlerts bool = false
 @description('Optional. Apply tags on resources and resource groups. (Default: false)')
 param enableResourceTags bool = false
 
+@description('Required. The end time for the peak hours in local Standard time.')
+param endPeakTime string = '17:00'
+
 @allowed([
-    'Prod'
-    'Dev'
-    'Staging'
+  'Prod'
+  'Dev'
+  'Staging'
 ])
 @description('Optional. Deployment environment of the application, workload. (Default: Dev)')
 param environmentTag string = 'Dev'
@@ -69,14 +75,20 @@ param environmentTag string = 'Dev'
 @description('Optional. Existing Azure log analytics workspace resource ID to capture runbook execution logs. (Default: )')
 param existingAutomationAccountResourceId string = ''
 
-@description('Optional. Existing Azure log analytics workspace resource ID to capture runbook execution logs. (Default: )')
+@description('Required. The resource ID of the existing host pool to scale.')
+param existingHostPoolResourceId string
+
+@description('Optional. The resource ID for an existing log analytics workspace. This value is required to enable monitoring for the solution.')
 param existingLogAnalyticsWorkspaceResourceId string = ''
 
-@description('Required. The resource ID for the file share on a Premium Storage Account.')
-param fileShareResourceId string
+@description('Required. The number of seconds to wait before automatically signing out users. If set to 0, any session host VM that has user sessions, will be left untouched.')
+param limitSecondsToForceLogOffUser string = '0'
 
 @description('Optional. Custom name for the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomName string = 'log-avd'
+
+@description('Required. The minimum number of session host VMs to keep running during off-peak hours.')
+param minimumNumberOfRdsh string = '0'
 
 @description('Optional. Team accountable for day-to-day operations. (Contoso-Ops)')
 param operationsTeamTag string = 'workload-admins@Contoso.com'
@@ -84,15 +96,15 @@ param operationsTeamTag string = 'workload-admins@Contoso.com'
 @description('Optional. Organizational owner of the AVD deployment. (Default: Contoso-Owner)')
 param ownerTag string = 'workload-owner@Contoso.com'
 
-@description('Optional. The amount to increase the file share quota by in GB.')
-param quotaIncreaseAmountInGb int = 100
-
-@description('Optional. The threshold in GB that determines when to increase the file share quota.')
-param quotaIncreaseThresholdInGb int = 50
-
 @maxLength(90)
 @description('Optional. Custom name for Resource Group. (Default: rg-avd-use2-shared-services)')
 param resourceGroupCustomName string = 'rg-avd-shared'
+
+@description('Required. The name of the resource group containing the AVD session hosts for the target host pool.')
+param sessionHostsResourceGroupName string
+
+@description('Required. The maximum number of sessions per CPU that will be used as a threshold to determine when new session host VMs need to be started during peak hours.')
+param sessionThresholdPerCPU string = '.5'
 
 @description('Required. AVD shared services subscription ID, multiple subscriptions scenario.')
 param sharedServicesSubscriptionId string = subscription().subscriptionId
@@ -111,7 +123,7 @@ param workloadNameTag string = 'Contoso-Workload'
 var varActionGroupName = customNaming ? actionGroupCustomName : 'ag-avd-${varNamingStandard}'
 var varAlerts = enableMonitoringAlerts ? [
   {
-      name: 'Azure Files Premium - Share Quota Scaling Failed'
+      name: 'AVD Scaling Tool - Scaling Failed'
       description: 'Sends an error alert when the runbook fails to execute.'
       severity: 0
       evaluationFrequency: 'PT5M'
@@ -119,47 +131,9 @@ var varAlerts = enableMonitoringAlerts ? [
       criterias: {
           allOf: [
               {
-                  query: 'AzureDiagnostics\n| where ResourceProvider == "MICROSOFT.AUTOMATION"\n| where Category  == "JobStreams"\n| where ResultDescription has "Image Template build failed"'
+                  query: 'AzureDiagnostics\n| where ResourceProvider == "MICROSOFT.AUTOMATION"\n| where Category  == "JobStreams"\n| where StreamType_s == "Error"'
                   TimeAggregation: 'Count'
-                  dimensions: [
-                      {
-                          name: 'ResultDescription'
-                          operator: 'Include'
-                          values: [
-                              '*'
-                          ]
-                      }
-                  ]
-                  operator: 'GreaterThanOrEqual'
-                  threshold: 1
-                  failingPeriods: {
-                      numberOfEvaluationPeriods: 1
-                      minFailingPeriodsToAlert: 1
-                  }
-              }
-          ]
-      }
-  }
-  {
-    name: 'Azure Files Premium - Share Quota Increased'
-      description: 'Sends an informational alert when the file share quota has increased.'
-      severity: 3
-      evaluationFrequency: 'PT5M'
-      windowSize: 'PT5M'
-      criterias: {
-          allOf: [
-              {
-                  query: 'AzureDiagnostics\n| where ResourceProvider == "MICROSOFT.AUTOMATION"\n| where Category  == "JobStreams"\n| where ResultDescription has "New Capacity"'
-                  TimeAggregation: 'Count'
-                  dimensions: [
-                      {
-                          name: 'ResultDescription'
-                          operator: 'Include'
-                          values: [
-                              '*'
-                          ]
-                      }
-                  ]
+                  dimensions: []
                   operator: 'GreaterThanOrEqual'
                   threshold: 1
                   failingPeriods: {
@@ -186,28 +160,38 @@ var varCommonResourceTags = enableResourceTags ? {
 } : {}
 var varExistingAutomationAccountName = empty(existingAutomationAccountResourceId) ? '' : split(existingAutomationAccountResourceId, '/')[8]
 var varExistingAutomationAccountResourceGroupName = empty(existingAutomationAccountResourceId) ? '' :  split(existingAutomationAccountResourceId, '/')[4]
-var varFileShareName = split(fileShareResourceId, '/')[12]
+var varExistingHostPoolName = split(existingHostPoolResourceId, '/')[8]
+var varExistingHostPoolResourceGroupName = split(existingHostPoolResourceId, '/')[4]
 var varJobScheduleParameters = {
-  EnvironmentName: environment().name
-  FileShareName: varFileShareName
-  QuotaIncreaseAmountInGb: quotaIncreaseAmountInGb
-  QuotaIncreaseThresholdInGb: quotaIncreaseThresholdInGb
-  StorageAccountName: varStorageAccountName
-  StorageAccountResourceGroupName: varStorageAccountResourceGroupName
-  StorageAccountSubscriptionId: varStorageAccountSubscriptionId
   TenantId: subscription().tenantId
+  SubscriptionId: subscription().subscriptionId
+  EnvironmentName: environment().name
+  ResourceGroupName: varExistingHostPoolResourceGroupName
+  HostPoolName: varExistingHostPoolName
+  MaintenanceTagName: 'Maintenance'
+  TimeDifference: varLocations[varLocation].timeDifference
+  BeginPeakTime: beginPeakTime
+  EndPeakTime: endPeakTime
+  SessionThresholdPerCPU: sessionThresholdPerCPU
+  MinimumNumberOfRDSH: minimumNumberOfRdsh
+  LimitSecondsToForceLogOffUser: limitSecondsToForceLogOffUser
+  LogOffMessageTitle: 'Machine is about to shutdown.'
+  LogOffMessageBody: 'Your session will be logged off. Please save and close everything.'
 }
 var varLocationAcronym = varLocations[varLocation].acronym
-var varLocations = loadJsonContent('../../../variables/locations.json')
 var varLocation = toLower(replace(deploymentLocation, ' ', ''))
+var varLocations = loadJsonContent('../../../variables/locations.json')
 var varLogAnalyticsWorkspaceName = customNaming ? logAnalyticsWorkspaceCustomName : 'log-avd-${varNamingStandard}'
 var varNamingStandard = '${varLocationAcronym}'
 var varResourceGroupName = customNaming ? resourceGroupCustomName : 'rg-avd-${varNamingStandard}-shared-services'
-var varRunbookName = 'Auto-Increase-Premium-File-Share-Quota'
-var varScheduleName = '${varStorageAccountName}_${varFileShareName}_'
-var varStorageAccountName = split(fileShareResourceId, '/')[8]
-var varStorageAccountResourceGroupName = split(fileShareResourceId, '/')[4]
-var varStorageAccountSubscriptionId = split(fileShareResourceId, '/')[2]
+var varRoleAssignments = varExistingHostPoolResourceGroupName == sessionHostsResourceGroupName ? [
+  varExistingHostPoolResourceGroupName
+] : [
+  varExistingHostPoolResourceGroupName
+  sessionHostsResourceGroupName
+]
+var varRunbookName = 'Azure-Virtual-Desktop-Scaling-Tool'
+var varScheduleName = '${varExistingHostPoolName}_'
 var varTimeZone = varLocations[varLocation].timeZone
 
 
@@ -266,7 +250,7 @@ module workspaceWait '../../../../carml/1.3.0/Microsoft.Resources/deploymentScri
 }
 
 // Get existing automation account
-module automationAccount_Existing 'modules/existingAutomationAccount.bicep' = if(!(empty(existingAutomationAccountResourceId))) {
+module automationAccount_Existing '../autoIncreasePremiumFileShareQuota/modules/existingAutomationAccount.bicep' = if(!(empty(existingAutomationAccountResourceId))) {
   name: 'Existing_Automation-Account-${time}'
   scope: resourceGroup(sharedServicesSubscriptionId, varAutomationAccountScope)
   params:{
@@ -312,10 +296,9 @@ module automationAccount_New '../../../../carml/1.3.0/Microsoft.Automation/autom
     runbooks: [
       {
         name: varRunbookName
-        description: 'When this runbook is triggered, the quota on the Azure Files Premium is checked. If the quota is within the defined threshold, the quota is increased based on the defined increment.'
+        description: 'When this runbook is triggered, the AVD session hosts will be either turned on or off depending upon the peak hours and active sessions.'
         type: 'PowerShell'
-        // To Do: Update URL to Azure repo
-        uri: 'https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/scripts/Set-AzureFilesPremiumShareQuota.ps1'
+        uri: 'https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/scripts/Set-AvdScalingTool.ps1'
         version: '1.0.0.0'
       }
     ]
@@ -359,16 +342,15 @@ module automationAccount_New '../../../../carml/1.3.0/Microsoft.Automation/autom
   }
 }
 
-// Role assignment
-module roleAssignments '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = {
-  name: 'Role-Assignment-${time}'
-  scope: resourceGroup(varStorageAccountSubscriptionId, varStorageAccountResourceGroupName)
+// Role assignments
+module roleAssignments'../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = [for i in range(0, length(varRoleAssignments)): {
+  name: 'Role-Assignment-${i}-${time}'
+  scope: resourceGroup(varRoleAssignments[i])
   params: {
-      roleDefinitionIdOrName: 'Storage Account Contributor'
-      principalId: automationAccount_New.outputs.systemAssignedPrincipalId
-      principalType: 'ServicePrincipal'
+    principalId: automationAccount_New.outputs.systemAssignedPrincipalId
+    roleDefinitionIdOrName: 'Desktop Virtualization Power On Off Contributor'
   }
-}
+}]
 
 // Alerts action group
 module actionGroup '../../../../carml/1.3.0/Microsoft.Insights/actionGroups/deploy.bicep' = if (enableMonitoringAlerts) {

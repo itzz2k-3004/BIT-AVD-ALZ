@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.16.2.56959",
-      "templateHash": "1979977178093283459"
+      "templateHash": "11710671189513351160"
     }
   },
   "parameters": {
@@ -28,6 +28,13 @@
       "defaultValue": "aa-avd",
       "metadata": {
         "description": "Optional. Custom name for the Automation Account."
+      }
+    },
+    "beginPeakTime": {
+      "type": "string",
+      "defaultValue": "8:00",
+      "metadata": {
+        "description": "Required. The start time for the peak hours in local Standard time."
       }
     },
     "costCenterTag": {
@@ -114,6 +121,13 @@
         "description": "Optional. Apply tags on resources and resource groups. (Default: false)"
       }
     },
+    "endPeakTime": {
+      "type": "string",
+      "defaultValue": "17:00",
+      "metadata": {
+        "description": "Required. The end time for the peak hours in local Standard time."
+      }
+    },
     "environmentTag": {
       "type": "string",
       "defaultValue": "Dev",
@@ -133,17 +147,24 @@
         "description": "Optional. Existing Azure log analytics workspace resource ID to capture runbook execution logs. (Default: )"
       }
     },
+    "existingHostPoolResourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The resource ID of the existing host pool to scale."
+      }
+    },
     "existingLogAnalyticsWorkspaceResourceId": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Optional. Existing Azure log analytics workspace resource ID to capture runbook execution logs. (Default: )"
+        "description": "Optional. The resource ID for an existing log analytics workspace. This value is required to enable monitoring for the solution."
       }
     },
-    "fileShareResourceId": {
+    "limitSecondsToForceLogOffUser": {
       "type": "string",
+      "defaultValue": "0",
       "metadata": {
-        "description": "Required. The resource ID for the file share on a Premium Storage Account."
+        "description": "Required. The number of seconds to wait before automatically signing out users. If set to 0, any session host VM that has user sessions, will be left untouched."
       }
     },
     "logAnalyticsWorkspaceCustomName": {
@@ -151,6 +172,13 @@
       "defaultValue": "log-avd",
       "metadata": {
         "description": "Optional. Custom name for the Log Analytics Workspace."
+      }
+    },
+    "minimumNumberOfRdsh": {
+      "type": "string",
+      "defaultValue": "0",
+      "metadata": {
+        "description": "Required. The minimum number of session host VMs to keep running during off-peak hours."
       }
     },
     "operationsTeamTag": {
@@ -167,20 +195,6 @@
         "description": "Optional. Organizational owner of the AVD deployment. (Default: Contoso-Owner)"
       }
     },
-    "quotaIncreaseAmountInGb": {
-      "type": "int",
-      "defaultValue": 100,
-      "metadata": {
-        "description": "Optional. The amount to increase the file share quota by in GB."
-      }
-    },
-    "quotaIncreaseThresholdInGb": {
-      "type": "int",
-      "defaultValue": 50,
-      "metadata": {
-        "description": "Optional. The threshold in GB that determines when to increase the file share quota."
-      }
-    },
     "resourceGroupCustomName": {
       "type": "string",
       "defaultValue": "rg-avd-shared",
@@ -188,6 +202,19 @@
         "description": "Optional. Custom name for Resource Group. (Default: rg-avd-use2-shared-services)"
       },
       "maxLength": 90
+    },
+    "sessionHostsResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the resource group containing the AVD session hosts for the target host pool."
+      }
+    },
+    "sessionThresholdPerCPU": {
+      "type": "string",
+      "defaultValue": ".5",
+      "metadata": {
+        "description": "Required. The maximum number of sessions per CPU that will be used as a threshold to determine when new session host VMs need to be started during peak hours."
+      }
     },
     "sharedServicesSubscriptionId": {
       "type": "string",
@@ -485,34 +512,39 @@
       }
     },
     "varActionGroupName": "[if(parameters('customNaming'), parameters('actionGroupCustomName'), format('ag-avd-{0}', variables('varNamingStandard')))]",
-    "varAlerts": "[if(parameters('enableMonitoringAlerts'), createArray(createObject('name', 'Azure Files Premium - Share Quota Scaling Failed', 'description', 'Sends an error alert when the runbook fails to execute.', 'severity', 0, 'evaluationFrequency', 'PT5M', 'windowSize', 'PT5M', 'criterias', createObject('allOf', createArray(createObject('query', 'AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category  == \"JobStreams\"\n| where ResultDescription has \"Image Template build failed\"', 'TimeAggregation', 'Count', 'dimensions', createArray(createObject('name', 'ResultDescription', 'operator', 'Include', 'values', createArray('*'))), 'operator', 'GreaterThanOrEqual', 'threshold', 1, 'failingPeriods', createObject('numberOfEvaluationPeriods', 1, 'minFailingPeriodsToAlert', 1))))), createObject('name', 'Azure Files Premium - Share Quota Increased', 'description', 'Sends an informational alert when the file share quota has increased.', 'severity', 3, 'evaluationFrequency', 'PT5M', 'windowSize', 'PT5M', 'criterias', createObject('allOf', createArray(createObject('query', 'AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category  == \"JobStreams\"\n| where ResultDescription has \"New Capacity\"', 'TimeAggregation', 'Count', 'dimensions', createArray(createObject('name', 'ResultDescription', 'operator', 'Include', 'values', createArray('*'))), 'operator', 'GreaterThanOrEqual', 'threshold', 1, 'failingPeriods', createObject('numberOfEvaluationPeriods', 1, 'minFailingPeriodsToAlert', 1)))))), createArray())]",
+    "varAlerts": "[if(parameters('enableMonitoringAlerts'), createArray(createObject('name', 'AVD Scaling Tool - Scaling Failed', 'description', 'Sends an error alert when the runbook fails to execute.', 'severity', 0, 'evaluationFrequency', 'PT5M', 'windowSize', 'PT5M', 'criterias', createObject('allOf', createArray(createObject('query', 'AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category  == \"JobStreams\"\n| where StreamType_s == \"Error\"', 'TimeAggregation', 'Count', 'dimensions', createArray(), 'operator', 'GreaterThanOrEqual', 'threshold', 1, 'failingPeriods', createObject('numberOfEvaluationPeriods', 1, 'minFailingPeriodsToAlert', 1)))))), createArray())]",
     "varAutomationAccountName": "[if(parameters('customNaming'), parameters('automationAccountCustomName'), format('aa-avd-{0}', variables('varNamingStandard')))]",
     "varAutomationAccountScope": "[if(empty(parameters('existingAutomationAccountResourceId')), variables('varResourceGroupName'), variables('varExistingAutomationAccountResourceGroupName'))]",
     "varCommonResourceTags": "[if(parameters('enableResourceTags'), createObject('WorkloadName', parameters('workloadNameTag'), 'DataClassification', parameters('dataClassificationTag'), 'Department', parameters('departmentTag'), 'Criticality', if(equals(parameters('criticalityTag'), 'Custom'), parameters('criticalityCustomTag'), parameters('criticalityTag')), 'ApplicationName', parameters('applicationNameTag'), 'OpsTeam', parameters('operationsTeamTag'), 'Owner', parameters('ownerTag'), 'CostCenter', parameters('costCenterTag'), 'Environment', parameters('environmentTag')), createObject())]",
     "varExistingAutomationAccountName": "[if(empty(parameters('existingAutomationAccountResourceId')), '', split(parameters('existingAutomationAccountResourceId'), '/')[8])]",
     "varExistingAutomationAccountResourceGroupName": "[if(empty(parameters('existingAutomationAccountResourceId')), '', split(parameters('existingAutomationAccountResourceId'), '/')[4])]",
-    "varFileShareName": "[split(parameters('fileShareResourceId'), '/')[12]]",
+    "varExistingHostPoolName": "[split(parameters('existingHostPoolResourceId'), '/')[8]]",
+    "varExistingHostPoolResourceGroupName": "[split(parameters('existingHostPoolResourceId'), '/')[4]]",
     "varJobScheduleParameters": {
+      "TenantId": "[subscription().tenantId]",
+      "SubscriptionId": "[subscription().subscriptionId]",
       "EnvironmentName": "[environment().name]",
-      "FileShareName": "[variables('varFileShareName')]",
-      "QuotaIncreaseAmountInGb": "[parameters('quotaIncreaseAmountInGb')]",
-      "QuotaIncreaseThresholdInGb": "[parameters('quotaIncreaseThresholdInGb')]",
-      "StorageAccountName": "[variables('varStorageAccountName')]",
-      "StorageAccountResourceGroupName": "[variables('varStorageAccountResourceGroupName')]",
-      "StorageAccountSubscriptionId": "[variables('varStorageAccountSubscriptionId')]",
-      "TenantId": "[subscription().tenantId]"
+      "ResourceGroupName": "[variables('varExistingHostPoolResourceGroupName')]",
+      "HostPoolName": "[variables('varExistingHostPoolName')]",
+      "MaintenanceTagName": "Maintenance",
+      "TimeDifference": "[variables('varLocations')[variables('varLocation')].timeDifference]",
+      "BeginPeakTime": "[parameters('beginPeakTime')]",
+      "EndPeakTime": "[parameters('endPeakTime')]",
+      "SessionThresholdPerCPU": "[parameters('sessionThresholdPerCPU')]",
+      "MinimumNumberOfRDSH": "[parameters('minimumNumberOfRdsh')]",
+      "LimitSecondsToForceLogOffUser": "[parameters('limitSecondsToForceLogOffUser')]",
+      "LogOffMessageTitle": "Machine is about to shutdown.",
+      "LogOffMessageBody": "Your session will be logged off. Please save and close everything."
     },
     "varLocationAcronym": "[variables('varLocations')[variables('varLocation')].acronym]",
-    "varLocations": "[variables('$fxv#0')]",
     "varLocation": "[toLower(replace(parameters('deploymentLocation'), ' ', ''))]",
+    "varLocations": "[variables('$fxv#0')]",
     "varLogAnalyticsWorkspaceName": "[if(parameters('customNaming'), parameters('logAnalyticsWorkspaceCustomName'), format('log-avd-{0}', variables('varNamingStandard')))]",
     "varNamingStandard": "[format('{0}', variables('varLocationAcronym'))]",
     "varResourceGroupName": "[if(parameters('customNaming'), parameters('resourceGroupCustomName'), format('rg-avd-{0}-shared-services', variables('varNamingStandard')))]",
-    "varRunbookName": "Auto-Increase-Premium-File-Share-Quota",
-    "varScheduleName": "[format('{0}_{1}_', variables('varStorageAccountName'), variables('varFileShareName'))]",
-    "varStorageAccountName": "[split(parameters('fileShareResourceId'), '/')[8]]",
-    "varStorageAccountResourceGroupName": "[split(parameters('fileShareResourceId'), '/')[4]]",
-    "varStorageAccountSubscriptionId": "[split(parameters('fileShareResourceId'), '/')[2]]",
+    "varRoleAssignments": "[if(equals(variables('varExistingHostPoolResourceGroupName'), parameters('sessionHostsResourceGroupName')), createArray(variables('varExistingHostPoolResourceGroupName')), createArray(variables('varExistingHostPoolResourceGroupName'), parameters('sessionHostsResourceGroupName')))]",
+    "varRunbookName": "Azure-Virtual-Desktop-Scaling-Tool",
+    "varScheduleName": "[format('{0}_', variables('varExistingHostPoolName'))]",
     "varTimeZone": "[variables('varLocations')[variables('varLocation')].timeZone]"
   },
   "resources": [
@@ -3398,9 +3430,9 @@
             "value": [
               {
                 "name": "[variables('varRunbookName')]",
-                "description": "When this runbook is triggered, the quota on the Azure Files Premium is checked. If the quota is within the defined threshold, the quota is increased based on the defined increment.",
+                "description": "When this runbook is triggered, the AVD session hosts will be either turned on or off depending upon the peak hours and active sessions.",
                 "type": "PowerShell",
-                "uri": "https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/scripts/Set-AzureFilesPremiumShareQuota.ps1",
+                "uri": "https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/scripts/Set-AvdScalingTool.ps1",
                 "version": "1.0.0.0"
               }
             ]
@@ -6185,25 +6217,25 @@
       ]
     },
     {
+      "copy": {
+        "name": "roleAssignments",
+        "count": "[length(range(0, length(variables('varRoleAssignments'))))]"
+      },
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "[format('Role-Assignment-{0}', parameters('time'))]",
-      "subscriptionId": "[variables('varStorageAccountSubscriptionId')]",
-      "resourceGroup": "[variables('varStorageAccountResourceGroupName')]",
+      "name": "[format('Role-Assignment-{0}-{1}', range(0, length(variables('varRoleAssignments')))[copyIndex()], parameters('time'))]",
+      "resourceGroup": "[variables('varRoleAssignments')[range(0, length(variables('varRoleAssignments')))[copyIndex()]]]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
         },
         "mode": "Incremental",
         "parameters": {
-          "roleDefinitionIdOrName": {
-            "value": "Storage Account Contributor"
-          },
           "principalId": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('sharedServicesSubscriptionId'), variables('varAutomationAccountScope')), 'Microsoft.Resources/deployments', format('Automation-Account-{0}', parameters('time'))), '2022-09-01').outputs.systemAssignedPrincipalId.value]"
           },
-          "principalType": {
-            "value": "ServicePrincipal"
+          "roleDefinitionIdOrName": {
+            "value": "Desktop Virtualization Power On Off Contributor"
           }
         },
         "template": {
