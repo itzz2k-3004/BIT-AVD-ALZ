@@ -213,7 +213,7 @@ module scheduledQueryRules './Microsoft.Insights/scheduledQueryRules/deploy.bice
       '<logAnalyticsWorkspaceResourceId>'
     ]
     // Non-required parameters
-    actions: ["/subscriptions/<subsriptionId>/resourceGroups/<resourceGroupName>/providers/microsoft.insights/actionGroups/<actionGroupName>"]
+    actions: ['/subscriptions/<subsriptionId>/resourceGroups/<resourceGroupName>/providers/microsoft.insights/actionGroups/<actionGroupName>']
     alertDescription: 'My sample Alert'
     autoMitigate: false
     enableDefaultTelemetry: '<enableDefaultTelemetry>'
