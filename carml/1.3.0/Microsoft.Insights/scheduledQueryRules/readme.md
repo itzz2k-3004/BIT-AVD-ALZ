@@ -31,7 +31,7 @@ This module deploys a scheduled query rule.
 
 | Parameter Name | Type | Default Value | Allowed Values | Description |
 | :-- | :-- | :-- | :-- | :-- |
-| `actions` | array | `[]` |  | Actions to invoke when the alert fires. |
+| `actions` | array | `[]` |  | Action Group resource Ids to invoke when the alert fires. |
 | `alertDescription` | string | `''` |  | The description of the scheduled query rule. |
 | `autoMitigate` | bool | `True` |  | The flag that indicates whether the alert should be automatically resolved or not. Relevant only for rules of the kind LogAlert. |
 | `displayname` | string | `name` |  | Alert display name. If not provided the name value will be used. |
@@ -213,6 +213,7 @@ module scheduledQueryRules './Microsoft.Insights/scheduledQueryRules/deploy.bice
       '<logAnalyticsWorkspaceResourceId>'
     ]
     // Non-required parameters
+    actions: ["/subscriptions/<subsriptionId>/resourceGroups/<resourceGroupName>/providers/microsoft.insights/actionGroups/<actionGroupName>"]
     alertDescription: 'My sample Alert'
     autoMitigate: false
     enableDefaultTelemetry: '<enableDefaultTelemetry>'
@@ -288,6 +289,11 @@ module scheduledQueryRules './Microsoft.Insights/scheduledQueryRules/deploy.bice
       ]
     },
     // Non-required parameters
+    "actions": {
+      "value": [
+        "/subscriptions/<subsriptionId>/resourceGroups/<resourceGroupName>/providers/microsoft.insights/actionGroups/<actionGroupName>"
+      ]
+    },  
     "alertDescription": {
       "value": "My sample Alert"
     },
