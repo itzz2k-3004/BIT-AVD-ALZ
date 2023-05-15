@@ -475,7 +475,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-11-01' = {
           deleteOption: contains(nicConfiguration, 'deleteOption') ? nicConfiguration.deleteOption : 'Delete'
           primary: index == 0 ? true : false
         }
-        id: az.resourceId('Microsoft.Network/networkInterfaces', '${name}${nicConfiguration.nicPrefix}')
+        id: az.resourceId('Microsoft.Network/networkInterfaces', '${nicConfiguration.nicPrefix}${name}')
       }]
     }
     diagnosticsProfile: {
