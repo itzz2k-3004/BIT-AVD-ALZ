@@ -42,6 +42,9 @@ param readerRoleId string
 @description('GUID for built in role ID of Storage Account Contributor.')
 param storageAccountContributorRoleId string
 
+@description('GUID for built in role ID of Storage Account Contributor.')
+param storageSmbContributorRoleId string
+
 @description('GUID for built in role ID of Desktop Virtualization Power On Contributor.')
 param desktopVirtualizationPowerOnContributorRoleId string
 
@@ -142,6 +145,17 @@ module readerRoleAssign '../../../../carml/1.3.0/Microsoft.Authorization/roleAss
     managedIdentityWait
   ]
 }
+
+// Storage Storage File Data SMB Share Contributor.
+module storageSmbContributorRoleAssign '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = [for avdApplicationGropupIdentityId in applicationGroupIdentitiesIds: if (createStorageDeployment && (identityServiceProvider == 'AAD') && (!empty(applicationGroupIdentitiesIds))) {
+  name: 'Storage-SmbContributor-Role-Assign-${take('${avdApplicationGropupIdentityId}', 6)}-${time}'
+  scope: resourceGroup('${workloadSubsId}', '${storageObjectsRgName}')
+  params: {
+    roleDefinitionIdOrName: '/subscriptions/${workloadSubsId}/providers/Microsoft.Authorization/roleDefinitions/${storageSmbContributorRoleId}'
+    principalId: avdApplicationGropupIdentityId
+  }
+  dependsOn: []
+}]
 
 // Scaling plan compute RG.
 module scalingPlanRoleAssignCompute '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = if (deployScalingPlan) {
