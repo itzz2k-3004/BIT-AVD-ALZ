@@ -36,7 +36,7 @@
             "value": false
         },            
         "avdApplicationGroupIdentitiesIds": {
-            "value": "a1ebeef7-15cd-4978-854f-2426f1fef5f5"
+            "value": "<<avdApplicationGroupIdentitiesIds>>"
         },           
         "avdApplicationGroupIdentityType": {
             "value": "Group"
@@ -195,7 +195,7 @@
             "value": false
         },  
         "alaExistingWorkspaceResourceId": {
-            "value": "/subscriptions/67ac36a5-a696-447f-b049-4dc0e4ac00e4/resourceGroups/Demo-MSFT-EUW-Shared-rg/providers/Microsoft.OperationalInsights/workspaces/demo-msft-euw-shared-la"
+            "value": "<<alaExistingWorkspaceResourceId>>"
         },           
         "avdAlaWorkspaceDataRetention": {
             "value": 90
