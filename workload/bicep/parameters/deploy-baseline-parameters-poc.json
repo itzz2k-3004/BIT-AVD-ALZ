@@ -147,10 +147,10 @@
             "value": 5
         },
         "fslogixStoragePerformance": {
-            "value": "Premium"
+            "value": "Standard"
         },
         "msixStoragePerformance": {
-            "value": "Premium"
+            "value": "Standard"
         },
         "encryptionAtHost": {
             "value": false

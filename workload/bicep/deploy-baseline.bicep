@@ -651,9 +651,11 @@ var varMarketPlaceGalleryWindows = {
         version: 'latest'
     }
 }
-var varBaseScriptUri = 'https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/'
+var varBaseScriptUri = 'https://raw.githubusercontent.com/MariaBTV/avdaccelerator/AAD/workload/'
 var varFslogixScriptUri = '${varBaseScriptUri}scripts/Set-FSLogixRegKeys.ps1'
+var varFslogixScriptUriAAD = '${varBaseScriptUri}scripts/Set-FSLogixRegKeysAAD.ps1'
 var varFsLogixScript = './Set-FSLogixRegKeys.ps1'
+var varFsLogixScriptAAD = './Set-FSLogixRegKeysAAD.ps1'
 var varFslogixFileShareName = createAvdFslogixDeployment ? fslogixStorageAzureFiles.outputs.fileShareName : ''
 var varFslogixSharePath = '\\\\${varFslogixStorageName}.file.${environment().suffixes.storage}\\${varFslogixFileShareName}'
 var varFsLogixScriptArguments = '-volumeshare ${varFslogixSharePath}'
@@ -674,8 +676,8 @@ var varStorageCustomOuPath = !empty(storageOuPath) ? 'true' : 'false'
 var varCreateOuForStorageString = string(createOuForStorage)
 var varAllDnsServers = '${customDnsIps},168.63.129.16'
 var varDnsServers = empty(customDnsIps) ? []: (split(varAllDnsServers, ','))
-var varCreateFslogixDeployment = (avdIdentityServiceProvider == 'AAD') ? false: createAvdFslogixDeployment
-var varCreateMsixDeployment = (avdIdentityServiceProvider == 'AAD') ? false: createMsixDeployment
+var varCreateFslogixDeployment = createAvdFslogixDeployment
+var varCreateMsixDeployment = createMsixDeployment
 var varCreateStorageDeployment = (varCreateFslogixDeployment||varCreateMsixDeployment == true) ? true: false
 var varApplicationGroupIdentitiesIds = !empty(avdApplicationGroupIdentitiesIds) ? (split(avdApplicationGroupIdentitiesIds, ',')): []
 var varCreateVnetPeering = !empty(existingHubVnetResourceId) ? true: false
@@ -773,7 +775,7 @@ module baselineResourceGroups '../../carml/1.3.0/Microsoft.Resources/resourceGro
 }]
 
 // Storage.
-module baselineStorageResourceGroup '../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (varCreateStorageDeployment && (avdIdentityServiceProvider != 'AAD')) {
+module baselineStorageResourceGroup '../../carml/1.3.0/Microsoft.Resources/resourceGroups/deploy.bicep' = if (varCreateStorageDeployment) {
     scope: subscription(avdWorkloadSubsId)
     name: 'Deploy-${varStorageObjectsRgName}-${time}'
     params: {
@@ -1000,7 +1002,7 @@ module wrklKeyVault '../../carml/1.3.0/Microsoft.KeyVault/vaults/deploy.bicep' =
 }
 
 // FSLogix Storage.
-module fslogixStorageAzureFiles './modules/storageAzureFiles/deploy.bicep' = if (varCreateFslogixDeployment && avdDeploySessionHosts && (avdIdentityServiceProvider != 'AAD')) {
+module fslogixStorageAzureFiles './modules/storageAzureFiles/deploy.bicep' = if (varCreateFslogixDeployment && avdDeploySessionHosts) {
     name: 'Storage-Fslogix-Azure-Files-${time}'
     params: {
         storagePurpose: 'fslogix'
@@ -1153,12 +1155,12 @@ module sessionHosts './modules/avdSessionHosts/deploy.bicep' = if (avdDeploySess
         vmLocalUserName: avdVmLocalUserName
         workloadSubsId: avdWorkloadSubsId
         encryptionAtHost: encryptionAtHost
-        createAvdFslogixDeployment: (avdIdentityServiceProvider != 'AAD') ? varCreateFslogixDeployment: false
-        storageManagedIdentityResourceId:  (varCreateStorageDeployment && (avdIdentityServiceProvider != 'AAD'))  ? managedIdentitiesRoleAssign.outputs.managedIdentityResourceId : ''
-        fsLogixScript: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScript: ''
-        fsLogixScriptArguments: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScriptArguments: ''
-        fslogixScriptUri: (avdIdentityServiceProvider != 'AAD') ? varFslogixScriptUri: ''
-        fslogixSharePath: (avdIdentityServiceProvider != 'AAD') ? varFslogixSharePath: ''
+        createAvdFslogixDeployment: varCreateFslogixDeployment
+        storageManagedIdentityResourceId:  (varCreateStorageDeployment && (avdIdentityServiceProvider != 'AAD'))  ? managedIdentitiesRoleAssign.outputs.managedIdentityResourceId : managedIdentitiesRoleAssign.outputs.managedIdentityResourceId
+        fsLogixScript: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScript: varFsLogixScriptAAD
+        fsLogixScriptArguments: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScriptArguments: varFslogixSharePath
+        fslogixScriptUri: (avdIdentityServiceProvider != 'AAD') ? varFslogixScriptUri: varFslogixScriptUriAAD
+        fslogixSharePath: (avdIdentityServiceProvider != 'AAD') ? varFslogixSharePath: varFslogixSharePath
         marketPlaceGalleryWindows: varMarketPlaceGalleryWindows[avdOsImage]
         useSharedImage: useSharedImage
         tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag

@@ -192,6 +192,8 @@ module storageAndFile '../../../../carml/1.3.0/Microsoft.Storage/storageAccounts
         kind: ((storageSku =~ 'Premium_LRS') || (storageSku =~ 'Premium_ZRS')) ? 'FileStorage' : 'StorageV2'
         azureFilesIdentityBasedAuthentication: (identityServiceProvider == 'AADDS') ? {
             directoryServiceOptions: 'AADDS'
+        }: (identityServiceProvider == 'AAD') ? {
+            directoryServiceOptions: 'AADKERB'
         }: {
             directoryServiceOptions: 'None'
         }
