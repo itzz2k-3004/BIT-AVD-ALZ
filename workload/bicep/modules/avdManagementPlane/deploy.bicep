@@ -39,9 +39,6 @@ param applicationGroupNameDesktop string
 @description('AVD Application group for the session hosts. Desktop type (friendly name).')
 param applicationGroupFriendlyNameDesktop string
 
-@description('AVD Application group app for the session hosts. Desktop type (friendly name).')
-param applicationGroupAppFriendlyNameDesktop string
-
 @description('AVD deploy remote app application group.')
 param deployRappGroup bool
 
@@ -224,7 +221,7 @@ var varScalingPlanDiagnostic = [
 ]
 
 // =========== //
-// Deployments //
+// Deployments Commercial//
 // =========== //
 
 // Hostpool.
@@ -257,7 +254,7 @@ module applicationGroups '../../../../carml/1.4.0/DesktopVirtualization/applicat
     friendlyName: applicationGroup.friendlyName
     location: applicationGroup.location
     applicationGroupType: applicationGroup.applicationGroupType
-    hostpoolName: hostPool.outputs.name
+    hostpoolName: hostPoolName
     tags: tags
     applications: (applicationGroup.applicationGroupType == 'RemoteApp')  ? varRAppApplicationGroupsApps : []
     roleAssignments: !empty(applicationGroupIdentitiesIds) ? [

@@ -112,7 +112,7 @@ param avdAgentPackageLocation string
 param createAvdFslogixDeployment bool
 
 @description('FSlogix configuration script file name.')
-param fsLogixScript string
+param fsLogixScriptFile string
 
 @description('Configuration arguments for FSlogix.')
 param fsLogixScriptArguments string
@@ -359,7 +359,7 @@ module sessionHostsMonitoring '../../../../../carml/1.4.0/Compute/virtualMachine
 }]
 
 // Introduce wait for antimalware extension to complete to be ready.
-module sessionHostsMonitoringWait '../../../../../carml/1.4.0/Resources/deploymentScripts/main.bicep' = {
+module sessionHostsMonitoringWait '../../../../../carml/1.4.0/Microsoft.Resources/deploymentScripts/main.bicep' = if (deployMonitoring) {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
     name: 'SH-Monitoring-Wait-${time}'
     params: {
@@ -382,13 +382,13 @@ module sessionHostsMonitoringWait '../../../../../carml/1.4.0/Resources/deployme
 } 
 
 // Add the registry keys for Fslogix. Alternatively can be enforced via GPOs.
-module configureFsLogixForAvdHosts './configureFslogixOnSessionHosts.bicep' = [for i in range(1, sessionHostsCount): if (createAvdFslogixDeployment && (identityServiceProvider != 'AAD')) {
+module configureFsLogixAvdHosts './configureFslogixOnSessionHosts.bicep' = [for i in range(1, sessionHostsCount): if (createAvdFslogixDeployment) {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'Configure-FsLogix-for-${padLeft((i + sessionHostCountIndex), 3, '0')}-${time}'
+    name: 'Configure-FsLogix-${padLeft((i + sessionHostCountIndex), 3, '0')}-${time}'
     params: {
         location: sessionHostLocation
         name: '${sessionHostNamePrefix}-${padLeft((i + sessionHostCountIndex), 3, '0')}'
-        file: fsLogixScript
+        file: fsLogixScriptFile
         fsLogixScriptArguments: fsLogixScriptArguments
         baseScriptUri: fslogixScriptUri
     }
@@ -412,7 +412,7 @@ module addAvdHostsToHostPool './registerSessionHostsOnHopstPool.bicep' = [for i 
     dependsOn: [
         sessionHosts
         sessionHostsMonitoringWait
-        configureFsLogixForAvdHosts
+        configureFsLogixAvdHosts
     ]
 }]
 

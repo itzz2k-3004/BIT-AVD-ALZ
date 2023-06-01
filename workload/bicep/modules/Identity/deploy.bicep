@@ -6,9 +6,6 @@ targetScope = 'subscription'
 @description('Location where to deploy AVD session hosts.')
 param sessionHostLocation string
 
-@description('Location where to deploy AVD management plane.')
-param managementPlaneLocation string
-
 @description('AVD workload subscription ID, multiple subscriptions scenario.')
 param workloadSubsId string
 
@@ -23,9 +20,6 @@ param storageObjectsRgName string
 
 @description('Azure Virtual Desktop enterprise application object ID.')
 param enterpriseAppObjectId string
-
-@description('Deploy new session hosts.')
-param deploySessionHosts bool
 
 @description('Configure start VM on connect.')
 param enableStartVmOnConnect bool
@@ -44,6 +38,9 @@ param storageManagedIdentityName string
 
 @description('GUID for built role Reader.')
 param readerRoleId string
+
+@description('GUID for built role Storage File Data SMB Share Contributor.')
+param storageSmbShareContributorRoleId string
 
 @description('GUID for built in role ID of Storage Account Contributor.')
 param storageAccountContributorRoleId string
@@ -64,11 +61,15 @@ param tags object
 param time string = utcNow()
 
 // =========== //
+// Variable declaration //
+// =========== //
+
+// =========== //
 // Deployments //
 // =========== //
 
 // Managed identity for fslogix/msix app attach
-module managedIdentity '../../../../carml/1.4.0/ManagedIdentity/userAssignedIdentities/main.bicep' = if (createStorageDeployment && (identityServiceProvider != 'AAD')) {
+module managedIdentity '../../../../carml/1.4.0/Microsoft.ManagedIdentity/userAssignedIdentities/deploy.bicep' = if (createStorageDeployment) {
   scope: resourceGroup('${workloadSubsId}', '${storageObjectsRgName}')
   name: 'Managed-Identity-${time}'
   params: {
@@ -79,7 +80,7 @@ module managedIdentity '../../../../carml/1.4.0/ManagedIdentity/userAssignedIden
 }
 
 // Introduce wait for management VM to be ready.
-module managedIdentityWait '../../../../carml/1.4.0/Resources/deploymentScripts/main.bicep' = if (createStorageDeployment && (identityServiceProvider != 'AAD')) {
+module managedIdentityWait '../../../../carml/1.4.0/Microsoft.Resources/deploymentScripts/main.bicep' = if (createStorageDeployment) {
   scope: resourceGroup('${workloadSubsId}', '${storageObjectsRgName}')
   name: 'Managed-Identity-Wait-${time}'
   params: {
@@ -112,7 +113,6 @@ module startVMonConnectRoleAssignCompute '../../../../carml/1.4.0/Authorization/
   }
 }
 
-
 // Start VM on connect service objects RG.
 module startVMonConnectRoleAssignServiceObjects '../../../../carml/1.4.0/Authorization/roleAssignments/resourceGroup/main.bicep' = if (enableStartVmOnConnect && !deployScalingPlan) {
   name: 'Start-OnConnect-RolAssignServ-${time}'
@@ -125,9 +125,9 @@ module startVMonConnectRoleAssignServiceObjects '../../../../carml/1.4.0/Authori
 }
 
 // Storage contributor.
-module contributorRoleAssign '../../../../carml/1.4.0/Authorization/roleAssignments/resourceGroup/main.bicep' = if (createStorageDeployment && (identityServiceProvider != 'AAD')) {
+module contributorRoleAssign '../../../../carml/1.4.0/Microsoft.Authorization/roleAssignments/resourceGroup/main.bicep' = if (createStorageDeployment) {
   name: 'UserAIdentity-ContributorRoleAssign-${time}'
-  scope: resourceGroup('${workloadSubsId}', '${storageObjectsRgName}')
+  scope: resourceGroup('${workloadSubsId}', '${storageObjectsRgName}') 
   params: {
     roleDefinitionIdOrName: '/subscriptions/${workloadSubsId}/providers/Microsoft.Authorization/roleDefinitions/${storageAccountContributorRoleId}'
     principalId: createStorageDeployment ? managedIdentity.outputs.principalId: ''
@@ -136,8 +136,9 @@ module contributorRoleAssign '../../../../carml/1.4.0/Authorization/roleAssignme
     managedIdentityWait
   ]
 }
+
 // Storage reader.
-module readerRoleAssign '../../../../carml/1.4.0/Authorization/roleAssignments/resourceGroup/main.bicep' = if (createStorageDeployment && (identityServiceProvider != 'AAD')) {
+module readerRoleAssign '../../../../carml/1.4.0/Microsoft.Authorization/roleAssignments/resourceGroup/main.bicep' = if (createStorageDeployment) {
   name: 'Storage-UserAIdentity-ReaderRoleAssign-${time}'
   scope: resourceGroup('${workloadSubsId}', '${storageObjectsRgName}')
   params: {
@@ -148,6 +149,17 @@ module readerRoleAssign '../../../../carml/1.4.0/Authorization/roleAssignments/r
     managedIdentityWait
   ]
 }
+
+// Storage File Data SMB Share Contributor.
+module storageSmbShareContributorRoleAssign '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = [for applicationGroupIdentitiesId in applicationGroupIdentitiesIds: if (createStorageDeployment && (identityServiceProvider == 'AAD') && (!empty(applicationGroupIdentitiesIds))) {
+  name: 'Storage-SmbContributor-Role-Assign-${take('${applicationGroupIdentitiesId}', 6)}-${time}'
+  scope: resourceGroup('${workloadSubsId}', '${storageObjectsRgName}')
+  params: {
+    roleDefinitionIdOrName: '/subscriptions/${workloadSubsId}/providers/Microsoft.Authorization/roleDefinitions/${storageSmbShareContributorRoleId}'
+    principalId: applicationGroupIdentitiesId
+  }
+  dependsOn: []
+}]
 
 // Scaling plan compute RG.
 module scalingPlanRoleAssignCompute '../../../../carml/1.4.0/Authorization/roleAssignments/resourceGroup/main.bicep' = if (deployScalingPlan) {
@@ -197,5 +209,5 @@ module aadIdentityLoginAccessServiceObjects '../../../../carml/1.4.0/Authorizati
 // =========== //
 // Outputs //
 // =========== //
-output managedIdentityResourceId string = (createStorageDeployment && (identityServiceProvider != 'AAD')) ? managedIdentity.outputs.resourceId: ''
-output managedIdentityClientId string = (createStorageDeployment && (identityServiceProvider != 'AAD')) ? managedIdentity.outputs.clientId: ''
+output managedIdentityResourceId string = (createStorageDeployment) ? managedIdentity.outputs.resourceId: ''
+output managedIdentityClientId string = (createStorageDeployment) ? managedIdentity.outputs.clientId: ''

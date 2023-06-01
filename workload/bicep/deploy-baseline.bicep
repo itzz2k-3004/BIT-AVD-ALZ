@@ -22,13 +22,14 @@ param avdWorkloadSubsId string = ''
 param avdEnterpriseAppObjectId string = ''
 
 @description('Required. AVD session host local username.')
-param avdVmLocalUserName string = ''
+param avdVmLocalUserName string
 
 @description('Required. AVD session host local password.')
 @secure()
-param avdVmLocalUserPassword string = ''
+param avdVmLocalUserPassword string
 
 @allowed([
+    'ADDS' // Active Directory Domain Services
     'ADDS' // Active Directory Domain Services
     'AADDS' // Azure Active Directory Domain Services
     'AAD' // Azure AD Join
@@ -51,14 +52,17 @@ param avdApplicationGroupIdentitiesIds string = ''
 param avdApplicationGroupIdentityType string = 'Group'
 
 @description('Required. AD domain name.')
-param avdIdentityDomainName string = ''
+param avdIdentityDomainName string
 
-@description('Required. AVD session host domain join username.')
-param avdDomainJoinUserName string = ''
+@description('Required. AD domain GUID.')
+param identityDomainGuid string = ''
 
-@description('Required. AVD session host domain join password.')
+@description('Required. AVD session host domain join username. (Defualt: "none")')
+param avdDomainJoinUserName string = 'none'
+
+@description('Required. AVD session host domain join password. (Defualt: "none")')
 @secure()
-param avdDomainJoinUserPassword string = ''
+param avdDomainJoinUserPassword string = 'none'
 
 @description('Optional. OU path to join AVd VMs. (Default: "")')
 param avdOuPath string = ''
@@ -84,8 +88,8 @@ param avdPersonalAssignType string = 'Automatic'
 @description('Optional. AVD host pool load balacing type. (Default: BreadthFirst)')
 param avdHostPoolLoadBalancerType string = 'BreadthFirst'
 
-@description('Optional. AVD host pool maximum number of user sessions per session host. (Default: 5)')
-param avhHostPoolMaxSessions int = 5
+@description('Optional. AVD host pool maximum number of user sessions per session host. (Default: 8)')
+param avhHostPoolMaxSessions int = 8
 
 @description('Optional. AVD host pool start VM on Connect. (Default: true)')
 param avdStartVmOnConnect bool = true
@@ -127,7 +131,7 @@ param customDnsIps string = ''
 param deployPrivateEndpointKeyvaultStorage bool = true
 
 @description('Optional. Use Azure private DNS zones for private endpoints. (Default: true)')
-param avdVnetPrivateDnsZone bool = true
+param createPrivateDnsZones bool = true
 
 @description('Optional. Use Azure private DNS zones for private endpoints. (Default: )')
 param avdVnetPrivateDnsZoneFilesId string = ''
@@ -168,15 +172,6 @@ param avdAlaWorkspaceDataRetention int = 90
 @description('Optional. Existing Azure log analytics workspace resource ID to connect to. (Default: )')
 param alaExistingWorkspaceResourceId string = ''
 
-@description('Required. Create and assign custom Azure Policy for NSG flow logs and network security')
-param deployCustomPolicyNetworking bool = false
-
-@description('Optional. Deploy Azure storage account for flow logs. (Default: false)')
-param deployStgAccountForFlowLogs bool = false
-
-@description('Optional. Existing Azure Storage account Resourece ID for NSG flow logs. (Default: )')
-param stgAccountForFlowLogsId string = ''
-
 @minValue(1)
 @maxValue(999)
 @description('Optional. Quantity of session hosts to deploy. (Default: 1)')
@@ -214,8 +209,8 @@ param msixStoragePerformance string = 'Premium'
 @description('Optional. This property can be used by user in the request to enable or disable the Host Encryption for the virtual machine. This will enable the encryption for all the disks including Resource/Temp disk at host itself. For security reasons, it is recommended to set encryptionAtHost to True. Restrictions: Cannot be enabled if Azure Disk Encryption (guest-VM encryption using bitlocker/DM-Crypt) is enabled on your VMs.')
 param encryptionAtHost bool = false
 
-@description('Optional. Session host VM size. (Defualt: Standard_D2s_v3)')
-param avdSessionHostsSize string = 'Standard_D2s_v3'
+@description('Optional. Session host VM size. (Defualt: Standard_D4ads_v5)')
+param avdSessionHostsSize string = 'Standard_D4ads_v5'
 
 @description('Optional. OS disk type for session host. (Defualt: Standard_LRS)')
 param avdSessionHostDiskType string = 'Standard_LRS'
@@ -469,124 +464,18 @@ param time string = utcNow()
 @description('Enable usage and telemetry feedback to Microsoft.')
 param enableTelemetry bool = true
 
-
 // =========== //
 // Variable declaration //
 // =========== //
 // Resource naming
-var varAzureCloudName = environment().name
 var varDeploymentPrefixLowercase = toLower(deploymentPrefix)
-var varSessionHostLocationLowercase = toLower(avdSessionHostLocation)
-var varManagementPlaneLocationLowercase = toLower(avdManagementPlaneLocation)
-var varSessionHostLocationAcronym = varLocationAcronyms[varSessionHostLocationLowercase]
-var varManagementPlaneLocationAcronym = varLocationAcronyms[varManagementPlaneLocationLowercase]
-var varLocationAcronyms = {
-    eastasia: 'eas'
-    southeastasia: 'seas'
-    centralus: 'cus'
-    eastus: 'eus'
-    eastus2: 'eus2'
-    westus: 'wus'
-    northcentralus: 'ncus'
-    southcentralus: 'scus'
-    northeurope: 'neu'
-    westeurope: 'weu'
-    japanwest: 'jpw'
-    japaneast: 'jpe'
-    brazilsouth: 'brs'
-    australiaeast: 'aue'
-    australiasoutheast: 'ause'
-    southindia: 'sin'
-    centralindia: 'cin'
-    westindia: 'win'
-    canadacentral: 'cac'
-    canadaeast: 'cae'
-    uksouth: 'uks'
-    ukwest: 'ukw'
-    usgovarizona: 'az'
-    usgoviowa: 'ia'
-    usgovtexas: 'tx'
-    usgovvirginia: 'va'
-    westcentralus: 'wcus'
-    westus2: 'wus2'
-    koreacentral: 'krc'
-    koreasouth: 'krs'
-    francecentral: 'frc'
-    francesouth: 'frs'
-    australiacentral: 'auc'
-    australiacentral2: 'auc2'
-    uaecentral: 'aec'
-    uaenorth: 'aen'
-    southafricanorth: 'zan'
-    southafricawest: 'zaw'
-    switzerlandnorth: 'chn'
-    switzerlandwest: 'chw'
-    germanynorth: 'den'
-    germanywestcentral: 'dewc'
-    norwaywest: 'now'
-    norwayeast: 'noe'
-    brazilsoutheast: 'brse'
-    westus3: 'wus3'
-    swedencentral: 'sec'
-}
-var varTimeZones = {
-    australiacentral: 'AUS Eastern Standard Time'
-    australiacentral2: 'AUS Eastern Standard Time'
-    australiaeast: 'AUS Eastern Standard Time'
-    australiasoutheast: 'AUS Eastern Standard Time'
-    brazilsouth: 'E. South America Standard Time'
-    brazilsoutheast: 'E. South America Standard Time'
-    canadacentral: 'Eastern Standard Time'
-    canadaeast: 'Eastern Standard Time'
-    centralindia: 'India Standard Time'
-    centralus: 'Central Standard Time'
-    chinaeast: 'China Standard Time'
-    chinaeast2: 'China Standard Time'
-    chinanorth: 'China Standard Time'
-    chinanorth2: 'China Standard Time'
-    eastasia: 'China Standard Time'
-    eastus: 'Eastern Standard Time'
-    eastus2: 'Eastern Standard Time'
-    francecentral: 'Central Europe Standard Time'
-    francesouth: 'Central Europe Standard Time'
-    germanynorth: 'Central Europe Standard Time'
-    germanywestcentral: 'Central Europe Standard Time'
-    japaneast: 'Tokyo Standard Time'
-    japanwest: 'Tokyo Standard Time'
-    jioindiacentral: 'India Standard Time'
-    jioindiawest: 'India Standard Time'
-    koreacentral: 'Korea Standard Time'
-    koreasouth: 'Korea Standard Time'
-    northcentralus: 'Central Standard Time'
-    northeurope: 'GMT Standard Time'
-    norwayeast: 'Central Europe Standard Time'
-    norwaywest: 'Central Europe Standard Time'
-    southafricanorth: 'South Africa Standard Time'
-    southafricawest: 'South Africa Standard Time'
-    southcentralus: 'Central Standard Time'
-    southindia: 'India Standard Time'
-    southeastasia: 'Singapore Standard Time'
-    swedencentral: 'Central Europe Standard Time'
-    switzerlandnorth: 'Central Europe Standard Time'
-    switzerlandwest: 'Central Europe Standard Time'
-    uaecentral: 'Arabian Standard Time'
-    uaenorth: 'Arabian Standard Time'
-    uksouth: 'GMT Standard Time'
-    ukwest: 'GMT Standard Time'
-    usdodcentral: 'Central Standard Time'
-    usdodeast: 'Eastern Standard Time'
-    usgovarizona: 'Mountain Standard Time'
-    usgoviowa: 'Central Standard Time'
-    usgovtexas: 'Central Standard Time'
-    usgovvirginia: 'Eastern Standard Time'
-    westcentralus: 'Mountain Standard Time'
-    westeurope: 'Central Europe Standard Time'
-    westindia: 'India Standard Time'
-    westus: 'Pacific Standard Time'
-    westus2: 'Pacific Standard Time'
-    westus3: 'Mountain Standard Time'
-}
-
+var varSessionHostLocationLowercase = toLower(replace(avdSessionHostLocation, ' ', ''))
+var varManagementPlaneLocationLowercase = toLower(replace(avdManagementPlaneLocation, ' ', ''))
+var varSessionHostLocationAcronym = varLocations[varSessionHostLocationLowercase].acronym
+var varManagementPlaneLocationAcronym = varLocations[varManagementPlaneLocationLowercase].acronym
+var varLocations = loadJsonContent('../variables/locations.json')
+var varTimeZoneSessionHosts = varLocations[varSessionHostLocationLowercase].timeZone
+var varTimeZoneManagementPlane = varLocations[varManagementPlaneLocationLowercase].timeZone
 var varNamingUniqueStringSixChar = take('${uniqueString(avdWorkloadSubsId, varDeploymentPrefixLowercase, time)}', 6)
 var varManagementPlaneNamingStandard = '${varManagementPlaneLocationAcronym}-${varDeploymentPrefixLowercase}'
 var varComputeStorageResourcesNamingStandard = '${varSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}'
@@ -611,7 +500,6 @@ var varHostPoolName = avdUseCustomNaming ? avdHostPoolCustomName : 'vdpool-${var
 var varHostFriendlyName = avdUseCustomNaming ? avdHostPoolCustomFriendlyName : '${deploymentPrefix}-${avdManagementPlaneLocation}-001'
 var varApplicationGroupNameDesktop = avdUseCustomNaming ? avdApplicationGroupCustomNameDesktop : 'vdag-desktop-${varManagementPlaneNamingStandard}-001'
 var varApplicationGroupFriendlyName = avdUseCustomNaming ? avdApplicationGroupCustomFriendlyName : 'Desktops-${deploymentPrefix}-${avdManagementPlaneLocation}-001'
-var varApplicationGroupAppFriendlyName = 'Desktops-${deploymentPrefix}'
 var varApplicationGroupNameRapp = avdUseCustomNaming ? avdApplicationGroupCustomNameRapp : 'vdag-rapp-${varManagementPlaneNamingStandard}-001'
 var varApplicationGroupFriendlyNameRapp = avdUseCustomNaming ? avdApplicationGroupCustomFriendlyNameRapp : 'Apps-${deploymentPrefix}-${avdManagementPlaneLocation}-001'
 var varScalingPlanName = avdUseCustomNaming ? avdScalingPlanCustomName : 'vdscaling-${varManagementPlaneNamingStandard}-001'
@@ -623,15 +511,23 @@ var varWrklKvPrivateEndpointName = 'pe-kv-avd-${varDeploymentPrefixLowercase}-${
 var varSessionHostNamePrefix = avdUseCustomNaming ? avdSessionHostCustomNamePrefix : 'vm-avd-${varDeploymentPrefixLowercase}'
 var varAvailabilitySetNamePrefix = avdUseCustomNaming ? '${avdAvailabilitySetCustomNamePrefix}-${varSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}' : 'avail-avd-${varSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}'
 var varStorageManagedIdentityName = 'id-avd-storage-${varSessionHostLocationAcronym}-${varDeploymentPrefixLowercase}'
-var varFslogixStorageName = createAvdFslogixDeployment ? fslogixStorageAzureFiles.outputs.storageAccountName : ''
+var varCreateStorageDeployment = (createAvdFslogixDeployment||createMsixDeployment == true) ? true: false
+var varBaseScriptUri = 'https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/'
+var varFslogixScriptUri = (avdIdentityServiceProvider == 'AAD') ? '${varBaseScriptUri}scripts/Set-FSLogixRegKeysAAD.ps1': '${varBaseScriptUri}scripts/Set-FSLogixRegKeys.ps1'
+var varFsLogixScript = (avdIdentityServiceProvider == 'AAD') ? './Set-FSLogixRegKeysAad.ps1': './Set-FSLogixRegKeys.ps1'
+var varAvdAgentPackageLocation = 'https://wvdportalstorageblob.blob.${environment().suffixes.storage}/galleryartifacts/Configuration_09-08-2022.zip'
+var varFslogixFileShareName = avdUseCustomNaming ? fslogixFileShareCustomName : 'fslogix-pc-${varDeploymentPrefixLowercase}-001'
+var varMsixFileShareName = avdUseCustomNaming ? msixFileShareCustomName : 'msix-pc-${varDeploymentPrefixLowercase}-001'
+var varFslogixStorageName = avdUseCustomNaming ? '${storageAccountPrefixCustomName}fsl${varDeploymentPrefixLowercase}${varNamingUniqueStringSixChar}' : 'stfsl${varDeploymentPrefixLowercase}${varNamingUniqueStringSixChar}'
+var varMsixStorageName = avdUseCustomNaming ? '${storageAccountPrefixCustomName}msx${varDeploymentPrefixLowercase}${varNamingUniqueStringSixChar}' : 'stmsx${varDeploymentPrefixLowercase}${varNamingUniqueStringSixChar}'
 var varFslogixStorageSku = avdUseAvailabilityZones ? '${fslogixStoragePerformance}_ZRS': '${fslogixStoragePerformance}_LRS'
 var varMsixStorageSku = avdUseAvailabilityZones ? '${msixStoragePerformance}_ZRS': '${msixStoragePerformance}_LRS'
-var varManagementVmName = 'vm-mgmt-${varDeploymentPrefixLowercase}'
+var varFsLogixScriptArguments = (avdIdentityServiceProvider == 'AAD') ? '-volumeshare ${varFslogixSharePath} -storageAccountName ${varFslogixStorageName} -identityDomainName ${avdIdentityDomainName}': '-volumeshare ${varFslogixSharePath}'
+var varFslogixSharePath = '\\\\${varFslogixStorageName}.file.${environment().suffixes.storage}\\${varFslogixFileShareName}'
 //var varAvdMsixStorageName = deployAvdMsixStorageAzureFiles.outputs.storageAccountName
+var varManagementVmName = 'vm-mgmt-${varDeploymentPrefixLowercase}'
 //var varAvdWrklStoragePrivateEndpointName = 'pe-stavd${varDeploymentPrefixLowercase}${varAvdNamingUniqueStringSixChar}-file'
 var varAlaWorkspaceName = avdUseCustomNaming ? avdAlaWorkspaceCustomName :  'log-avd-${varManagementPlaneLocationAcronym}' //'log-avd-${varAvdComputeStorageResourcesNamingStandard}-${varAvdNamingUniqueStringSixChar}'
-var varStgAccountForFlowLogsName = avdUseCustomNaming ? '${storageAccountPrefixCustomName}${varDeploymentPrefixLowercase}flowlogs${varNamingUniqueStringSixChar}' : 'stavd${varDeploymentPrefixLowercase}flowlogs${varNamingUniqueStringSixChar}'
-
 var varScalingPlanSchedules = [
     {
         daysOfWeek: [
@@ -707,7 +603,6 @@ var varScalingPlanSchedules = [
         }
     }
 ]
-
 var varMarketPlaceGalleryWindows = {
     win10_21h2: {
         publisher: 'MicrosoftWindowsDesktop'
@@ -770,16 +665,9 @@ var varMarketPlaceGalleryWindows = {
         version: 'latest'
     }
 }
-
-var varBaseScriptUri = 'https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/'
-var varFslogixScriptUri = '${varBaseScriptUri}scripts/Set-FSLogixRegKeys.ps1'
-var varFsLogixScript = './Set-FSLogixRegKeys.ps1'
-var varFslogixFileShareName = createAvdFslogixDeployment ? fslogixStorageAzureFiles.outputs.fileShareName : ''
-var varFslogixSharePath = '\\\\${varFslogixStorageName}.file.${environment().suffixes.storage}\\${varFslogixFileShareName}'
-var varFsLogixScriptArguments = '-volumeshare ${varFslogixSharePath}'
-var varAvdAgentPackageLocation = 'https://wvdportalstorageblob.blob.${environment().suffixes.storage}/galleryartifacts/Configuration_09-08-2022.zip'
 var varStorageAccountContributorRoleId = '17d1049b-9a84-46fb-8f53-869881c3d3ab'
 var varReaderRoleId = 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
+var varStorageSmbShareContributorRoleId = '0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb'
 var varDesktopVirtualizationPowerOnContributorRoleId = '489581de-a3bd-480d-9518-53dea7416b33'
 var varDesktopVirtualizationPowerOnOffContributorRoleId = '40c5ff49-9181-41f8-ae61-143b0e78555e'
 var varStorageAzureFilesDscAgentPackageLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/DSCStorageScripts.zip'
@@ -794,12 +682,8 @@ var varStorageCustomOuPath = !empty(storageOuPath) ? 'true' : 'false'
 var varCreateOuForStorageString = string(createOuForStorage)
 var varAllDnsServers = '${customDnsIps},168.63.129.16'
 var varDnsServers = empty(customDnsIps) ? []: (split(varAllDnsServers, ','))
-var varCreateFslogixDeployment = (avdIdentityServiceProvider == 'AAD') ? false: createAvdFslogixDeployment
-var varCreateMsixDeployment = (avdIdentityServiceProvider == 'AAD') ? false: createMsixDeployment
-var varCreateStorageDeployment = (varCreateFslogixDeployment||varCreateMsixDeployment == true) ? true: false
 var varApplicationGroupIdentitiesIds = !empty(avdApplicationGroupIdentitiesIds) ? (split(avdApplicationGroupIdentitiesIds, ',')): []
 var varCreateVnetPeering = !empty(existingHubVnetResourceId) ? true: false
-
 // Resource tagging
 // Tag Exclude-${varAvdScalingPlanName} is used by scaling plans to exclude session hosts from scaling. Exmaple: Exclude-vdscal-eus2-app1-001
 var varCommonResourceTags = createResourceTags ? {
@@ -816,22 +700,17 @@ var varCommonResourceTags = createResourceTags ? {
     Environment: environmentTypeTag
 
 } : {}
-
 var varAllComputeStorageTags = {
     DomainName: avdIdentityDomainName
     JoinType: avdIdentityServiceProvider
 }
-
 var varAvdCostManagementParentResourceTag = {
     'cm-resource-parent': '/subscriptions/${avdWorkloadSubsId}}/resourceGroups/${varServiceObjectsRgName}/providers/Microsoft.DesktopVirtualization/hostpools/${varHostPoolName}'
 }
-
 var varAllResourceTags = union(varCommonResourceTags, varAllComputeStorageTags)
 //
-
 var varTelemetryId = 'pid-2ce4228c-d72c-43fb-bb5b-cd8f3ba2138e-${avdManagementPlaneLocation}'
-
-var resourceGroups = [
+var verResourceGroups = [
     {
         purpose: 'Service-Objects'
         name: varServiceObjectsRgName
@@ -913,48 +792,6 @@ module baselineStorageResourceGroup '../../carml/1.4.0/Resources/resourceGroups/
     ]: []
 }
 
-/*
-// Validation Deployment Script
-// This module validates the selected parameter values and collects required data
-module validation 'avd-modules/validation.bicep' = {
-  name: 'AVD-Deployment-Validation-${time}'
-  scope: resourceGroup(avdServiceObjectsRgName)
-  params: {
-    Availability: Availability
-    DiskEncryption: DiskEncryption
-    DiskSku: DiskSku
-    DomainName: DomainName
-    DomainServices: DomainServices
-    EphemeralOsDisk: EphemeralOsDisk
-    ImageSku: ImageSku
-    KerberosEncryption: KerberosEncryption
-    Location: Location
-    ManagedIdentityResourceId: managedIdentity.outputs.resourceIdentifier
-    NamingStandard: NamingStandard
-    PooledHostPool: PooledHostPool
-    RecoveryServices: RecoveryServices
-    SasToken: SasToken
-    ScriptsUri: ScriptsUri
-    SecurityPrincipalIds: SecurityPrincipalObjectIds
-    SecurityPrincipalNames: SecurityPrincipalNames
-    SessionHostCount: SessionHostCount
-    SessionHostIndex: SessionHostIndex
-    StartVmOnConnect: StartVmOnConnect
-    //StorageCount: StorageCount
-    StorageSolution: StorageSolution
-    Tags: createResourceTags ? commonResourceTags : {}
-    Timestamp: time
-    VirtualNetwork: VirtualNetwork
-    VirtualNetworkResourceGroup: VirtualNetworkResourceGroup
-    VmSize: avdSessionHostsSize
-  }
-  dependsOn: [
-    resourceGroups
-    managedIdentity
-  ]
-}
-*/
-
 // Azure Policies for monitoring Diagnostic settings. Performance couunters on new or existing Log Analytics workspace. New workspace if needed.
 module monitoringDiagnosticSettings './modules/avdInsightsMonitoring/deploy.bicep' = if (avdDeployMonitoring) {
     name: 'Monitoring-${time}'
@@ -972,24 +809,6 @@ module monitoringDiagnosticSettings './modules/avdInsightsMonitoring/deploy.bice
     dependsOn: []
 }
 
-// Azure Policies for network monitorig/security . New storage account/Reuse existing one if needed created for the NSG flow logs
-module azurePoliciesNetworking './modules/azurePolicyNetworking/deploy.bicep' = if (avdDeployMonitoring && deployCustomPolicyNetworking) {
-    name: (length('Enable-Azure-Policy-for-Netwok-Security-${time}') > 64) ? take('Enable-Azure-Policy-for-Netwok-Security-${time}',64) : 'Enable-Azure-Policy-for-Netwok-Security-${time}'
-    params: {
-        alaWorkspaceResourceId: (avdDeployMonitoring && deployAlaWorkspace) ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId
-        alaWorkspaceId: (avdDeployMonitoring && deployAlaWorkspace) ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceId : alaExistingWorkspaceResourceId
-        managementPlaneLocation: avdManagementPlaneLocation
-        workloadSubsId: avdWorkloadSubsId
-        monitoringRgName: varMonitoringRgName
-        stgAccountForFlowLogsId: deployStgAccountForFlowLogs ? '' : stgAccountForFlowLogsId
-        stgAccountForFlowLogsName: deployStgAccountForFlowLogs ? varStgAccountForFlowLogsName : ''
-        tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
-    }
-    dependsOn: [
-        monitoringDiagnosticSettings
-    ]
-}
-
 // Networking.
 module networking './modules/networking/deploy.bicep' = if (createAvdVnet) {
     name: 'Networking-${time}'
@@ -1003,25 +822,26 @@ module networking './modules/networking/deploy.bicep' = if (createAvdVnet) {
         privateEndpointRouteTableName: varPrivateEndpointRouteTableName
         vNetworkAddressPrefixes: avdVnetworkAddressPrefixes
         vNetworkName: varVnetworkName
-        vNetworkPeeringName: avdIdentityServiceProvider == 'AAD' ? '': varVnetworkPeeringName
+        vNetworkPeeringName: varVnetworkPeeringName
         vNetworkAvdSubnetName: varVnetworkAvdSubnetName
         vNetworkPrivateEndpointSubnetName: varVnetworkPrivateEndpointSubnetName
-        createVnet: createAvdVnet
         createVnetPeering: varCreateVnetPeering
         deployPrivateEndpointSubnet: (deployPrivateEndpointKeyvaultStorage == true) ? true : false //adding logic that will be used when also including AVD control plane PEs
         vNetworkGatewayOnHub: vNetworkGatewayOnHub
-        existingHubVnetResourceId: avdIdentityServiceProvider == 'AAD' ? '': existingHubVnetResourceId
+        existingHubVnetResourceId: existingHubVnetResourceId
         sessionHostLocation: avdSessionHostLocation
         vNetworkAvdSubnetAddressPrefix: vNetworkAvdSubnetAddressPrefix
         vNetworkPrivateEndpointSubnetAddressPrefix: vNetworkPrivateEndpointSubnetAddressPrefix
         workloadSubsId: avdWorkloadSubsId
         dnsServers: varDnsServers
+        createPrivateDnsZones: createPrivateDnsZones
         tags: createResourceTags ? union(varCommonResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
     }
     dependsOn: [
         baselineNetworkResourceGroup
+        monitoringDiagnosticSettings
     ]
 }
 
@@ -1031,14 +851,13 @@ module managementPLane './modules/avdManagementPlane/deploy.bicep' = {
     params: {
         applicationGroupNameDesktop: varApplicationGroupNameDesktop
         applicationGroupFriendlyNameDesktop: varApplicationGroupFriendlyName
-        applicationGroupAppFriendlyNameDesktop: varApplicationGroupAppFriendlyName
         workSpaceName: varWorkSpaceName
         osImage: avdOsImage
         workSpaceFriendlyName: varWorkSpaceFriendlyName
         applicationGroupNameRapp: varApplicationGroupNameRapp
         applicationGroupFriendlyNameRapp: varApplicationGroupFriendlyNameRapp
         deployRappGroup: avdDeployRappGroup
-        computeTimeZone: varTimeZones[avdSessionHostLocation]
+        computeTimeZone: varTimeZoneSessionHosts
         hostPoolName: varHostPoolName
         hostPoolFriendlyName: varHostFriendlyName
         hostPoolRdpProperties: avdHostPoolRdpProperties
@@ -1064,6 +883,7 @@ module managementPLane './modules/avdManagementPlane/deploy.bicep' = {
     dependsOn: [
         baselineResourceGroups
         managedIdentitiesRoleAssign
+        monitoringDiagnosticSettings
     ]
 }
 
@@ -1072,7 +892,6 @@ module managedIdentitiesRoleAssign './modules/identity/deploy.bicep' = {
     name: 'Managed-ID-RoleAssign-${time}'
     params: {
         computeObjectsRgName: varComputeObjectsRgName
-        deploySessionHosts: avdDeploySessionHosts
         enterpriseAppObjectId: avdEnterpriseAppObjectId
         deployScalingPlan: avdDeployScalingPlan
         sessionHostLocation: avdSessionHostLocation
@@ -1081,8 +900,8 @@ module managedIdentitiesRoleAssign './modules/identity/deploy.bicep' = {
         workloadSubsId: avdWorkloadSubsId
         storageManagedIdentityName: varStorageManagedIdentityName
         readerRoleId: varReaderRoleId
+        storageSmbShareContributorRoleId: varStorageSmbShareContributorRoleId
         enableStartVmOnConnect: avdStartVmOnConnect
-        managementPlaneLocation: avdManagementPlaneLocation
         identityServiceProvider: avdIdentityServiceProvider
         storageAccountContributorRoleId: varStorageAccountContributorRoleId
         createStorageDeployment: varCreateStorageDeployment
@@ -1094,6 +913,7 @@ module managedIdentitiesRoleAssign './modules/identity/deploy.bicep' = {
     dependsOn: [
         baselineResourceGroups
         baselineStorageResourceGroup
+        monitoringDiagnosticSettings
     ]
 }
 
@@ -1114,7 +934,7 @@ module wrklKeyVault '../../carml/1.4.0/KeyVault/vaults/main.bicep' = if (avdDepl
             virtualNetworkRules: []
             ipRules: []
         } : {}
-        privateEndpoints: deployPrivateEndpointKeyvaultStorage ? (avdVnetPrivateDnsZone ? [
+        privateEndpoints: deployPrivateEndpointKeyvaultStorage ? [
             {
                 name: varWrklKvPrivateEndpointName
                 subnetResourceId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetworkPrivateEndpointSubnetName}' : existingVnetPrivateEndpointSubnetResourceId
@@ -1122,18 +942,11 @@ module wrklKeyVault '../../carml/1.4.0/KeyVault/vaults/main.bicep' = if (avdDepl
                 service: 'vault'
                 privateDnsZoneGroup: {
                     privateDNSResourceIds: [
-                        avdVnetPrivateDnsZoneKeyvaultId
+                        createPrivateDnsZones ? networking.outputs.KeyVaultDnsZoneResourceId: avdVnetPrivateDnsZoneKeyvaultId
                     ] 
                 }
             }
-        ] : [
-            {
-                name: varWrklKvPrivateEndpointName
-                subnetResourceId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetworkPrivateEndpointSubnetName}' : existingVnetPrivateEndpointSubnetResourceId
-                customNetworkInterfaceName: 'nic-01-${varWrklKvPrivateEndpointName}'
-                service: 'vault'
-            }
-        ]) : []
+        ]: []
         secrets: {
             secureList: (avdIdentityServiceProvider != 'AAD') ? [
                 {
@@ -1184,16 +997,57 @@ module wrklKeyVault '../../carml/1.4.0/KeyVault/vaults/main.bicep' = if (avdDepl
     }
     dependsOn: [
         baselineResourceGroups
-        //updateExistingSubnet
+        monitoringDiagnosticSettings
     ]
 }
 
-// FSLogix Storage.
-module fslogixStorageAzureFiles './modules/storageAzureFiles/deploy.bicep' = if (varCreateFslogixDeployment && avdDeploySessionHosts && (avdIdentityServiceProvider != 'AAD')) {
-    name: 'Storage-Fslogix-Azure-Files-${time}'
+// Management VM deployment
+module managementVm './modules/storageAzureFiles/.bicep/managementVm.bicep' = if (createAvdFslogixDeployment || createMsixDeployment) {
+    name: 'Storage-Management-VM-${time}'
+    params: {
+        identityServiceProvider: avdIdentityServiceProvider
+        managementVmName: varManagementVmName
+        computeTimeZone: varTimeZoneSessionHosts
+        applicationSecurityGroupResourceId: createAvdVnet ? '${networking.outputs.applicationSecurityGroupResourceId}' : ''
+        domainJoinUserName: avdDomainJoinUserName
+        wrklKvName: varWrklKvName
+        serviceObjectsRgName: varServiceObjectsRgName
+        identityDomainName: avdIdentityDomainName
+        imageTemplateDefinitionId: avdImageTemplateDefinitionId
+        sessionHostOuPath: avdOuPath
+        sessionHostDiskType: avdSessionHostDiskType
+        sessionHostLocation: avdSessionHostLocation
+        sessionHostsSize: avdSessionHostsSize
+        avdSubnetId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetworkAvdSubnetName}' : existingVnetAvdSubnetResourceId
+        enableAcceleratedNetworking: enableAcceleratedNetworking
+        createAvdVnet: createAvdVnet
+        vmLocalUserName: avdVmLocalUserName
+        workloadSubsId: avdWorkloadSubsId
+        encryptionAtHost: encryptionAtHost
+        storageManagedIdentityResourceId: varCreateStorageDeployment ? managedIdentitiesRoleAssign.outputs.managedIdentityResourceId : ''
+        marketPlaceGalleryWindowsManagementVm: varMarketPlaceGalleryWindows[avdOsImage]
+        useSharedImage: useSharedImage
+        tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
+    }
+    dependsOn: [
+        baselineStorageResourceGroup
+        networking
+        wrklKeyVault
+    ]
+}
+
+// FSLogix storage.
+module fslogixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if (createAvdFslogixDeployment) {
+    name: 'Storage-FSLogix-${time}'
     params: {
         storagePurpose: 'fslogix'
-        fileShareCustomName: fslogixFileShareCustomName
+        fileShareName: varFslogixFileShareName
+        fileShareMultichannel: (fslogixStoragePerformance == 'Premium') ? true : false
+        storageSku: varFslogixStorageSku
+        fileShareQuotaSize: fslogixFileShareQuotaSize
+        storageAccountName: varFslogixStorageName
+        storageToDomainScript:  varStorageToDomainScript
+        storageToDomainScriptUri: varStorageToDomainScriptUri
         identityServiceProvider: avdIdentityServiceProvider
         dscAgentPackageLocation: varStorageAzureFilesDscAgentPackageLocation
         storageCustomOuPath: varStorageCustomOuPath
@@ -1202,57 +1056,41 @@ module fslogixStorageAzureFiles './modules/storageAzureFiles/deploy.bicep' = if 
         ouStgPath: varOuStgPath
         createOuForStorageString: varCreateOuForStorageString
         managedIdentityClientId: varCreateStorageDeployment ? managedIdentitiesRoleAssign.outputs.managedIdentityClientId : ''
-        storageToDomainScript:  varStorageToDomainScript
-        storageToDomainScriptUri: varStorageToDomainScriptUri
-        computeTimeZone: varTimeZones[avdSessionHostLocation]
-        applicationSecurityGroupResourceId: createAvdVnet ? '${networking.outputs.applicationSecurityGroupResourceId}' : ''
-        computeObjectsRgName: varComputeObjectsRgName
         domainJoinUserName: avdDomainJoinUserName
         wrklKvName: varWrklKvName
         serviceObjectsRgName: varServiceObjectsRgName
-        fileShareQuotaSize: fslogixFileShareQuotaSize
         identityDomainName: avdIdentityDomainName
-        imageTemplateDefinitionId: avdImageTemplateDefinitionId
-        sessionHostOuPath: avdOuPath
-        sessionHostDiskType: avdSessionHostDiskType
+        identityDomainGuid: identityDomainGuid
         sessionHostLocation: avdSessionHostLocation
-        sessionHostsSize: avdSessionHostsSize
         storageObjectsRgName: varStorageObjectsRgName
-        avdSubnetId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetworkAvdSubnetName}' : existingVnetAvdSubnetResourceId
         privateEndpointSubnetId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetworkPrivateEndpointSubnetName}' : existingVnetPrivateEndpointSubnetResourceId
-        enableAcceleratedNetworking: enableAcceleratedNetworking
-        createAvdVnet: createAvdVnet
-        vmLocalUserName: avdVmLocalUserName
-        vnetPrivateDnsZone: avdVnetPrivateDnsZone
-        vnetPrivateDnsZoneFilesId: avdVnetPrivateDnsZoneFilesId
+        vnetPrivateDnsZoneFilesId: createPrivateDnsZones ? networking.outputs.azureFilesDnsZoneResourceId: avdVnetPrivateDnsZoneFilesId
         workloadSubsId: avdWorkloadSubsId
-        encryptionAtHost: encryptionAtHost
-        storageManagedIdentityResourceId: varCreateStorageDeployment ? managedIdentitiesRoleAssign.outputs.managedIdentityResourceId : ''
-        fileShareMultichannel: (fslogixStoragePerformance == 'Premium') ? true : false
-        storageSku: varFslogixStorageSku
-        marketPlaceGalleryWindowsManagementVm: varMarketPlaceGalleryWindows[avdOsImage]
-        useSharedImage: useSharedImage
         tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
-        useCustomNaming: avdUseCustomNaming
-        storageAccountPrefixCustomName: storageAccountPrefixCustomName
-        namingUniqueStringSixChar: varNamingUniqueStringSixChar
-        deploymentPrefixLowercase: varDeploymentPrefixLowercase
     }
     dependsOn: [
         baselineStorageResourceGroup
         networking
         wrklKeyVault
+        managementVm
+        monitoringDiagnosticSettings
     ]
 }
 
-// Msix Storage.
-module msixStorageAzureFiles './modules/storageAzureFiles/deploy.bicep' = if (varCreateMsixDeployment && avdDeploySessionHosts && (avdIdentityServiceProvider != 'AAD')) {
-    name: 'Storage-Msix-AzureFiles-${time}'
+// MSIX storage.
+module msixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if (createMsixDeployment) {
+    name: 'Storage-MSIX-${time}'
     params: {
         storagePurpose: 'msix'
-        fileShareCustomName: msixFileShareCustomName
+        fileShareName: varMsixFileShareName
+        fileShareMultichannel: (msixStoragePerformance == 'Premium') ? true : false
+        storageSku: varMsixStorageSku
+        fileShareQuotaSize: msixFileShareQuotaSize
+        storageAccountName: varMsixStorageName
+        storageToDomainScript:  varStorageToDomainScript
+        storageToDomainScriptUri: varStorageToDomainScriptUri
         identityServiceProvider: avdIdentityServiceProvider
         dscAgentPackageLocation: varStorageAzureFilesDscAgentPackageLocation
         storageCustomOuPath: varStorageCustomOuPath
@@ -1261,49 +1099,27 @@ module msixStorageAzureFiles './modules/storageAzureFiles/deploy.bicep' = if (va
         ouStgPath: varOuStgPath
         createOuForStorageString: varCreateOuForStorageString
         managedIdentityClientId: varCreateStorageDeployment ? managedIdentitiesRoleAssign.outputs.managedIdentityClientId : ''
-        storageToDomainScript:  varStorageToDomainScript
-        storageToDomainScriptUri: varStorageToDomainScriptUri
-        computeTimeZone: varTimeZones[avdSessionHostLocation]
-        applicationSecurityGroupResourceId: createAvdVnet ? '${networking.outputs.applicationSecurityGroupResourceId}' : ''
-        computeObjectsRgName: varComputeObjectsRgName
         domainJoinUserName: avdDomainJoinUserName
         wrklKvName: varWrklKvName
         serviceObjectsRgName: varServiceObjectsRgName
-        fileShareQuotaSize: msixFileShareQuotaSize
         identityDomainName: avdIdentityDomainName
-        imageTemplateDefinitionId: avdImageTemplateDefinitionId
-        sessionHostOuPath: avdOuPath
-        sessionHostDiskType: avdSessionHostDiskType
+        identityDomainGuid: identityDomainGuid
         sessionHostLocation: avdSessionHostLocation
-        sessionHostsSize: avdSessionHostsSize
         storageObjectsRgName: varStorageObjectsRgName
-        avdSubnetId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetworkAvdSubnetName}' : existingVnetAvdSubnetResourceId
         privateEndpointSubnetId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetworkPrivateEndpointSubnetName}' : existingVnetPrivateEndpointSubnetResourceId
-        enableAcceleratedNetworking: enableAcceleratedNetworking
-        createAvdVnet: createAvdVnet
-        vmLocalUserName: avdVmLocalUserName
-        vnetPrivateDnsZone: avdVnetPrivateDnsZone
-        vnetPrivateDnsZoneFilesId: avdVnetPrivateDnsZoneFilesId
+        vnetPrivateDnsZoneFilesId: createPrivateDnsZones ? networking.outputs.azureFilesDnsZoneResourceId: avdVnetPrivateDnsZoneFilesId
         workloadSubsId: avdWorkloadSubsId
-        encryptionAtHost: encryptionAtHost
-        storageManagedIdentityResourceId: varCreateStorageDeployment ? managedIdentitiesRoleAssign.outputs.managedIdentityResourceId : ''
-        fileShareMultichannel: (msixStoragePerformance == 'Premium') ? true : false
-        storageSku: varMsixStorageSku
-        marketPlaceGalleryWindowsManagementVm: varMarketPlaceGalleryWindows[avdOsImage]
-        useSharedImage: useSharedImage
         tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
-        useCustomNaming: avdUseCustomNaming
-        storageAccountPrefixCustomName: storageAccountPrefixCustomName
-        namingUniqueStringSixChar: varNamingUniqueStringSixChar
-        deploymentPrefixLowercase: varDeploymentPrefixLowercase
     }
     dependsOn: [
+        fslogixAzureFilesStorage
         baselineStorageResourceGroup
-        fslogixStorageAzureFiles
         networking
         wrklKeyVault
+        managementVm
+        monitoringDiagnosticSettings
     ]
 }
 
@@ -1311,9 +1127,8 @@ module msixStorageAzureFiles './modules/storageAzureFiles/deploy.bicep' = if (va
 module sessionHosts './modules/avdSessionHosts/deploy.bicep' = if (avdDeploySessionHosts) {
     name: 'Session-Hosts-${time}'
     params: {
-
         avdAgentPackageLocation: varAvdAgentPackageLocation
-        computeTimeZone: varTimeZones[avdSessionHostLocation]
+        computeTimeZone: varTimeZoneSessionHosts
         applicationSecurityGroupResourceId: createAvdVnet ? '${networking.outputs.applicationSecurityGroupResourceId}' : ''
         availabilitySetFaultDomainCount: avdAsFaultDomainCount
         availabilitySetUpdateDomainCount: avdAsUpdateDomainCount
@@ -1344,12 +1159,12 @@ module sessionHosts './modules/avdSessionHosts/deploy.bicep' = if (avdDeploySess
         vmLocalUserName: avdVmLocalUserName
         workloadSubsId: avdWorkloadSubsId
         encryptionAtHost: encryptionAtHost
-        createAvdFslogixDeployment: (avdIdentityServiceProvider != 'AAD') ? varCreateFslogixDeployment: false
-        storageManagedIdentityResourceId:  (varCreateStorageDeployment && (avdIdentityServiceProvider != 'AAD'))  ? managedIdentitiesRoleAssign.outputs.managedIdentityResourceId : ''
-        fsLogixScript: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScript: ''
-        fsLogixScriptArguments: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScriptArguments: ''
-        fslogixScriptUri: (avdIdentityServiceProvider != 'AAD') ? varFslogixScriptUri: ''
-        fslogixSharePath: (avdIdentityServiceProvider != 'AAD') ? varFslogixSharePath: ''
+        createAvdFslogixDeployment: createAvdFslogixDeployment
+        storageManagedIdentityResourceId:  (varCreateStorageDeployment)  ? managedIdentitiesRoleAssign.outputs.managedIdentityResourceId : ''
+        fsLogixScript: varFsLogixScript
+        fslogixScriptUri: varFslogixScriptUri
+        fslogixSharePath: '\\\\${varFslogixStorageName}.file.${environment().suffixes.storage}\\${varFslogixFileShareName}'
+        fsLogixScriptArguments: varFsLogixScriptArguments
         marketPlaceGalleryWindows: varMarketPlaceGalleryWindows[avdOsImage]
         useSharedImage: useSharedImage
         tags: createResourceTags ? union(varAllResourceTags,varAvdCostManagementParentResourceTag) : varAvdCostManagementParentResourceTag
@@ -1358,10 +1173,11 @@ module sessionHosts './modules/avdSessionHosts/deploy.bicep' = if (avdDeploySess
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
     }
     dependsOn: [
-        fslogixStorageAzureFiles
+        fslogixAzureFilesStorage
         baselineResourceGroups
         networking
         wrklKeyVault
+        monitoringDiagnosticSettings
     ]
 }
 /*
