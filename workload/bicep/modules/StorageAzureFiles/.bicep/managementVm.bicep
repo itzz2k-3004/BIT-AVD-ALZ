@@ -91,7 +91,7 @@ resource avdWrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' exist
 }
 
 // Provision temporary VM and add it to domain.
-module managementVm '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/deploy.bicep' = {
+module managementVm '../../../../../carml/1.4.0/Compute/virtualMachines/main.bicep' = {
     scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
     name: 'Management-VM-${time}'
     params: {
@@ -103,7 +103,6 @@ module managementVm '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachine
             '${storageManagedIdentityResourceId}': {}
         }
         encryptionAtHost: encryptionAtHost
-        availabilityZone: []
         osType: 'Windows'
         //licenseType: 'Windows_Client'
         vmSize: sessionHostsSize
@@ -121,7 +120,7 @@ module managementVm '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachine
         adminPassword: avdWrklKeyVaultget.getSecret('vmLocalUserPassword')
         nicConfigurations: [
             {
-                nicSuffix: 'nic-001-'
+                nicPrefix: 'nic-001'
                 deleteOption: 'Delete'
                 enableAcceleratedNetworking: enableAcceleratedNetworking
                 ipConfigurations: createAvdVnet ? [
@@ -166,7 +165,7 @@ module managementVm '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachine
 }
 
 // Introduce wait for management VM to be ready.
-module managementVmWait '../../../../../carml/1.3.0/Microsoft.Resources/deploymentScripts/deploy.bicep' = {
+module managementVmWait '../../../../../carml/1.4.0/Resources/deploymentScripts/main.bicep' = {
     scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
     name: 'Management-VM-Wait-${time}'
     params: {

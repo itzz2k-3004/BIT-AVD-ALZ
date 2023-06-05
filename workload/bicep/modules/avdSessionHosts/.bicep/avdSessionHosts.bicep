@@ -141,7 +141,6 @@ param time string = utcNow()
 // =========== //
 // Variable declaration //
 // =========== //
-var varAllAvailabilityZones = pickZones('Microsoft.Compute', 'virtualMachines', sessionHostLocation, 3)
 var varNicDiagnosticMetricsToEnable = [
     'AllMetrics'
   ]
@@ -357,9 +356,9 @@ module sessionHostsMonitoring '../../../../../carml/1.4.0/Compute/virtualMachine
         alaWorkspaceGet
     ]
 }]
-
+//../../../../../carml/1.4.0/Microsoft.Resources/deploymentScripts/main.bicep
 // Introduce wait for antimalware extension to complete to be ready.
-module sessionHostsMonitoringWait '../../../../../carml/1.4.0/Microsoft.Resources/deploymentScripts/main.bicep' = if (deployMonitoring) {
+module sessionHostsMonitoringWait '../../../../../carml/1.4.0/Resources/deploymentScripts/main.bicep' = if (deployMonitoring) {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
     name: 'SH-Monitoring-Wait-${time}'
     params: {

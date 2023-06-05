@@ -763,7 +763,7 @@ module baselineNetworkResourceGroup '../../carml/1.4.0/Resources/resourceGroups/
 }
 
 // Compute, service objects
-module baselineResourceGroups '../../carml/1.4.0/Resources/resourceGroups/main.bicep' = [for resourceGroup in resourceGroups: {
+module baselineResourceGroups '../../carml/1.4.0/Resources/resourceGroups/main.bicep' = [for resourceGroup in verResourceGroups: {
     scope: subscription(avdWorkloadSubsId)
     name: 'Deploy-AVD-${resourceGroup.purpose}-${time}'
     params: {

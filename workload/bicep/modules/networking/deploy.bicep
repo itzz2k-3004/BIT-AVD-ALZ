@@ -101,7 +101,7 @@ var varCreateAvdStaicRoute = true
 // =========== //
 
 // AVD network security group.
-module networksecurityGroupAvd '../../../../carml/1.4.0/Microsoft.Network/networkSecurityGroups/main.bicep' = {
+module networksecurityGroupAvd '../../../../carml/1.4.0/Network/networkSecurityGroups/main.bicep' = {
     scope: resourceGroup('${workloadSubsId}', '${networkObjectsRgName}')
     name: 'NSG-AVD-${time}'
     params: {
@@ -216,7 +216,7 @@ module networksecurityGroupAvd '../../../../carml/1.4.0/Microsoft.Network/networ
 }
 
 // Private endpoint network security group.
-module networksecurityGroupPrivateEndpoint '../../../../carml/1.4.0/Microsoft.Network/networkSecurityGroups/main.bicep' = if (deployPrivateEndpointSubnet) {
+module networksecurityGroupPrivateEndpoint '../../../../carml/1.4.0/Network/networkSecurityGroups/main.bicep' = if (deployPrivateEndpointSubnet) {
     scope: resourceGroup('${workloadSubsId}', '${networkObjectsRgName}')
     name: 'NSG-Private-Endpoint-${time}'
     params: {
@@ -232,7 +232,7 @@ module networksecurityGroupPrivateEndpoint '../../../../carml/1.4.0/Microsoft.Ne
 }
 
 // Application security group.
-module applicationSecurityGroup '../../../../carml/1.4.0/Microsoft.Network/applicationSecurityGroups/main.bicep' = {
+module applicationSecurityGroup '../../../../carml/1.4.0/Network/applicationSecurityGroups/main.bicep' = {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
     name: 'ASG-${time}'
     params: {
@@ -244,7 +244,7 @@ module applicationSecurityGroup '../../../../carml/1.4.0/Microsoft.Network/appli
 }
 
 // AVD route table.
-module routeTableAvd '../../../../carml/1.4.0/Microsoft.Network/routeTables/main.bicep' = {
+module routeTableAvd '../../../../carml/1.4.0/Network/routeTables/main.bicep' = {
     scope: resourceGroup('${workloadSubsId}', '${networkObjectsRgName}')
     name: 'Route-Table-AVD-${time}'
     params: {
@@ -266,7 +266,7 @@ module routeTableAvd '../../../../carml/1.4.0/Microsoft.Network/routeTables/main
 }
 
 // Private endpoint route table.
-module routeTablePrivateEndpoint '../../../../carml/1.4.0/Microsoft.Network/routeTables/main.bicep' = if (deployPrivateEndpointSubnet) {
+module routeTablePrivateEndpoint '../../../../carml/1.4.0/Network/routeTables/main.bicep' = if (deployPrivateEndpointSubnet) {
     scope: resourceGroup('${workloadSubsId}', '${networkObjectsRgName}')
     name: 'Route-Table-PE-${time}'
     params: {
@@ -279,7 +279,7 @@ module routeTablePrivateEndpoint '../../../../carml/1.4.0/Microsoft.Network/rout
 }
 
 // Virtual network.
-module virtualNetwork '../../../../carml/1.4.0/Microsoft.Network/virtualNetworks/deploy.bicep' = {
+module virtualNetwork '../../../../carml/1.4.0/Network/virtualNetworks/main.bicep' = {
     scope: resourceGroup('${workloadSubsId}', '${networkObjectsRgName}')
     name: 'vNet-${time}'
     params: {
@@ -369,7 +369,7 @@ module privateDnsZoneAzureFilesCommercial '.bicep/privateDnsZones.bicep' = if (c
     scope: resourceGroup('${workloadSubsId}', '${networkObjectsRgName}')
     name: 'Private-DNS-Com-Files-${time}'
     params: {
-        privateDnsZoneName: 'privatelink.file.core.windows.net'
+        privateDnsZoneName: 'privatelink.file.${environment().suffixes.storage}'
         virtualNetworkResourceId: virtualNetwork.outputs.resourceId
         tags: tags
     }
