@@ -394,7 +394,7 @@
                                     "type": "Microsoft.Common.OptionsGroup",
                                     "visible": true,
                                     "label": "Create remote app group",
-                                    "defaultValue": "Yes",
+                                    "defaultValue": "No",
                                     "toolTip": "This application group type allows to publish seamless apps instead of full desktops.",
                                     "constraints": {
                                         "required": true,
@@ -1163,7 +1163,7 @@
                             "options": {
                                 "filter": {
                                     "subscription": "onBasics",
-                                    "location": "[steps('SessionHosts').SessionHostsRegionSection.SessionHostsRegion.location.displayName]"
+                                    "location": "[steps('SessionHosts').SessionHostsRegionSection.SessionHostsRegion.location.name]"
                                 }
                             }
                         },

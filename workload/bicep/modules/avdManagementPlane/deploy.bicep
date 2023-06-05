@@ -242,6 +242,17 @@ module hostPool '../../../../carml/1.4.0/DesktopVirtualization/hostpools/main.bi
     diagnosticWorkspaceId: alaWorkspaceResourceId
     diagnosticLogsRetentionInDays: diagnosticLogsRetentionInDays
     diagnosticLogCategoriesToEnable: varHostPoolDiagnostic
+    agentUpdate: {
+      //useSessionHostLocalTime: true
+      //maintenanceWindowTimeZone: computeTimeZone
+      //type: 'Default'
+      //maintenanceWindows: [
+      //  {
+      //    dayOfWeek: 'string'
+      //    hour: int
+      //  }
+      //]
+    }
   }
 }
 
