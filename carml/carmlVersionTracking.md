@@ -12,4 +12,4 @@ CARML version | AVD accelerator version | Clone date | Delta | Tested
 0.5.0  | 1.2.0 | 05/13/2022 | - | yes
 0.5.0  | 1.2.1 | 08/31/2022 | - | no
 0.8.0  | 1.3.0 | 04/07/2023 | - | yes
-0.10.0 | 1.4.0 | 05/11/2023 | - | no
+0.10.0 | 1.4.0 | 05/11/2023 | - | yes
