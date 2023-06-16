@@ -597,7 +597,7 @@ resource telemetryDeployment 'Microsoft.Resources/deployments@2021-04-01' = if (
 // AVD Shared Services Resource Group.
 module avdSharedResourcesRg '../../carml/1.4.0/Resources/resourceGroups/main.bicep' = {
     scope: subscription(sharedServicesSubId)
-    name: 'Resource-Group-${time}'
+    name: 'RG-${time}'
     params: {
         name: varResourceGroupName
         location: deploymentLocation
@@ -772,9 +772,9 @@ module workspace '../../carml/1.4.0/OperationalInsights/workspaces/main.bicep' =
 // Introduce wait after log analitics workspace creation.
 module workspaceWait '../../carml/1.4.0/Resources/deploymentScripts/main.bicep' = if (enableMonitoringAlerts && empty(existingLogAnalyticsWorkspaceResourceId)) {
     scope: resourceGroup(sharedServicesSubId, varResourceGroupName)
-    name: 'Log-Analytics-Workspace-Wait-${time}'
+    name: 'LA-Workspace-Wait-${time}'
     params: {
-        name: 'Log-Analytics-Workspace-Wait-${time}'
+        name: 'LA-Workspace-Wait-${time}'
         location: deploymentLocation
         azPowerShellVersion: '8.3.0'
         cleanupPreference: 'Always'
@@ -859,7 +859,7 @@ module automationAccount '../../carml/1.4.0/Automation/automationAccounts/main.b
 @batchSize(1)
 module modules '../../carml/1.4.0/Automation/automationAccounts/modules/main.bicep' = [for i in range(0, length(varModules)): {
     scope: resourceGroup(sharedServicesSubId, varResourceGroupName)
-    name: 'Automation-Account-Module-${i}-${time}'
+    name: 'AA-Module-${i}-${time}'
     params: {
         name: varModules[i].name
         location: deploymentLocation

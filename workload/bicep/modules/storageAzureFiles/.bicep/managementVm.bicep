@@ -4,6 +4,9 @@ targetScope = 'subscription'
 // Parameters //
 // ========== //
 
+@description('AVD disk encryption set resource ID to enable server side encyption.')
+param diskEncryptionSetResourceId string
+
 @description('AVD workload subscription ID, multiple subscriptions scenario.')
 param workloadSubsId string
 
@@ -21,9 +24,6 @@ param avdSubnetId string
 
 @description('Enable accelerated networking on the session host VMs.')
 param enableAcceleratedNetworking bool
-
-@description('Create new virtual network.')
-param createAvdVnet bool
 
 @description('Location where to deploy compute services.')
 param sessionHostLocation string
@@ -80,6 +80,15 @@ param time string = utcNow()
 // Variable declaration //
 // =========== //
 
+var varManagedDisk = empty(diskEncryptionSetResourceId) ? {
+    storageAccountType: sessionHostDiskType
+} : {
+    diskEncryptionSet: {
+        id: diskEncryptionSetResourceId
+    }
+    storageAccountType: sessionHostDiskType
+}
+
 // =========== //
 // Deployments //
 // =========== //
@@ -91,9 +100,9 @@ resource avdWrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' exist
 }
 
 // Provision temporary VM and add it to domain.
-module managementVm '../../../../../carml/1.4.0/Compute/virtualMachines/main.bicep' = {
+module managementVm '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/deploy.bicep' = {
     scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
-    name: 'Management-VM-${time}'
+    name: 'MGMT-VM-${time}'
     params: {
         name: managementVmName
         location: sessionHostLocation
@@ -103,6 +112,7 @@ module managementVm '../../../../../carml/1.4.0/Compute/virtualMachines/main.bic
             '${storageManagedIdentityResourceId}': {}
         }
         encryptionAtHost: encryptionAtHost
+        availabilityZone: []
         osType: 'Windows'
         //licenseType: 'Windows_Client'
         vmSize: sessionHostsSize
@@ -112,18 +122,16 @@ module managementVm '../../../../../carml/1.4.0/Compute/virtualMachines/main.bic
             createOption: 'fromImage'
             deleteOption: 'Delete'
             diskSizeGB: 128
-            managedDisk: {
-                storageAccountType: sessionHostDiskType
-            }
+            managedDisk: varManagedDisk
         }
         adminUsername: vmLocalUserName
         adminPassword: avdWrklKeyVaultget.getSecret('vmLocalUserPassword')
         nicConfigurations: [
             {
-                nicPrefix: 'nic-001'
+                nicSuffix: 'nic-01-'
                 deleteOption: 'Delete'
                 enableAcceleratedNetworking: enableAcceleratedNetworking
-                ipConfigurations: createAvdVnet ? [
+                ipConfigurations: !empty(applicationSecurityGroupResourceId)  ? [
                     {
                         name: 'ipconfig01'
                         subnetResourceId: avdSubnetId
@@ -165,11 +173,11 @@ module managementVm '../../../../../carml/1.4.0/Compute/virtualMachines/main.bic
 }
 
 // Introduce wait for management VM to be ready.
-module managementVmWait '../../../../../carml/1.4.0/Resources/deploymentScripts/main.bicep' = {
+module managementVmWait '../../../../../carml/1.3.0/Microsoft.Resources/deploymentScripts/deploy.bicep' = {
     scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
-    name: 'Management-VM-Wait-${time}'
+    name: 'MGMT-VM-Wait-${time}'
     params: {
-        name: 'Management-VM-Wait-${time}'
+        name: 'MGMT-VM-Wait-${time}'
         location: sessionHostLocation
         azPowerShellVersion: '8.3.0'
         cleanupPreference: 'Always'

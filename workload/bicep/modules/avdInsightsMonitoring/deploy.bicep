@@ -40,7 +40,7 @@ param time string = utcNow()
 // Resource group if new Log Analytics space is required
 module baselineMonitoringResourceGroup '../../../../carml/1.4.0/Resources/resourceGroups/main.bicep' = if (deployAlaWorkspace) {
   scope: subscription(workloadSubsId)
-  name: '${monitoringRgName}-${time}'
+  name: 'Monitoing-RG-${time}'
   params: {
       name: monitoringRgName
       location: managementPlaneLocation
@@ -52,7 +52,7 @@ module baselineMonitoringResourceGroup '../../../../carml/1.4.0/Resources/resour
 // Azure log analytics workspace.
 module alaWorkspace '../../../../carml/1.4.0/OperationalInsights/workspaces/main.bicep' = if (deployAlaWorkspace) {
   scope: resourceGroup('${workloadSubsId}', '${monitoringRgName}')
-  name: 'Log-Analytics-Workspace-${time}'
+  name: 'LA-Workspace-${time}'
   params: {
     location: managementPlaneLocation
     name: alaWorkspaceName
@@ -68,9 +68,9 @@ module alaWorkspace '../../../../carml/1.4.0/OperationalInsights/workspaces/main
 // Introduce Wait after log analitics workspace creation.
 module alaWorkspaceWait '../../../../carml/1.4.0/Resources/deploymentScripts/main.bicep' = if (deployAlaWorkspace) {
   scope: resourceGroup('${workloadSubsId}', '${monitoringRgName}')
-  name: 'ALA-Workspace-Wait-${time}'
+  name: 'LA-Workspace-Wait-${time}'
   params: {
-      name: 'ALA-Workspace-Wait-${time}'
+      name: 'LA-Workspace-Wait-${time}'
       location: managementPlaneLocation
       azPowerShellVersion: '8.3.0'
       cleanupPreference: 'Always'

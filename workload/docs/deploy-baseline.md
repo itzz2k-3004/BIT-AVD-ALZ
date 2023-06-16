@@ -7,7 +7,8 @@
 - **Basics** blade
   - **Subscription** - The subscription where the accelerator is going to deploy the resources.
   - **Region** – The desired Azure Region to be used for the deployment.
-  - **Deployment prefix** – A prefix of maximum 4 characters that will be appended to the names of Resource Groups and Azure resources within the Resource Groups.
+  - **Prefix** – A prefix of maximum 4 characters that will be appended to the names of Resource Groups and Azure resources within the Resource Groups.
+  - **Environment** – Deployment Environment type (Development/Test/Production), will be used for naming and tagging purposes.
 - **Identity provider** blade
   - **Identity Service Provider** - Identity service provider (AD DS, AAD DS, AAD) that already exists and will be used for Azure Virtual Desktop.
     - Azure Active Directory (AAD).
@@ -21,7 +22,7 @@
   - **When selecting AD DS or AAD DS:**
     - Domain join credentials The Username and password with rights to join computers to the domain.
   - **When selecting ADD:**
-    - Enroll VM with Intune: select to enroll session hosts on tenant Intune (Yes) or not (No).
+    - Enroll VM with Intune: check the box to enroll session hosts on tenant's.
   - **Session host local admin credentials** The Username and password to set for local administrator.
 - **Management plane** blade
   - **Deployment location** - The Azure Region where management plane resources (workspace, host pool, application groups) will be deployed. These resources are not available in all locations but are globally replicated and they can share the same location as the session hosts or not.
@@ -38,11 +39,12 @@
   - **Deploy sessions hosts** - You can choose to not deploy session hosts just the AVD service objects.
   - **Session host region** - Provide the region to where you want to deploy the session hosts. This defaults to the Management Plane region but can be changed.
   - **Session hosts OU path (Optional)** - Provide OU where to locate session hosts, if not provided session hosts will be placed on the default (computers) OU. If left empty the computer account will be created in the default Computers OU. Example: OU=avd,DC=contoso,DC=com.
-  - **Use availability zones** - If you select no an Availability set will be created instead and session hosts will be created in the availability set. If you select yes the accelerator  will distribute compute and storage resources across availability zones.
+  - **Use availability zones** - If you deselect the checkbox an Availability set will be created instead and session hosts will be created in the availability set. If you select the checkbox the accelerator  will distribute compute and storage resources across availability zones.
   - **VM size** -  Select the SKU size for the session hosts.
   - **VM count** - Select the number of session hosts to deploy.
   - **OS disk type** - Select the OS Disk SKU type. Premium is recommended.
-  - **End to end encryption** - If you want data stored on the session host  encrypted at rest and flow encrypted to the Storage service.
+  - **Zero trust disk configuration** - Check the box to enable the zero trust configuration on the session host disks to ensure all the disks are encrypted, the OS and data disks are protected with double encryption with a customer managed key, and network access is disabled.
+  - **Enable accelerated networking** - Check the box to ensure the network traffic on the session hosts is offloaded to the network interface to enhance performance. This feature is free as long as a supported generation 2 VM size is selected. Checked is recommended.
   - **OS image source** - Select a marketplace image or an image from Azure Compute Gallery (Custom image build deployment will create images in compute gallery).
   - **OS version or image** - Choose the OS version or desired image from the Azure compute gallery.
 - **Storage** blade
@@ -64,19 +66,19 @@
       - **AVD subnet** - Select virtual network subnet to be used for session hosts deployment.
       - **Private endpoint virtual network** - Select virtual network to be used for private endpoint deployment.
       - **Private endpoint subnet** - Select virtual network subnet to be used for private endpoint deployment.
-  - **Use private endpoints (Key vault and Azure files)** - Select yes to create private endpoints for key vault and Azure file services, when selecting no public endpoints of the services will be used.
-  - **Existing Azure private DNS zone** - Select yes to use an existing private DNS zone for Azure Files and Key vault. Select No if you do not want to use private endpoints (Private DNS for Azure files is required for FSLogix deployment to configure properly).
+  - **Use private endpoints (Key vault and Azure files)** - Select the checkbox to create private endpoints for key vault and Azure file services, when selecting no public endpoints of the services will be used.
+  - **Existing Azure private DNS zone** - Select the checkbox to use an existing private DNS zone for Azure Files and Key vault (Private DNS for Azure files is required for FSLogix deployment to configure properly).
   - **Existing hub VNet peering**
     - **Virtual Network** - Select the hub VNet where this new VNet will be peered with.
-    - **VNet Gateway on hub** - Select Yes or No if you want to set the use remote gateway option for the VNet peering.
+    - **VNet Gateway on hub** - Select the checkbox to set the use remote gateway option for the VNet peering.
 - **Monitoring** blade
-  - **Deploy monitoring** - When set 'Yes', all required diagnostic configurations will be applied to all AVD resources, also events and performance stats will be pushed from session hosts to a log analytics workspace.
+  - **Deploy monitoring** - select checkbox to deploy all required diagnostic configurations all AVD resources, also events and performance stats will be pushed from session hosts to a log analytics workspace.
     - **Log analytics workspace** - select if creating a new workspace or if using and existing one.
-    - **Deploy monitoring policies (subscription level)** - when set to 'Yes', custom policies and policy sets will be created and assigned to the subscription to enforce deployIfNotExist rules to future AVD resources.
+    - **Deploy monitoring policies (subscription level)** - select the checkbox to deploy custom policies and policy sets will be created and assigned to the subscription to enforce deployIfNotExist rules to future AVD resources.
 - **Resource naming** blade
-  - **Custom Resource Naming** - When set 'Yes', the information provided will be used to name resources. When set to 'No' deployment will use the AVD accelerator naming standard.
+  - **Custom Resource Naming** - select the checkbox to provide the names that will be used to name resources. When the checkbox is not selected deployment will use the AVD accelerator naming standard.
 - **Resource tagging** blade
-  - **Custom Resource tagging** - When set 'Yes', the information provided will be used to create tags on resources and resource groups When set to 'No' deployment will use the AVD accelerator naming standard.
+  - **Custom Resource tagging** - select the checkbox to provide information to be use to create tags on resources and resource groups.
 - **Review + create** blade
 
 Take a look at the [Naming Standard and Tagging](./resource-naming.md) page for further information.
@@ -96,8 +98,8 @@ We have these other options available:
 
 ## Next Steps
 
-- After successful deployment, you can remove the following temporary resources used only during deployment: 
-    - virtual machine (`vm-mgmt-{deployment-prefix}`) and associated OS disk (`vm-mgmt-{deployment-prefix}-disk-os-01`) and network interface (`nic-001-vm-mgmt-{deployment-prefix}`) that was used to provision the storage account for FSLogix purposes.
+- After successful deployment, you can remove the following temporary resources used only during deployment:
+    - Management virtual machine (`vmmgmt{deploymentPrefix}{DeploymentEnvironment-d/t/p}{AzureRegionAcronym}`) and its associated OS disk and network interface.
     - Deployment scripts used to introduce wait times: Management-VM-Wait-{timestamp}, Managed-Identity-Wait-{timestamp}, Antimalware-Extension-Wait-{timestamp}, Session-Hosts-Wait-{timestamp}, SH-Monitoring-Wait-{timestamp}.
 - You should assign specific roles, including AVD-specific roles based on your organization’s policies.
 - Preferably enable NSG Flow logs and AVD insights.

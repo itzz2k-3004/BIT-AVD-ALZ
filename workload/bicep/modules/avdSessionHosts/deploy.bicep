@@ -3,6 +3,10 @@ targetScope = 'subscription'
 // ========== //
 // Parameters //
 // ========== //
+
+@description('AVD disk encryption set resource ID to enable server side encyption.')
+param diskEncryptionSetResourceId string
+
 @description('AVD subnet ID.')
 param subnetId string
 
@@ -181,6 +185,7 @@ module sessionHosts './.bicep/avdSessionHosts.bicep' = [for i in range(1, varAvd
   scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
   name: 'AVD-SH-Batch-${i-1}-${time}'
   params: {
+    diskEncryptionSetResourceId: diskEncryptionSetResourceId 
     avdAgentPackageLocation: avdAgentPackageLocation
     timeZone: computeTimeZone
     applicationSecurityGroupResourceId: applicationSecurityGroupResourceId
@@ -199,7 +204,6 @@ module sessionHosts './.bicep/avdSessionHosts.bicep' = [for i in range(1, varAvd
     sessionHostDiskType: sessionHostDiskType
     sessionHostLocation: sessionHostLocation
     sessionHostNamePrefix: sessionHostNamePrefix
-    createAvdVnet: createAvdVnet
     sessionHostsSize: sessionHostsSize
     enableAcceleratedNetworking: enableAcceleratedNetworking
     securityType: securityType
@@ -230,3 +234,14 @@ module sessionHosts './.bicep/avdSessionHosts.bicep' = [for i in range(1, varAvd
     availabilitySet
   ]
 }]
+/*
+// GPU policy definitions.
+module gpuPolicies './.bicep/gpuAzurePolicies.bicep' = {
+  scope: subscription('${workloadSubsId}')
+  name: 'Custom-Policy-GPU-${time}'
+  params: {
+    subscriptionId: workloadSubsId
+    location: sessionHostLocation
+  }
+}
+*/

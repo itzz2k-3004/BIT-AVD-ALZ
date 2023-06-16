@@ -3,6 +3,10 @@ targetScope = 'resourceGroup'
 // ========== //
 // Parameters //
 // ========== //
+
+@description('AVD disk encryption set resource ID to enable server side encyption.')
+param diskEncryptionSetResourceId string
+
 @description('AVD subnet ID.')
 param subnetId string
 
@@ -32,9 +36,6 @@ param workloadSubsId string
 
 @description('Quantity of session hosts to deploy')
 param sessionHostsCount int
-
-@description('Create new virtual network.')
-param createAvdVnet bool
 
 @description('The session host number to begin with for the deployment.')
 param sessionHostCountIndex int
@@ -144,6 +145,14 @@ param time string = utcNow()
 var varNicDiagnosticMetricsToEnable = [
     'AllMetrics'
   ]
+var varManagedDisk = empty(diskEncryptionSetResourceId) ? {
+    storageAccountType: sessionHostDiskType
+} : {
+    diskEncryptionSet: {
+        id: diskEncryptionSetResourceId
+    }
+    storageAccountType: sessionHostDiskType
+}
 // =========== //
 // Deployments //
 // =========== //
@@ -157,9 +166,9 @@ resource wrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing
 // Session hosts.
 module sessionHosts '../../../../../carml/1.4.0/Compute/virtualMachines/main.bicep' = [for i in range(1, sessionHostsCount): {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'Session-Host-${padLeft((i + sessionHostCountIndex), 3, '0')}-${time}'
+    name: 'Session-Host-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
     params: {
-        name: '${sessionHostNamePrefix}-${padLeft((i + sessionHostCountIndex), 3, '0')}'
+        name: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
         location: sessionHostLocation
         timeZone: timeZone
         userAssignedIdentities: createAvdFslogixDeployment ? {
@@ -180,9 +189,7 @@ module sessionHosts '../../../../../carml/1.4.0/Compute/virtualMachines/main.bic
             createOption: 'fromImage'
             deleteOption: 'Delete'
             diskSizeGB: 128
-            managedDisk: {
-                storageAccountType: sessionHostDiskType
-            }
+            managedDisk: varManagedDisk
         }
         adminUsername: vmLocalUserName
         adminPassword: wrklKeyVaultget.getSecret('vmLocalUserPassword')
@@ -191,7 +198,7 @@ module sessionHosts '../../../../../carml/1.4.0/Compute/virtualMachines/main.bic
                 nicPrefix: 'nic-01-'
                 deleteOption: 'Delete'
                 enableAcceleratedNetworking: enableAcceleratedNetworking
-                ipConfigurations: createAvdVnet ? [
+                ipConfigurations: !empty(applicationSecurityGroupResourceId) ? [
                     {
                         name: 'ipconfig01'
                         subnetResourceId: subnetId
@@ -269,10 +276,10 @@ module sessionHostsWait '../../../../../carml/1.4.0/Resources/deploymentScripts/
 // Add antimalware extension to session host.
 module sessionHostsAntimalwareExtension '../../../../../carml/1.4.0/Compute/virtualMachines/extensions/main.bicep' = [for i in range(1, sessionHostsCount): {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'SH-Antimalware-${padLeft((i + sessionHostCountIndex), 3, '0')}-${time}'
+    name: 'SH-Antimalware-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
     params: {
         location: sessionHostLocation
-        virtualMachineName: '${sessionHostNamePrefix}-${padLeft((i + sessionHostCountIndex), 3, '0')}'
+        virtualMachineName: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
         name: 'MicrosoftAntiMalware'
         publisher: 'Microsoft.Azure.Security'
         type: 'IaaSAntimalware'
@@ -333,10 +340,10 @@ resource alaWorkspaceGet 'Microsoft.OperationalInsights/workspaces@2021-06-01' e
 // Add monitoring extension to session host.
 module sessionHostsMonitoring '../../../../../carml/1.4.0/Compute/virtualMachines/extensions/main.bicep' = [for i in range(1, sessionHostsCount): if (deployMonitoring) {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'SH-Monitoring-${padLeft((i + sessionHostCountIndex), 3, '0')}-${time}'
+    name: 'SH-Mon-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
     params: {
         location: sessionHostLocation
-        virtualMachineName: '${sessionHostNamePrefix}-${padLeft((i + sessionHostCountIndex), 3, '0')}'
+        virtualMachineName: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
         name: 'MicrosoftMonitoringAgent'
         publisher: 'Microsoft.EnterpriseCloud.Monitoring'
         type: 'MicrosoftMonitoringAgent'
@@ -383,10 +390,10 @@ module sessionHostsMonitoringWait '../../../../../carml/1.4.0/Resources/deployme
 // Add the registry keys for Fslogix. Alternatively can be enforced via GPOs.
 module configureFsLogixAvdHosts './configureFslogixOnSessionHosts.bicep' = [for i in range(1, sessionHostsCount): if (createAvdFslogixDeployment) {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'Configure-FsLogix-${padLeft((i + sessionHostCountIndex), 3, '0')}-${time}'
+    name: 'Fsl-Conf-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
     params: {
         location: sessionHostLocation
-        name: '${sessionHostNamePrefix}-${padLeft((i + sessionHostCountIndex), 3, '0')}'
+        name: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
         file: fsLogixScriptFile
         fsLogixScriptArguments: fsLogixScriptArguments
         baseScriptUri: fslogixScriptUri
@@ -400,11 +407,11 @@ module configureFsLogixAvdHosts './configureFslogixOnSessionHosts.bicep' = [for 
 // Add session hosts to AVD Host pool.
 module addAvdHostsToHostPool './registerSessionHostsOnHopstPool.bicep' = [for i in range(1, sessionHostsCount): {
     scope: resourceGroup('${workloadSubsId}', '${computeObjectsRgName}')
-    name: 'HP-Join-${padLeft((i + sessionHostCountIndex), 3, '0')}-to-HP-${time}'
+    name: 'HP-Join-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
     params: {
         location: sessionHostLocation
         hostPoolToken: hostPoolToken
-        name: '${sessionHostNamePrefix}-${padLeft((i + sessionHostCountIndex), 3, '0')}'
+        name: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
         hostPoolName: hostPoolName
         avdAgentPackageLocation: avdAgentPackageLocation
     }

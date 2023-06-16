@@ -29,9 +29,9 @@
                                     "name": "deploymentInfo",
                                     "type": "Microsoft.Common.InfoBox",
                                     "options": {
-					"style": "Info",
+                                        "style": "Info",
                                         "text": "The subscription selected in the 'Project details' section below will be used to deploy all resources. \n\nThe region selected in 'Instance details' section below will be used to deploy the AVD management plane resources (workspace, host pool, and application group, etc.). These resource types are not available in all regions, but they are globally replicated.\n\nThe session hosts do not have to be deployed to the same region, therefore you will have the option to select that region on the 'Session Hosts' blade.",
-                                        "uri": "https://docs.microsoft.com/azure/virtual-desktop/data-locations"										
+                                        "uri": "https://docs.microsoft.com/azure/virtual-desktop/data-locations"
                                     }
                                 }
                             ]
@@ -58,16 +58,48 @@
                             }
                         },
                         {
-                            "name": "deploymentPrefix",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Deployment prefix",
-                            "toolTip": "Provide a prefix (max 4 characters) for the resource groups and resources created as part of AVD landing zones.",
-                            "placeholder": "Example: app1",
-                            "constraints": {
-                                "required": true,
-                                "regex": "^[a-z0-9A-Z-]{1,4}$",
-                                "validationMessage": "The prefix must be 1-4 characters."
-                            }
+                            "name": "deploymentSpecs",
+                            "type": "Microsoft.Common.Section",
+                            "visible": true,
+                            "label": "Deployment Specs",
+                            "elements": [
+                                {
+                                    "name": "deploymentPrefix",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Prefix",
+                                    "toolTip": "Provide a prefix (max 4 characters) for the resource groups and resources created as part of AVD landing zones.",
+                                    "placeholder": "Example: app1",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^[a-z0-9A-Z-]{1,4}$",
+                                        "validationMessage": "The prefix must be 1-4 characters."
+                                    }
+                                },
+                                {
+                                    "name": "deploymentEnvironment",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "visible": true,
+                                    "label": "Environment",
+                                    "defaultValue": "Development",
+                                    "toolTip": "Select the type of environment (Development (d), Test (t), Production (p)) that will be deployed, this information will be use as part of the resources naming.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Development",
+                                                "value": "Dev"
+                                            },
+                                            {
+                                                "label": "Test",
+                                                "value": "Test"
+                                            },
+                                            {
+                                                "label": "Production",
+                                                "value": "Prod"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
                         }
                     ]
                 },
@@ -197,7 +229,6 @@
                                     "toolTip": "Comma separated list of identities (ObjectIDs) to be granted access to AVD published items and to create sessions on VMs and single sign-on (SSO) when using AAD as identity provider.",
                                     "placeholder": "Example: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX,XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
                                 }
-
                             ]
                         },
                         {
@@ -209,7 +240,7 @@
                                 {
                                     "name": "identityDomainJoinUserName",
                                     "type": "Microsoft.Common.TextBox",
-                                    "label": "Username",
+                                    "label": "User principal name",
                                     "toolTip": "Provide username with permissions to join session host to the domain.",
                                     "placeholder": "Example: avdadmin@contoso.com",
                                     "defaultValue": "",
@@ -250,7 +281,6 @@
                                         "regex": "^(?!.*[aA]dministrator).*$",
                                         "validationMessage": "This username can't be used, it is a reserved word.",
                                         "required": true
-
                                     }
                                 },
                                 {
@@ -391,24 +421,11 @@
                             "elements": [
                                 {
                                     "name": "deployRemoteAppGroup",
-                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "type": "Microsoft.Common.CheckBox",
                                     "visible": true,
                                     "label": "Create remote app group",
-                                    "defaultValue": "No",
-                                    "toolTip": "This application group type allows to publish seamless apps instead of full desktops.",
-                                    "constraints": {
-                                        "required": true,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes",
-                                                "value": true
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
+                                    "defaultValue": false,
+                                    "toolTip": "This application group type allows to publish seamless apps instead of full desktops."
                                 }
                             ]
                         },
@@ -420,52 +437,27 @@
                             "elements": [
                                 {
                                     "name": "scalingPlan",
-                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "type": "Microsoft.Common.CheckBox",
                                     "visible": "[equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled')]",
                                     "label": "AVD scaling plan",
-                                    "defaultValue": "Yes (Recommended)",
-                                    "toolTip": "Will automatically manage session host power state based on usage and schedules (weekdays and weekend schedules will be created). ",
-                                    "constraints": {
-                                        "required": false,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes (Recommended)",
-                                                "value": true
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
+                                    "defaultValue": true,
+                                    "toolTip": "Will automatically manage session host power state based on usage and schedules (weekdays and weekend schedules will be created)."
                                 },
                                 {
                                     "name": "startVmOnConnect",
-                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "type": "Microsoft.Common.CheckBox",
                                     "visible": "[equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Personal')]",
                                     "label": "Start VM on connect",
-                                    "defaultValue": "Yes (Recommended)",
-                                    "toolTip": "If VM is powered off (deallocated), VM will be started automatically once user connects. ",
-                                    "constraints": {
-                                        "required": false,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes (Recommended)",
-                                                "value": true
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
+                                    "defaultValue": true,
+                                    "toolTip": "If VM is powered off (deallocated), VM will be started automatically once user connects."
                                 },
                                 {
                                     "name": "avdEnterpriseApplication",
                                     "type": "Microsoft.Solutions.GraphApiControl",
                                     "request": {
                                         "method": "GET",
-                                        "path": "/v1.0/serviceprincipals?$filter=appId eq '9cdead84-a844-4324-93f2-b2e6bb768d07'"                          }
+                                        "path": "/v1.0/serviceprincipals?$filter=appId eq '9cdead84-a844-4324-93f2-b2e6bb768d07'"
+                                    }
                                 },
                                 {
                                     "name": "startVmOnConnectRoleInfo",
@@ -492,7 +484,7 @@
                                     "type": "Microsoft.Common.InfoBox",
                                     "visible": "[equals(steps('managementPlane').managementPlaneHostPoolScaling.scalingPlan, true)]",
                                     "options": {
-                                        "text": "Session hosts can be excluded from the scaling plan by assigning the tag name Exclude-avdScalingPlanName, if not using custom resource naming and example of default tag name is Exclude-vdscaling-eus2-app1-001.",
+                                        "text": "Session hosts can be excluded from the scaling plan by assigning the tag name Exclude-avdScalingPlanName, if not using custom resource naming and example of default tag name is Exclude-vdscaling-eus2-app1-dev-001.",
                                         "uri": "https://docs.microsoft.com/azure/virtual-desktop/autoscale-scenarios#scenario-4-how-do-exclusion-tags-work",
                                         "style": "Info"
                                     }
@@ -507,24 +499,11 @@
                     "elements": [
                         {
                             "name": "deploySessionHosts",
-                            "type": "Microsoft.Common.OptionsGroup",
+                            "type": "Microsoft.Common.CheckBox",
                             "visible": true,
                             "label": "Deploy session hosts",
-                            "defaultValue": "Yes",
-                            "toolTip": "Create session hosts compute and storage resources.",
-                            "constraints": {
-                                "required": true,
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes",
-                                        "value": true
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": false
-                                    }
-                                ]
-                            }
+                            "defaultValue": true,
+                            "toolTip": "Create session hosts compute and storage resources."
                         },
                         {
                             "name": "sessionHostsRegionSection",
@@ -551,25 +530,13 @@
                                         "style": "Info"
                                     }
                                 },
-                                { 
+                                {
                                     "name": "sessionHostsAvailabilitySettings",
-                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "type": "Microsoft.Common.CheckBox",
+                                    "visible": true,
                                     "label": "Use availability zones",
-                                    "defaultValue": "Yes (Recommended)",
-                                    "toolTip": "Distribute compute resources across availability zones. If 'No' is selected then an availability set will be created to host the VMs.",
-                                    "constraints": {
-                                        "required": true,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes (Recommended)",
-                                                "value": true
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
+                                    "defaultValue": true,
+                                    "toolTip": "Distribute compute resources across availability zones. If 'No' is selected then an availability set will be created to host the VMs."
                                 },
                                 {
                                     "name": "sessionHostsRegion",
@@ -666,43 +633,36 @@
                                     }
                                 },
                                 {
+                                    "name": "sessionHostDiskZeroTrust",
+                                    "type": "Microsoft.Common.CheckBox",
+                                    "label": "Zero trust disk configuration",
+                                    "defaultValue": false,
+                                    "toolTip": "Enables disk encryption and Zero trust settings on management VM and session hosts disks"
+                                },
+                                {
+                                    "name": "ssessionHostDiskZeroTrustWarning",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[equals(steps('sessionHosts').sessionHostsSettingsSection.sessionHostDiskZeroTrust, true)]",
+                                    "options": {
+                                        "text": "Zero trust disk encryption requires feature EncryptionAtHost of resource provider Microsoft.Compute to be registered in the subscription.",
+                                        "uri": "https://learn.microsoft.com/azure/virtual-machines/disks-enable-host-based-encryption-portal?tabs=azure-powershell",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "acceleratedNetworking",
+                                    "type": "Microsoft.Common.CheckBox",
+                                    "label": "Enable accelerated networking",
+                                    "defaultValue": true,
+                                    "toolTip": "Enables low latency and high throughput on the network interface."
+                                },
+                                {
                                     "name": "warningAcceleratedNetworkingSupport",
                                     "type": "Microsoft.Common.InfoBox",
                                     "visible": "[equals(steps('sessionHosts').sessionHostsOsSection.sessionHostsImageSource, true)]",
                                     "options": {
                                         "text": "The Compute Gallery Image definition selected must have the 'isAcceleratedNetworkSupported' feature property set to 'true' if you enable accelerated networking on the session hosts.",
                                         "uri": "https://github.com/Azure/avdaccelerator/blob/main/workload/docs/getting-started-baseline.md",
-                                        "style": "Warning"
-                                    }
-                                },
-								{
-                                    "name": "acceleratedNetworking",
-                                    "type": "Microsoft.Common.OptionsGroup",
-                                    "visible": true,
-                                    "label": "Enable accelerated networking",
-                                    "defaultValue": "Yes (recommended)",
-                                    "toolTip": "Enables low latency and high throughput on the network interface.",
-                                    "constraints": {
-                                        "required": true,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes (recommended)",
-                                                "value": true
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
-                                    "name": "sessionHostEncryptionAtHostWarning",
-                                    "type": "Microsoft.Common.InfoBox",
-                                    "visible": "[equals(steps('sessionHosts').sessionHostsSettingsSection.sessionHostEncryptionAtHost, true)]",
-                                    "options": {
-                                        "text": "Encryption at host requires feature EncryptionAtHost of resource provider Microsoft.Compute to be registered in the subscription.",
-                                        "uri": "https://docs.microsoft.com/azure/virtual-machines/disks-enable-host-based-encryption-portal?msclkid=31c2d29bbce111ec8bca8257221ab9d1",
                                         "style": "Warning"
                                     }
                                 }
@@ -918,24 +878,11 @@
                             "elements": [
                                 {
                                     "name": "fslogixDeployment",
-                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "type": "Microsoft.Common.CheckBox",
                                     "label": "Use FSLogix profile management",
-                                    "defaultValue": "Yes (Recommended)",
-                                    "toolTip": "Deploys FSLogix containers and session host setup for user's profiles.",
-                                    "constraints": {
-                                        "required": true,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes (Recommended)",
-                                                "value": true
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
-                                },	
+                                    "defaultValue": true,
+                                    "toolTip": "Deploys FSLogix containers and session host setup for user's profiles."
+                                },
                                 {
                                     "name": "fslogixStorageAccountSku",
                                     "type": "Microsoft.Common.DropDown",
@@ -980,7 +927,7 @@
                                     "type": "Microsoft.Common.InfoBox",
                                     "visible": "[equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD')]",
                                     "options": {
-                                        "text": "Grating admin consent to the storage account service principal (your-storage-account-name.file.core.windows.net) is a requirememt, the link in this box contains the steps to grant the consent.",
+                                        "text": "Granting admin consent to the storage account service principal (your-storage-account-name.file.core.windows.net) is a requirememt, the link in this box contains the steps to grant the consent.",
                                         "uri": "https://learn.microsoft.com/azure/storage/files/storage-files-identity-auth-azure-active-directory-enable?tabs=azure-portal#grant-admin-consent-to-the-new-service-principal",
                                         "style": "Warning"
                                     }
@@ -995,24 +942,11 @@
                             "elements": [
                                 {
                                     "name": "msixDeployment",
-                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "type": "Microsoft.Common.CheckBox",
                                     "label": "Create MSIX App Attach storage",
-                                    "defaultValue": "No",
-                                    "toolTip": "Deploys MSIX App Attach containers and permissions setup.",
-                                    "constraints": {
-                                        "required": true,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes",
-                                                "value": true
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
-                                },	
+                                    "defaultValue": false,
+                                    "toolTip": "Deploys MSIX App Attach containers and permissions setup."
+                                },
                                 {
                                     "name": "msixStorageAccountSku",
                                     "type": "Microsoft.Common.DropDown",
@@ -1194,24 +1128,11 @@
                         },
                         {
                             "name": "deployPrivateEndpointKeyvaultStorage",
-                            "type": "Microsoft.Common.OptionsGroup",
+                            "type": "Microsoft.Common.CheckBox",
                             "visible": true,
                             "label": "Use private endpoints (Key vault and Storage account)",
-                            "defaultValue": "Yes (Recommended)",
-                            "toolTip": "Enables Private Endpoints for Key Vault and Storage Resources. It is recommended to use Azure Private Endpoints to keep all traffic to PaaS services on the Azure backbone.",
-                            "constraints": {
-                                "required": true,
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (Recommended)",
-                                        "value": true
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": false
-                                    }
-                                ]
-                            }
+                            "defaultValue": true,
+                            "toolTip": "Enables Private Endpoints for Key Vault and Storage Resources. It is recommended to use Azure Private Endpoints to keep all traffic to PaaS services on the Azure backbone."
                         },
                         {
                             "name": "virtualNetworkPrivateEndpointSubnetSize",
@@ -1270,7 +1191,7 @@
                         {
                             "name": "existingVirtualNetworkInfoBoxPrivateEndpointWarning",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[equals(steps('network').createAvdVirtualNetwork, false)]",
+                            "visible": "[and(equals(steps('network').createAvdVirtualNetwork, false), equals(steps('network').deployPrivateEndpointKeyvaultStorage, true))]",
                             "options": {
                                 "text": "Private endpoint network policy needs to be disabled on the existing subnet before deploying AVD accelerator.",
                                 "uri": "https://docs.microsoft.com/azure/private-link/disable-private-endpoint-network-policy",
@@ -1296,6 +1217,64 @@
                                         "value": false
                                     }
                                 ]
+                            }
+                        },
+                        {
+                            "name": "privateDnsZoneSelectionWarning1",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[and(equals(steps('network').createAvdVirtualNetwork, true), equals(steps('network').deployPrivateEndpointKeyvaultStorage, true), equals(steps('network').virtualNetworkPrivateDnsZone, false))]",
+                            "options": {
+                                "text": "When creating a new AVD vNet and providing custom DNS servers, FSLogix/MSIX end to end setup will be successful only when the selected existing Azure private DNS zones are linked to the vNet where the custom DNS servers are located, because DNS resolution requests will go to custom DNS servers and their vNet is the one that needs to resolve private endpoint DNS records.",
+                                "uri": "https://docs.microsoft.com/azure/private-link/disable-private-endpoint-network-policy",
+                                "style": "Warning"
+                            }
+                        },
+                        {
+                            "name": "privateDnsZoneSelectionWarning2",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[and(equals(steps('network').createAvdVirtualNetwork, true), equals(steps('network').deployPrivateEndpointKeyvaultStorage, true), equals(steps('network').virtualNetworkPrivateDnsZone, true))]",
+                            "options": {
+                                "text": "When creating a new AVD vNet and private DNS zones, FSLogix/MSIX end to end setup will be successful only when not providing custom DNS servers for the new vNet, because new private DNS zones will be linked only to the new AVD vNet so this will be the only network able to resolve private endpoint DNS record.",
+                                "uri": "https://docs.microsoft.com/azure/private-link/disable-private-endpoint-network-policy",
+                                "style": "Warning"
+                            }
+                        },
+                        {
+                            "name": "privateDnsZoneSelectionWarning3",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[and(equals(steps('network').createAvdVirtualNetwork, false), equals(steps('network').deployPrivateEndpointKeyvaultStorage, true), equals(steps('network').virtualNetworkPrivateDnsZone, false))]",
+                            "options": {
+                                "text": "When using an existing AVD vNet that has custom DNS servers configured, FSLogix/MSIX end to end setup will be successful only when the existing private DNS zones are linked to the vNet where the custom DNS servers are located, because DNS resolution requests will go to custom DNS servers and their vNet is the one that needs to resolve private endpoint DNS records.",
+                                "uri": "https://docs.microsoft.com/azure/private-link/disable-private-endpoint-network-policy",
+                                "style": "Warning"
+                            }
+                        },
+                        {
+                            "name": "privateDnsZoneSelectionWarning4",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[and(equals(steps('network').createAvdVirtualNetwork, false), equals(steps('network').deployPrivateEndpointKeyvaultStorage, true), equals(steps('network').virtualNetworkPrivateDnsZone, true))]",
+                            "options": {
+                                "text": "When using an existing AVD vNet and creating new private DNS zones, FSLogix/MSIX end to end setup will be successful only when the existing vNet doesn't have custom DNS servers configured, because new private DNS zones will be linked only to the existing AVD vNet so this will be the only network able to resolve private endpoint DNS record. <br/> ***Note: selected options (existing vNet and create DNS zones) are only recommended when using Azure AD (AAD) as identity service provider.",
+                                "uri": "https://docs.microsoft.com/azure/private-link/disable-private-endpoint-network-policy",
+                                "style": "Warning"
+                            }
+                        },
+                        {
+                            "name": "virtualNetworkPrivateDnsZoneInfo1",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[and(equals(steps('network').virtualNetworkPrivateDnsZone, true), equals(steps('network').createAvdVirtualNetwork, true))]",
+                            "options": {
+                                "text": "The following private DNS zones will be created and linked to the new AVD vNet: <br/> Azure Files: <br/> - Azure commercial: privatelink.file.core.windows.net <br/> - Azure government: privatelink.file.core.usgovcloudapi.net <br/> Key vault: <br/> - Azure commercial: privatelink.vaultcore.azure.net <br/> - Azure government: privatelink.vaultcore.usgovcloudapi.net",
+                                "style": "info"
+                            }
+                        },
+                        {
+                            "name": "virtualNetworkPrivateDnsZoneInfo2",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[and(equals(steps('network').virtualNetworkPrivateDnsZone, true), equals(steps('network').createAvdVirtualNetwork, false))]",
+                            "options": {
+                                "text": "The following private DNS zones will be created and linked to the existing AVD vNet: <br/> Azure Files: <br/> - Azure commercial: privatelink.file.core.windows.net <br/> - Azure government: privatelink.file.core.usgovcloudapi.net <br/> Key vault: <br/> - Azure commercial: privatelink.vaultcore.azure.net <br/> - Azure government: privatelink.vaultcore.usgovcloudapi.net",
+                                "style": "info"
                             }
                         },
                         {
@@ -1346,15 +1325,6 @@
                                     "options": {
                                         "text": "Key Vault private DNS zone naming: <br/> - Azure commercial: privatelink.vaultcore.azure.net <br/> - Azure government: privatelink.vaultcore.usgovcloudapi.net",
                                         "style": "info"
-                                    }
-                                },
-                                {
-                                    "name": "virtualNetworkPrivateDnsZoneSelectionWarning",
-                                    "type": "Microsoft.Common.InfoBox",
-                                    "options": {
-                                        "text": "When using customn DNS servers, use existing Azure private DNS zones that are linked to the custom DNS servers vNet.",
-                                        "uri": "https://docs.microsoft.com/azure/private-link/disable-private-endpoint-network-policy",
-                                        "style": "Warning"
                                     }
                                 }
                             ]
@@ -1435,24 +1405,11 @@
                                 },
                                 {
                                     "name": "hubVirtualNetworkGateway",
-                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "type": "Microsoft.Common.CheckBox",
                                     "visible": "[not(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'))]",
                                     "label": "Gateway on hub",
-                                    "defaultValue": "No",
-                                    "toolTip": "This information will be used to set remote gateway settings on vNet peering.",
-                                    "constraints": {
-                                        "required": true,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes",
-                                                "value": true
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
+                                    "defaultValue": false,
+                                    "toolTip": "This information will be used to set remote gateway settings on vNet peering."
                                 }
                             ]
                         }
@@ -1466,24 +1423,11 @@
                     "elements": [
                         {
                             "name": "deployMonitoring",
-                            "type": "Microsoft.Common.OptionsGroup",
+                            "type": "Microsoft.Common.CheckBox",
                             "visible": true,
                             "label": "Deploy monitoring",
-                            "defaultValue": "No",
-                            "toolTip": "Deploy monitoring settings and if selected deploy Azure log analytics workspace.",
-                            "constraints": {
-                                "required": true,
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes",
-                                        "value": true
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": false
-                                    }
-                                ]
-                            }
+                            "defaultValue": false,
+                            "toolTip": "Deploy monitoring settings and if selected deploy Azure log analytics workspace."
                         },
                         {
                             "name": "deployMonitoringInfo1",
@@ -1519,7 +1463,7 @@
                         {
                             "name": "deployMonitoringNewAlaWorkspaceRetention",
                             "type": "Microsoft.Common.TextBox",
-                            "visible": "[equals(steps('monitoring').deployMonitoringAlaWorkspace, true)]", 
+                            "visible": "[equals(steps('monitoring').deployMonitoringAlaWorkspace, true)]",
                             "label": "Retention policy (Days)",
                             "toolTip": "Number of days data will be retained in the workspace.",
                             "defaultValue": 90,
@@ -1532,7 +1476,7 @@
                         {
                             "name": "alaWorkspaceExistingWorkspacesSelection",
                             "type": "Microsoft.Solutions.ResourceSelector",
-                            "visible": "[equals(steps('monitoring').deployMonitoringAlaWorkspace, false)]", 
+                            "visible": "[equals(steps('monitoring').deployMonitoringAlaWorkspace, false)]",
                             "label": "Existing workspace",
                             "resourceType": "Microsoft.OperationalInsights/workspaces",
                             "constraints": {
@@ -1541,24 +1485,11 @@
                         },
                         {
                             "name": "deployMonitoringPolicies",
-                            "type": "Microsoft.Common.OptionsGroup",
+                            "type": "Microsoft.Common.CheckBox",
                             "visible": "[equals(steps('monitoring').deployMonitoring, true)]",
                             "label": "Deploy monitoring policies (subscription level)",
-                            "defaultValue": "No",
-                            "toolTip": "Deploy monitoring policy and policy set definitions to set diagnostic settings on new deployed resources.",
-                            "constraints": {
-                                "required": true,
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes",
-                                        "value": true
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": false
-                                    }
-                                ]
-                            }
+                            "defaultValue": false,
+                            "toolTip": "Deploy monitoring policy and policy set definitions to set diagnostic settings on new deployed resources."
                         },
                         {
                             "name": "deployMonitoringInfo2",
@@ -1590,24 +1521,11 @@
                         },
                         {
                             "name": "resourceNamingSelection",
-                            "type": "Microsoft.Common.OptionsGroup",
+                            "type": "Microsoft.Common.CheckBox",
                             "visible": true,
                             "label": "Custom resource naming",
-                            "defaultValue": "No",
-                            "toolTip": "When set 'Yes', the information provided will be used to name resources. When set to 'No' deployment will use the AVD accelerator naming standard.",
-                            "constraints": {
-                                "required": true,
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes",
-                                        "value": true
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": false
-                                    }
-                                ]
-                            }
+                            "defaultValue": false,
+                            "toolTip": "When set 'Yes', the information provided will be used to name resources. When set to 'No' deployment will use the AVD accelerator naming standard."
                         },
                         {
                             "name": "resourceNamingWarning",
@@ -1630,7 +1548,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Resource group",
                                     "toolTip": "AVD management plane resources (Workspace, Host pool, Application groups, Key vault) resource group custom name.",
-                                    "placeholder": "Example: rg-avd-use2-app1-service-objects",
+                                    "placeholder": "Example: rg-avd-app1-dev-use2-service-objects",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,90}$",
@@ -1642,7 +1560,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Workspace",
                                     "toolTip": "AVD workspace custom name.",
-                                    "placeholder": "Example: vdws-use2-app1-001",
+                                    "placeholder": "Example: vdws-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1654,7 +1572,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Workspace (Friendly name)",
                                     "toolTip": "AVD workspace custom friendly name.",
-                                    "placeholder": "Example: East US - 001",
+                                    "placeholder": "Example: App1 - Dev - East US 2 - 001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1666,7 +1584,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Host pool",
                                     "toolTip": "AVD host pool custom name.",
-                                    "placeholder": "Example: vdpool-use2-app1-001",
+                                    "placeholder": "Example: vdpool-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1678,7 +1596,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Host pool (Friendly name)",
                                     "toolTip": "AVD host pool custom friendly name.",
-                                    "placeholder": "Example: App1 - East US - 001",
+                                    "placeholder": "Example: App1 - Dev - East US 2 - 001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1690,7 +1608,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Scaling Plan",
                                     "toolTip": "AVD host pool scaling plan.",
-                                    "placeholder": "Example: vdscaling-use2-app1-001",
+                                    "placeholder": "Example: vdscaling-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1702,7 +1620,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Application group (Desktop)",
                                     "toolTip": "AVD desktop application group custom name.",
-                                    "placeholder": "Example: vdag-desktop-use2-app1-001",
+                                    "placeholder": "Example: vdag-desktop-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1714,7 +1632,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Application group (Desktop, Friendly name)",
                                     "toolTip": "AVD desktop application group custom name.",
-                                    "placeholder": "Example: Desktops - App1 - East US - 001",
+                                    "placeholder": "Example: Desktops - App1 - Dev - East US 2 - 001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1727,7 +1645,7 @@
                                     "label": "Application group (Remote App)",
                                     "visible": "[equals(steps('managementPlane').managementPlaneAppGroupOptions.deployRemoteAppGroup, true)]",
                                     "toolTip": "AVD remote application group custom name.",
-                                    "placeholder": "Example: vdag-rapp-use2-app1-001",
+                                    "placeholder": "Example: vdag-rapp-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1740,7 +1658,7 @@
                                     "label": "Application group (Remote App, Friendly name)",
                                     "visible": "[equals(steps('managementPlane').managementPlaneAppGroupOptions.deployRemoteAppGroup, true)]",
                                     "toolTip": "AVD remote application group custom name.",
-                                    "placeholder": "Example: Remote apps - App1 - East US - 001",
+                                    "placeholder": "Example: Remote apps - App1 - Dev - East US 2 - 001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1752,10 +1670,10 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Key vault prefix",
                                     "toolTip": "AVD keyvault prefix custom name.",
-                                    "placeholder": "Example: kv-avd",
+                                    "placeholder": "Example: kv",
                                     "constraints": {
                                         "required": true,
-                                        "regex": "^[a-z0-9A-Z-]{1,6}$",
+                                        "regex": "^[a-z0-9A-Z-]{1,5}$",
                                         "validationMessage": "Value must be 1-6 characters."
                                     }
                                 }
@@ -1772,7 +1690,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Resource group",
                                     "toolTip": "AVD compute resources (VMs, NICs, Disks, Availability sets) resource group custom name.",
-                                    "placeholder": "Example: rg-avd-use2-app1-pool-compute",
+                                    "placeholder": "Example: rg-avd-app1-dev-use2-pool-compute",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,90}$",
@@ -1784,7 +1702,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Applications security group",
                                     "toolTip": "AVD application security custom name.",
-                                    "placeholder": "Example: asg-avd-use2-app1-001",
+                                    "placeholder": "Example: asg-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,80}$",
@@ -1797,7 +1715,7 @@
                                     "label": "Session host prefix",
                                     "visible": "[equals(steps('sessionHosts').deploySessionHosts, true)]",
                                     "toolTip": "AVD session host prefix custom name.",
-                                    "placeholder": "Example: vm-avd-app1",
+                                    "placeholder": "Example: vmapp1deus2",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,11}$",
@@ -1810,7 +1728,7 @@
                                     "label": "Availability set prefix",
                                     "visible": "[equals(steps('sessionHosts').sessionHostsRegionSection.sessionHostsAvailabilitySettings, false)]",
                                     "toolTip": "AVD availability set custom name.",
-                                    "placeholder": "Example: avail-avd",
+                                    "placeholder": "Example: avail",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,9}$",
@@ -1858,7 +1776,7 @@
                                     "label": "Resource group",
                                     "visible": "[or(equals(steps('storage').storageFslogix.fslogixDeployment, true), equals(steps('storage').storageMsix.msixDeployment, true))]",
                                     "toolTip": "AVD storage resources (Storage account, file shares, files private endpoints, temporary domain join VM) resource group custom name.",
-                                    "placeholder": "Example: rg-avd-use2-app1-storage",
+                                    "placeholder": "Example: rg-avd-app1-dev-use2-storage",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,90}$",
@@ -1871,10 +1789,10 @@
                                     "label": "Storage account prefix",
                                     "visible": "[or(equals(steps('storage').storageFslogix.fslogixDeployment, true), equals(steps('storage').storageMsix.msixDeployment, true))]",
                                     "toolTip": "AVD storage account prefix custom name.",
-                                    "placeholder": "Example: stavd",
+                                    "placeholder": "Example: st",
                                     "constraints": {
                                         "required": true,
-                                        "regex": "^[a-z0-9A-Z-]{1,5}$",
+                                        "regex": "^[a-z0-9A-Z-]{1,2}$",
                                         "validationMessage": "Value must be 1-5 characters."
                                     }
                                 },
@@ -1884,7 +1802,7 @@
                                     "label": "FSLogix Profile container file share",
                                     "visible": "[equals(steps('storage').storageFslogix.fslogixDeployment, true)]",
                                     "toolTip": "AVD fslogix storage account profile container file share prefix custom name.",
-                                    "placeholder": "Example: fslogix-pc-app1-001",
+                                    "placeholder": "Example: fslogix-pc-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1897,7 +1815,7 @@
                                     "label": "MSIX App Attach container file share",
                                     "visible": "[equals(steps('storage').storageMsix.msixDeployment, true)]",
                                     "toolTip": "AVD MSIX App Attach storage account container file share prefix custom name.",
-                                    "placeholder": "Example: msix-pc-app1-001",
+                                    "placeholder": "Example: msix-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1927,7 +1845,7 @@
                                     "label": "Resource group",
                                     "visible": "[equals(steps('network').createAvdVirtualNetwork, true)]",
                                     "toolTip": "AVD network resources (vNet, NSG, Route table) resource group custom name.",
-                                    "placeholder": "Example: rg-avd-use2-app1-network",
+                                    "placeholder": "Example: rg-avd-app1-dev-use2-network",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,90}$",
@@ -1940,7 +1858,7 @@
                                     "label": "Virtual network",
                                     "visible": "[equals(steps('network').createAvdVirtualNetwork, true)]",
                                     "toolTip": "AVD virtual network custom name.",
-                                    "placeholder": "Example: vnet-avd-use2-app1-001",
+                                    "placeholder": "Example: vnet-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -1953,7 +1871,7 @@
                                     "label": "AVD Subnet",
                                     "visible": "[equals(steps('network').createAvdVirtualNetwork, true)]",
                                     "toolTip": "AVD virtual network subnet custom name.",
-                                    "placeholder": "Example: snet-avd-use2-app1-001",
+                                    "placeholder": "Example: snet-avd-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,80}$",
@@ -1966,7 +1884,7 @@
                                     "label": "AVD Network security group",
                                     "visible": "[equals(steps('network').createAvdVirtualNetwork, true)]",
                                     "toolTip": "AVD network security group custom name.",
-                                    "placeholder": "Example: nsg-avd-use2-app1-001",
+                                    "placeholder": "Example: nsg-avd-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,80}$",
@@ -1979,7 +1897,7 @@
                                     "label": "AVD Route table",
                                     "visible": "[equals(steps('network').createAvdVirtualNetwork, true)]",
                                     "toolTip": "AVD route table custom name.",
-                                    "placeholder": "Example: route-avd-use2-app1-001",
+                                    "placeholder": "Example: route-avd-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,80}$",
@@ -1992,7 +1910,7 @@
                                     "label": "Private endpoint subnet",
                                     "visible": "[equals(steps('network').createAvdVirtualNetwork, true)]",
                                     "toolTip": "AVD virtual network subnet custom name.",
-                                    "placeholder": "Example: snet-pe-use2-app1-001",
+                                    "placeholder": "Example: snet-pe-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,80}$",
@@ -2005,7 +1923,7 @@
                                     "label": "Private endpoint network security group",
                                     "visible": "[equals(steps('network').createAvdVirtualNetwork, true)]",
                                     "toolTip": "Private endpoint network security group custom name.",
-                                    "placeholder": "Example: nsg-pe-use2-app1-001",
+                                    "placeholder": "Example: nsg-pe-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,80}$",
@@ -2018,7 +1936,7 @@
                                     "label": "Private endpoint route table",
                                     "visible": "[equals(steps('network').createAvdVirtualNetwork, true)]",
                                     "toolTip": "Private endpoint route table custom name.",
-                                    "placeholder": "Example: route-pe-use2-app1-001",
+                                    "placeholder": "Example: route-pe-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,80}$",
@@ -2030,6 +1948,7 @@
                         {
                             "name": "resourceNamingMonitoring",
                             "type": "Microsoft.Common.Section",
+                            "visible": "[equals(steps('resourceNaming').resourceNamingSelection, true)]",
                             "label": "Monitoring naming:",
                             "elements": [
                                 {
@@ -2047,7 +1966,7 @@
                                     "label": "Resource group",
                                     "visible": "[and(equals(steps('resourceNaming').resourceNamingSelection, true), equals(steps('monitoring').deployMonitoring, true))]",
                                     "toolTip": "AVD monitoring resources (log analytics workspace) resource group custom name.",
-                                    "placeholder": "Example: rg-avd-use2-monitoring",
+                                    "placeholder": "Example: rg-avd-dev-use2-monitoring",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,90}$",
@@ -2060,10 +1979,66 @@
                                     "label": "Log analytics workspace name",
                                     "visible": "[and(equals(steps('resourceNaming').resourceNamingSelection, true), equals(steps('monitoring').deployMonitoring, true), equals(steps('monitoring').deployMonitoringAlaWorkspace, true))]",
                                     "toolTip": "AVD monitoring log analytics workspace custom name.",
-                                    "placeholder": "Example: log-avd-use2",
+                                    "placeholder": "Example: log-avd-dev-use2",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,90}$",
+                                        "validationMessage": "Value must be 1-90 characters."
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "resourceNamingZeroTrust",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Zero Trust naming:",
+                            "visible": "[steps('resourceNaming').resourceNamingSelection]",
+                            "elements": [
+                                {
+                                    "name": "resourceNamingZeroTrustInfo",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[not(steps('sessionHosts').sessionHostsSettingsSection.sessionHostDiskZeroTrust)]",
+                                    "options": {
+                                        "text": "Current deployment configuration is not creating zero trust resources.",
+                                        "style": "Info"
+                                    }
+                                },
+                                {
+                                    "name": "zeroTrustObjectsDiskEncryptionSetCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Disk encryption set",
+                                    "visible": "[and(steps('resourceNaming').resourceNamingSelection, steps('sessionHosts').sessionHostsSettingsSection.sessionHostDiskZeroTrust)]",
+                                    "toolTip": "Disk encryption set resource for double encryption of session host disks.",
+                                    "placeholder": "Example: des-zt",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^[a-z0-9A-Z-]{1,6}$",
+                                        "validationMessage": "Value must be 1-90 characters."
+                                    }
+                                },
+                                {
+                                    "name": "zeroTrustObjectsKeyVaultCustomPrefix",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Key vault prefix",
+                                    "visible": "[and(steps('resourceNaming').resourceNamingSelection, steps('sessionHosts').sessionHostsSettingsSection.sessionHostDiskZeroTrust)]",
+                                    "toolTip": "Key Vault that stores the encryption key for disk encryption.",
+                                    "placeholder": "Example: kv-zt",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^[a-z0-9A-Z-]{1,6}$",
+                                        "validationMessage": "Value must be 1-90 characters."
+                                    }
+                                },
+                                {
+                                    "name": "zeroTrustObjectsManagedIdentityCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "User assigned identity",
+                                    "visible": "[and(steps('resourceNaming').resourceNamingSelection, steps('sessionHosts').sessionHostsSettingsSection.sessionHostDiskZeroTrust)]",
+                                    "toolTip": "User assigned identity that enables server-side encryption and disables network access.",
+                                    "placeholder": "Example: id-zt",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^[a-z0-9A-Z-]{1,5}$",
                                         "validationMessage": "Value must be 1-90 characters."
                                     }
                                 }
@@ -2108,15 +2083,15 @@
                                 ]
                             }
                         },
-			    {
-    				"name": "resourceTaggingParentCostInfo",
-    				"type": "Microsoft.Common.InfoBox",
-    				"options": {
-        				"text": "By default, all resources will be tagged with parent resource cost management tag (cm-resource-parent). This will group all costs under the host pool resource.",
-        				"uri": "https://learn.microsoft.com/azure/virtual-desktop/tag-virtual-desktop-resources#use-the-cm-resource-parent-tag-to-automatically-group-costs-by-host-pool",
-        				"style": "Info"
-    				}
-			},
+                        {
+                            "name": "resourceTaggingParentCostInfo",
+                            "type": "Microsoft.Common.InfoBox",
+                            "options": {
+                                "text": "By default, the following tags will be created: <br/> - Parent resource cost management tag (cm-resource-parent): reports all resources cost to the host pool (ResourceID). <br/> - Environment (Environment): environment selected during deployment (Dev/Test/prod). <br/> - Service Workload (ServiceWorkload): defaults to AVD. <br/> - Creation time (CreationTimeUTC): deployment time in UTC. <br/> - Domain Name (DomainName): identity service domain name (applied only to compute and storage). <br/> - Identity service provider (IdentityServiceProvider): identity provider selected (ADDS/AADDS/AAD).",
+                                "uri": "https://learn.microsoft.com/azure/virtual-desktop/tag-virtual-desktop-resources#use-the-cm-resource-parent-tag-to-automatically-group-costs-by-host-pool",
+                                "style": "Info"
+                            }
+                        },
                         {
                             "name": "resourceTags",
                             "type": "Microsoft.Common.Section",
@@ -2324,34 +2299,6 @@
                                         "regex": "^[a-z0-9A-Z-]{1,256}$",
                                         "validationMessage": "Value must be 1-256 characters."
                                     }
-                                },
-                                {
-                                    "name": "tagsEnvironmentTypeTag",
-                                    "type": "Microsoft.Common.DropDown",
-                                    "label": "Environment type:",
-                                    "filter": true,
-                                    "defaultValue": "Dev",
-                                    "toolTip": "This input will be the value of a tag named Environment, reference to the environment type of the workload.",
-                                    "constraints": {
-                                        "required": true,
-                                        "allowedValues": [
-                                            {
-                                                "label": "Dev",
-                                                "description": "",
-                                                "value": "Dev"
-                                            },
-                                            {
-                                                "label": "Staging",
-                                                "description": "",
-                                                "value": "Staging"
-                                            },
-                                            {
-                                                "label": "Prod",
-                                                "description": "",
-                                                "value": "Prod"
-                                            }
-                                        ]
-                                    }
                                 }
                             ]
                         }
@@ -2361,9 +2308,11 @@
         },
         "outputs": {
             "parameters": {
-                "deploymentPrefix": "[steps('basics').deploymentPrefix]",
+                "deploymentPrefix": "[steps('basics').deploymentSpecs.deploymentPrefix]",
+                "deploymentEnvironment": "[steps('basics').deploymentSpecs.deploymentEnvironment]",
+                "diskZeroTrust": "[steps('sessionHosts').sessionHostsSettingsSection.sessionHostDiskZeroTrust]",
                 "avdManagementPlaneLocation": "[steps('basics').resourceScope.location.name]",
-                "avdSessionHostLocation": "[steps('sessionHosts').sessionHostsRegionSection.sessionHostsRegion]",
+                "avdSessionHostLocation": "[if(equals(steps('sessionHosts').deploySessionHosts, true), steps('sessionHosts').sessionHostsRegionSection.sessionHostsRegion, steps('basics').resourceScope.location.name)]",
                 "avdWorkloadSubsId": "[steps('basics').resourceScope.subscription.subscriptionId]",
                 "avdHostPoolType": "[steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType]",
                 "avdHostPoolLoadBalancerType": "[steps('managementPlane').managementPlaneHostPoolSettings.loadBalancerType]",
@@ -2373,9 +2322,9 @@
                 "avdIdentityServiceProvider": "[steps('identity').identityDomainInformation.identityServiceProvider]",
                 "createIntuneEnrollment": "[if(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'), steps('identity').identityDomainInformation.identityServiceProviderIntuneEnrollment, false)]",
                 "avdIdentityDomainName": "[steps('identity').identityDomainInformation.identityDomainName]",
-                "avdOuPath": "[if(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'), 'none', steps('sessionHosts').sessionHostsComputeStorageSection.identityDomainOuPath)]",
-                "avdDomainJoinUserName": "[if(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'), 'none', steps('identity').identityDomainCredentials.identityDomainJoinUserName)]",
-                "avdDomainJoinUserPassword": "[if(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'), 'none', steps('identity').identityDomainCredentials.identityDomainJoinUserPassword)]",
+                "avdOuPath": "[if(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'), 'no', steps('sessionHosts').sessionHostsComputeStorageSection.identityDomainOuPath)]",
+                "avdDomainJoinUserName": "[if(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'), 'no', steps('identity').identityDomainCredentials.identityDomainJoinUserName)]",
+                "avdDomainJoinUserPassword": "[if(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'), 'no', steps('identity').identityDomainCredentials.identityDomainJoinUserPassword)]",
                 "avdVmLocalUserName": "[steps('identity').identityLocalCredentials.identityLocalUserName]",
                 "avdVmLocalUserPassword": "[steps('identity').identityLocalCredentials.identityLocalUserPassword.password]",
                 "createAvdVnet": "[steps('network').createAvdVirtualNetwork]",
@@ -2385,12 +2334,12 @@
                 "customDnsIps": "[if(equals(steps('network').createAvdVirtualNetwork, true), steps('network').virtualNetworkDns, '')]",
                 "existingHubVnetResourceId": "[if(equals(steps('network').createAvdVirtualNetwork, true), steps('network').hubVirtualNetworkPeering.existingHubVirtualNetwork, '')]",
                 "vNetworkGatewayOnHub": "[if(equals(steps('network').createAvdVirtualNetwork, true), steps('network').hubVirtualNetworkPeering.hubVirtualNetworkGateway, false)]",
-                "existingVnetAvdSubnetResourceId": "[if(equals(steps('network').createAvdVirtualNetwork, false), steps('network').virtualNetworkAvdSubnetSelectorName, 'none')]",
-                "existingVnetPrivateEndpointSubnetResourceId": "[if(equals(steps('network').createAvdVirtualNetwork, false), steps('network').virtualNetworkPrivateEndpointSubnetSelectorName, 'none')]",
+                "existingVnetAvdSubnetResourceId": "[if(equals(steps('network').createAvdVirtualNetwork, false), steps('network').virtualNetworkAvdSubnetSelectorName, 'no')]",
+                "existingVnetPrivateEndpointSubnetResourceId": "[if(equals(steps('network').createAvdVirtualNetwork, false), steps('network').virtualNetworkPrivateEndpointSubnetSelectorName, 'no')]",
                 "avdDeploySessionHosts": "[steps('sessionHosts').deploySessionHosts]",
                 "avdStartVmOnConnect": "[if(equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Personal'), steps('managementPlane').managementPlaneHostPoolScaling.startVmOnConnect, false)]",
                 "avdDeployScalingPlan": "[if(equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled'), steps('managementPlane').managementPlaneHostPoolScaling.scalingPlan, false)]",
-                "avdEnterpriseAppObjectId":   "[first(map(steps('managementPlane').managementPlaneHostPoolScaling.avdEnterpriseApplication.value, (item) => item.id))]",
+                "avdEnterpriseAppObjectId": "[first(map(steps('managementPlane').managementPlaneHostPoolScaling.avdEnterpriseApplication.value, (item) => item.id))]",
                 "avdUseAvailabilityZones": "[steps('sessionHosts').sessionHostsRegionSection.sessionHostsAvailabilitySettings]",
                 "avdDeploySessionHostsCount": "[if(equals(steps('sessionHosts').deploySessionHosts, true), steps('sessionHosts').sessionHostsSettingsSection.sessionHostsCount, 1)]",
                 "useSharedImage": "[if(equals(steps('sessionHosts').deploySessionHosts, true), steps('sessionHosts').sessionHostsOsSection.sessionHostsImageSource, false)]",
@@ -2398,9 +2347,9 @@
                 "securityType": "[steps('sessionHosts').sessionHostsSecuritySection.securityType]",
                 "secureBootEnabled": "[steps('sessionHosts').sessionHostsSecuritySection.secureBootEnabled]",
                 "vTpmEnabled": "[steps('sessionHosts').sessionHostsSecuritySection.vTpmEnabled]",
-                "avdImageTemplateDefinitionId": "[if(equals(steps('sessionHosts').sessionHostsOsSection.sessionHostsImageSource, true), steps('sessionHosts').sessionHostsOsSection.sessionHostsComputeGalleryImage.id, 'none')]",
+                "avdImageTemplateDefinitionId": "[if(equals(steps('sessionHosts').sessionHostsOsSection.sessionHostsImageSource, true), steps('sessionHosts').sessionHostsOsSection.sessionHostsComputeGalleryImage.id, 'no')]",
                 "avdSessionHostDiskType": "[steps('sessionHosts').sessionHostsSettingsSection.sessionHostDiskType]",
-				"enableAcceleratedNetworking": "[steps('sessionHosts').sessionHostsSettingsSection.acceleratedNetworking]",
+                "enableAcceleratedNetworking": "[steps('sessionHosts').sessionHostsSettingsSection.acceleratedNetworking]",
                 "avdSessionHostsSize": "[if(equals(steps('sessionHosts').deploySessionHosts, true), steps('sessionHosts').sessionHostsSettingsSection.sessionHostSize, 'Standard_D4ads_v5')]",
                 "deployPrivateEndpointKeyvaultStorage": "[steps('network').deployPrivateEndpointKeyvaultStorage]",
                 "createPrivateDnsZones": "[if(equals(steps('network').deployPrivateEndpointKeyvaultStorage, true), steps('network').virtualNetworkPrivateDnsZone, false)]",
@@ -2414,55 +2363,57 @@
                 "msixFileShareQuotaSize": "[if(equals(steps('storage').storageMsix.msixDeployment, true), steps('storage').storageMsix.sessionHostsMsixFileShareQuota, 1 )]",
                 "storageOuPath": "[steps('storage').storageGeneralSettings.identityDomainOuPathStorageExisting]",
                 "avdUseCustomNaming": "[steps('resourceNaming').resourceNamingSelection]",
-                "avdServiceObjectsRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.serviceObjectsRgCustomName, 'none')]",
-                "avdNetworkObjectsRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.networkObjectsRgCustomName, 'none')]",
-                "avdComputeObjectsRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.computeObjectsRgCustomName, 'none')]",
-                "avdStorageObjectsRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.storageObjectsRgCustomName, 'none')]",
-                "avdVnetworkCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.virtualNetworkCustomName, 'none')]",
-                "avdVnetworkSubnetCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.virtualNetworkAvdSubnetCustomName, 'none')]",
-                "avdNetworksecurityGroupCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.avdNetworkSecurityGroupCustomName, 'none')]",
-                "avdRouteTableCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.avdRouteTableCustomName, 'none')]",
-                "privateEndpointVnetworkSubnetCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.virtualNetworkPrivateEndpointSubnetCustomName, 'none')]",
-                "privateEndpointNetworksecurityGroupCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.privateEndpointNetworkSecurityGroupCustomName, 'none')]",
-                "privateEndpointRouteTableCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.privateEndpointRouteTableCustomName, 'none')]",
-                "avdApplicationSecurityGroupCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.applicationSecurityGroupCustomName, 'none')]",
-                "avdWorkSpaceCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.workSpaceCustomName, 'none')]",
-                "avdWorkSpaceCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.workSpaceCustomFriendlyName, 'none')]",
-                "avdHostPoolCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.hostPoolCustomName, 'none')]",
-                "avdHostPoolCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.hostPoolCustomFriendlyName, 'none')]",
-                "avdScalingPlanCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.scalingPlanCustomName, 'none')]",
-                "avdApplicationGroupCustomNameDesktop": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomNameDesktop, 'none')]",
-                "avdApplicationGroupCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomFriendlyNameDesktop, 'none')]",
-                "avdApplicationGroupCustomNameRapp": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomNameRemoteApp, 'none')]",
-                "avdApplicationGroupCustomFriendlyNameRapp": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomFriendlyNameRemoteApp, 'none')]",
-                "avdSessionHostCustomNamePrefix": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.sessionHostCustomNamePrefix, 'none')]",
-                "avdAvailabilitySetCustomNamePrefix": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.availabilitySetCustomNamePrefix, 'none')]",
-                "storageAccountPrefixCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.storageAccountPrefixCustomName, 'none')]",
-                "fslogixFileShareCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.fslogixFileShareCustomName, 'none')]",
-                "msixFileShareCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.msixFileShareCustomName, 'none')]",
-                "avdWrklKvPrefixCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.workloadKvCustomName, 'none')]",
+                "avdServiceObjectsRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.serviceObjectsRgCustomName, 'no')]",
+                "avdNetworkObjectsRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.networkObjectsRgCustomName, 'no')]",
+                "avdComputeObjectsRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.computeObjectsRgCustomName, 'no')]",
+                "avdStorageObjectsRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.storageObjectsRgCustomName, 'no')]",
+                "avdVnetworkCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.virtualNetworkCustomName, 'no')]",
+                "avdVnetworkSubnetCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.virtualNetworkAvdSubnetCustomName, 'no')]",
+                "avdNetworksecurityGroupCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.avdNetworkSecurityGroupCustomName, 'no')]",
+                "avdRouteTableCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.avdRouteTableCustomName, 'no')]",
+                "privateEndpointVnetworkSubnetCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.virtualNetworkPrivateEndpointSubnetCustomName, 'no')]",
+                "privateEndpointNetworksecurityGroupCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.privateEndpointNetworkSecurityGroupCustomName, 'no')]",
+                "privateEndpointRouteTableCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingNetwork.privateEndpointRouteTableCustomName, 'no')]",
+                "avdApplicationSecurityGroupCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.applicationSecurityGroupCustomName, 'no')]",
+                "avdWorkSpaceCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.workSpaceCustomName, 'no')]",
+                "avdWorkSpaceCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.workSpaceCustomFriendlyName, 'no')]",
+                "avdHostPoolCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.hostPoolCustomName, 'no')]",
+                "avdHostPoolCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.hostPoolCustomFriendlyName, 'no')]",
+                "avdScalingPlanCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.scalingPlanCustomName, 'no')]",
+                "avdApplicationGroupCustomNameDesktop": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomNameDesktop, 'no')]",
+                "avdApplicationGroupCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomFriendlyNameDesktop, 'no')]",
+                "avdApplicationGroupCustomNameRapp": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomNameRemoteApp, 'no')]",
+                "avdApplicationGroupCustomFriendlyNameRapp": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomFriendlyNameRemoteApp, 'no')]",
+                "avdSessionHostCustomNamePrefix": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.sessionHostCustomNamePrefix, 'no')]",
+                "avdAvailabilitySetCustomNamePrefix": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.availabilitySetCustomNamePrefix, 'no')]",
+                "storageAccountPrefixCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.storageAccountPrefixCustomName, 'no')]",
+                "fslogixFileShareCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.fslogixFileShareCustomName, 'no')]",
+                "msixFileShareCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.msixFileShareCustomName, 'no')]",
+                "avdWrklKvPrefixCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.workloadKvCustomName, 'no')]",
                 "createResourceTags": "[steps('resourceTagging').resourceTaggingSelection]",
-                "workloadNameTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsWorkloadName, 'none')]",
+                "workloadNameTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsWorkloadName, 'no')]",
                 "workloadTypeTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsWorkloadType, 'Light')]",
                 "dataClassificationTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsDataClassificationTag, 'Non-business')]",
-                "departmentTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsDepartmentTag, 'none')]",
+                "departmentTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsDepartmentTag, 'no')]",
                 "workloadCriticalityTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsCriticalityTag, 'Low')]",
                 "workloadCriticalityCustomValueTag": "[if(equals(steps('resourceTagging').resourceTags.tagsCriticalityTag, 'Custom'), steps('resourceTagging').resourceTags.tagsCustomWorkloadCriticality, 'Low')]",
-                "applicationNameTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsApplicationNameTag, 'none')]",
-                "workloadSlaTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsWorkloadSlaTag, 'none')]",
-                "opsTeamTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsOpsTeamTag, 'none')]",
-                "ownerTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsOwnerTag, 'none')]",
-                "costCenterTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsCostCenterTag, 'none')]",
-                "environmentTypeTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsEnvironmentTypeTag, 'Dev')]",
+                "applicationNameTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsApplicationNameTag, 'no')]",
+                "workloadSlaTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsWorkloadSlaTag, 'no')]",
+                "opsTeamTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsOpsTeamTag, 'no')]",
+                "ownerTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsOwnerTag, 'no')]",
+                "costCenterTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsCostCenterTag, 'no')]",
                 "avdApplicationGroupIdentityType": "[steps('identity').identityAvdUserAccess.identityAccessTypes]",
                 "avdApplicationGroupIdentitiesIds": "[steps('identity').identityAvdUserAccess.identityAccessIds]",
                 "avdDeployMonitoring": "[steps('monitoring').deployMonitoring]",
                 "deployAlaWorkspace": "[if(equals(steps('monitoring').deployMonitoring, true), steps('monitoring').deployMonitoringAlaWorkspace, false)]",
                 "avdAlaWorkspaceDataRetention": "[if(equals(steps('monitoring').deployMonitoringAlaWorkspace, true), steps('monitoring').deployMonitoringNewAlaWorkspaceRetention, 0)]",
-                "alaExistingWorkspaceResourceId": "[if(equals(steps('monitoring').deployMonitoringAlaWorkspace, false), steps('monitoring').alaWorkspaceExistingWorkspacesSelection.id, 'none')]",
+                "alaExistingWorkspaceResourceId": "[if(equals(steps('monitoring').deployMonitoringAlaWorkspace, false), steps('monitoring').alaWorkspaceExistingWorkspacesSelection.id, 'no')]",
                 "deployCustomPolicyMonitoring": "[if(equals(steps('monitoring').deployMonitoring, true), steps('monitoring').deployMonitoringPolicies, false)]",
-                "avdMonitoringRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingMonitoring.monitoringObjectsRgCustomName, 'none')]",
-                "avdAlaWorkspaceCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingMonitoring.monitoringLogAnalyticsWorkspaceName, 'none')]"
+                "avdMonitoringRgCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingMonitoring.monitoringObjectsRgCustomName, 'no')]",
+                "avdAlaWorkspaceCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingMonitoring.monitoringLogAnalyticsWorkspaceName, 'no')]",
+                "ztDiskEncryptionSetCustomNamePrefix": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsDiskEncryptionSetCustomName]",
+                "ztKvPrefixCustomName ": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsKeyVaultCustomPrefix]",
+                "ztManagedIdentityCustomName": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsManagedIdentityCustomName]"
             },
             "kind": "Subscription",
             "location": "[steps('basics').resourceScope.location.name]",
