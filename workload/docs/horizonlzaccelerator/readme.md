@@ -57,7 +57,7 @@ Consider the Horizon solution if:
 
 
 **Horizon Cloud on AVD - Network Reference Architecture**
-[![Diagram of the Horizon Cloud on Azure hybrid connectivity scenario](../diagrams/horizon-cloud-azure-virtual-desktop-architecture-1a.png)](./diagrams/horizon-cloud-azure-virtual-desktop-architecture-1.png#lightbox)
+[![Diagram of the Horizon Cloud on Azure hybrid connectivity scenario](../diagrams/horizon-cloud-azure-virtual-desktop-architecture-1a.png)](./diagrams/horizon-cloud-azure-virtual-desktop-architecture-1a.png#lightbox)
 
 
 Details on network topology and connectivity for each platform are discussed below. 
@@ -100,8 +100,8 @@ Horizon offers flexible deployment options across private and public clouds, fro
 
 
 
-**Horizon Cloud on AVD - Multi Cloud Deployment Reference Architecture**
-[![Diagram of the Horizon Cloud on Azure multi-cloud deployment scenario](../diagrams/horizon-cloud-azure-virtual-desktop-architecture-3.png)](./diagrams/horizon-cloud-azure-virtual-desktop-architecture-3a.png#lightbox)
+**Horizon Cloud on Azure Reference Architecture**
+[![Diagram of the Horizon Cloud on Azure deployment scenario](../diagrams/horizon-cloud-azure-virtual-desktop-architecture-3a.png)](./diagrams/horizon-cloud-azure-virtual-desktop-architecture-3a.png#lightbox)
 
 
 
