@@ -188,7 +188,6 @@ Try {
 	$Commands3 = "icacls $FileShareLocation /grant:r 'CREATOR OWNER:(OI)(CI)(IO)(M)'"
 	$Commands4 = "icacls $FileShareLocation /grant:r '$NetBIOSName\Domain Admins:(OI)(CI)(F)'"
 	$Commands5 = "icacls $FileShareLocation /grant:r '$NetBIOSName\Domain Users:(M)'"
-	$
     Invoke-Expression -Command $Commands1
 	Invoke-Expression -Command $Commands2
 	Invoke-Expression -Command $Commands3
