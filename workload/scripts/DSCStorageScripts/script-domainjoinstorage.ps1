@@ -182,8 +182,18 @@ Catch {
 
 Try {
     Write-Log "setting up NTFS permission for FSLogix"
-    $Commands = "icacls ${DriveLetter}: /remove ('BUILTIN\Administrators')"
-    Invoke-Expression -Command $Commands
+	$NetBIOSName = (Get-ADDomain).NetBIOSName
+    $Commands1 = "icacls ${DriveLetter}: /remove ('BUILTIN\Administrators')"
+	$Commands2 = "icacls $FileShareLocation /inheritance:r"
+	$Commands3 = "icacls $FileShareLocation /grant:r 'CREATOR OWNER:(OI)(CI)(IO)(M)'"
+	$Commands4 = "icacls $FileShareLocation /grant:r '$NetBIOSName\Domain Admins:(OI)(CI)(F)'"
+	$Commands5 = "icacls $FileShareLocation /grant:r '$NetBIOSName\Domain Users:(M)'"
+	$
+    Invoke-Expression -Command $Commands1
+	Invoke-Expression -Command $Commands2
+	Invoke-Expression -Command $Commands3
+	Invoke-Expression -Command $Commands4
+	Invoke-Expression -Command $Commands5
     Write-Log "ACLs set"
 }
 Catch {
