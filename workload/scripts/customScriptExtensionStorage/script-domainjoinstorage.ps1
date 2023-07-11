@@ -165,10 +165,10 @@ Try {
         $UserStorage = "/user:Azure\$StorageAccountName"
 		Write-Log "User storage: $UserStorage"
         $StorageKey = (Get-AzStorageAccountKey -ResourceGroupName $StorageAccountRG -AccountName $StorageAccountName) | Where-Object {$_.KeyName -eq "key1"}
-		Write-Log "Storage key: $StorageKey"
+		#Write-Log "Storage key: $StorageKey"
 		Write-Log "File Share location: $FileShareLocation"
 		net use ${DriveLetter}: $FileShareLocation $UserStorage $StorageKey.Value
-		#New-PSDrive -Name $DriveLetter -PSProvider FileSystem -Root $FileShareLocation -Persist
+		#New-PSDrive -Name $DriveLetter -PSProvider 'FileSystem' -Root $FileShareLocation -Credential $StorageKey.Value
 	}
     else {
         Write-Log "Drive $DriveLetter already mounted."
@@ -194,9 +194,35 @@ Try {
 	Invoke-Expression -Command $Commands4
 	Invoke-Expression -Command $Commands5
     Write-Log "ACLs set"
+
+	# Set recommended NTFS permissions on the file share
+	$ACL = Get-Acl -Path $DriveLetter
+	$CreatorOwner = New-Object System.Security.Principal.Ntaccount ("Creator Owner")
+	$ACL.PurgeAccessRules($CreatorOwner)
+	$AuthenticatedUsers = New-Object System.Security.Principal.Ntaccount ("Authenticated Users")
+	$ACL.PurgeAccessRules($AuthenticatedUsers)
+	$Users = New-Object System.Security.Principal.Ntaccount ("Users")
+	$ACL.PurgeAccessRules($Users)
+	$DomainUsers = New-Object System.Security.AccessControl.FileSystemAccessRule("$Group","Modify","None","None","Allow")
+	$ACL.SetAccessRule($DomainUsers)
+	$CreatorOwner = New-Object System.Security.AccessControl.FileSystemAccessRule("Creator Owner","Modify","ContainerInherit,ObjectInherit","InheritOnly","Allow")
+	$ACL.AddAccessRule($CreatorOwner)
+	$ACL | Set-Acl -Path $DriveLetter
+	Write-Log -Message "Setting the NTFS permissions on the Azure file share succeeded" -Type 'INFO'
+
+
+
+
+
+	# Unmount file share
+	Remove-PSDrive -Name $DriveLetter -PSProvider 'FileSystem' -Force
+	Start-Sleep -Seconds 5
+	Write-Log -Message "Unmounting the Azure file share, $FileShareLocation, succeeded" -Type 'INFO'
 }
 Catch {
     Write-Log -Err "Error while setting up NTFS permission for FSLogix"
     Write-Log -Err $_.Exception.Message
     Throw $_
 }
+
+
