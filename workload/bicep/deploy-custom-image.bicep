@@ -9,7 +9,7 @@ targetScope = 'subscription'
 
 // Placeholder for future release
 // @maxLength(60)
-// @sys.description('Custom name for container storing AIB artifacts. (Default: avd-artifacts)')
+// @sys.description('Custom name for container storing AIB artifacts.')
 // param aibContainerCustomName string = 'aib-artifacts'
 
 @sys.description('Custom name for Action Group.')
@@ -26,20 +26,20 @@ param automationAccountCustomName string = 'aa-avd'
 
 // Placeholder for future release
 // @maxLength(60)
-// @sys.description('Custom name for container storing AVD artifacts. (Default: avd-artifacts)')
+// @sys.description('Custom name for container storing AVD artifacts.')
 // param avdContainerCustomName string = 'avd-artifacts'
 
 @allowed([
     'OneTime'
     'Recurring'
 ])
-@sys.description('Determine whether to build the image template one time or check daily for a new marketplace image and auto build when found. (Default: Recurring)')
+@sys.description('Determine whether to build the image template one time or check daily for a new marketplace image and auto build when found.')
 param buildSchedule string = 'Recurring'
 
-@sys.description('Cost center of owner team. (Default: Contoso-CC)')
+@sys.description('Cost center of owner team.')
 param costCenterTag string = 'Contoso-CC'
 
-@sys.description('Tag value for custom criticality value. (Default: Contoso-Critical)')
+@sys.description('Tag value for custom criticality value.')
 param criticalityCustomTag string = 'Contoso-Critical'
 
 @allowed([
@@ -49,10 +49,10 @@ param criticalityCustomTag string = 'Contoso-Critical'
     'Mission-critical'
     'Custom'
 ])
-@sys.description('criticality of each workload. (Default: Low)')
+@sys.description('criticality of each workload.')
 param criticalityTag string = 'Low'
 
-@sys.description('Determine whether to enable custom naming for the Azure resources. (Default: false)')
+@sys.description('Determine whether to enable custom naming for the Azure resources.')
 param customNaming bool = false
 
 @allowed([
@@ -62,10 +62,10 @@ param customNaming bool = false
     'Confidential'
     'Highly Confidential'
 ])
-@sys.description('Sensitivity of data hosted (Default: Non-business)')
+@sys.description('Sensitivity of data hosted.')
 param dataClassificationTag string = 'Non-business'
 
-@sys.description('Department that owns the deployment, (Dafult: Contoso-AVD)')
+@sys.description('Department that owns the deployment.')
 param departmentTag string = 'Contoso-AVD'
 
 @allowed([
@@ -104,13 +104,13 @@ param departmentTag string = 'Contoso-AVD'
     'westus2'
     'westus3'
 ])
-@sys.description('Location to deploy the resources in this solution, except the image template. (Default: eastus)')
+@sys.description('Location to deploy the resources in this solution, except the image template.')
 param deploymentLocation string = 'eastus'
 
-@sys.description('Set to deploy monitoring and alerts for the build automation (Default: false).')
+@sys.description('Set to deploy monitoring and alerts for the build automation.')
 param enableMonitoringAlerts bool = false
 
-@sys.description('Apply tags on resources and resource groups. (Default: false)')
+@sys.description('Apply tags on resources and resource groups.')
 param enableResourceTags bool = false
 
 @sys.description('Enable usage and telemetry feedback to Microsoft.')
@@ -121,23 +121,23 @@ param enableTelemetry bool = true
     'Dev'
     'Staging'
 ])
-@sys.description('Deployment environment of the application, workload. (Default: Dev)')
+@sys.description('Deployment environment of the application, workload.')
 param environmentTag string = 'Dev'
 
-@sys.description('Existing Azure log analytics workspace resource ID to capture build logs. (Default: )')
+@sys.description('Existing Azure log analytics workspace resource ID to capture build logs.')
 param existingLogAnalyticsWorkspaceResourceId string = ''
 
-@sys.description('Input the name of the subnet for the existing virtual network that the network interfaces on the build virtual machines will join. (Default: "")')
+@sys.description('Input the name of the subnet for the existing virtual network that the network interfaces on the build virtual machines will join.')
 param existingSubnetName string = ''
 
-@sys.description('Input the resource ID for the existing virtual network that the network interfaces on the build virtual machines will join. (Default: "")')
+@sys.description('Input the resource ID for the existing virtual network that the network interfaces on the build virtual machines will join.')
 param existingVirtualNetworkResourceId string = ''
 
-@sys.description('The name of workload for tagging purposes. (Default: AVD-Image)')
+@sys.description('The name of workload for tagging purposes.')
 param imageBuildNameTag string = 'AVD-Image'
 
 @maxLength(64)
-@sys.description('Custom name for Image Definition. (Default: avd-win11-21h2)')
+@sys.description('Custom name for Image Definition.')
 param imageDefinitionCustomName string = 'avd-win11-21h2'
 
 @sys.description('''The image supports accelerated networking.
@@ -164,21 +164,21 @@ param imageDefinitionHibernateSupported string = 'false'
     'ConfidentialVM'
     'ConfidentialVMSupported'
 ])
-@sys.description('Choose the Security Type of the Image Definition. (Default: Standard)')
+@sys.description('Choose the Security Type of the Image Definition.')
 param imageDefinitionSecurityType string = 'Standard'
 
 @maxLength(64)
-@sys.description('Custom name for Image Gallery. (Default: gal_avd_use2_001)')
+@sys.description('Custom name for Image Gallery.')
 param imageGalleryCustomName string = 'gal_avd_use2_001'
 
 @maxLength(260)
-@sys.description('Custom name for Image Template. (Default: it-avd-win11-21h2)')
+@sys.description('Custom name for Image Template.')
 param imageTemplateCustomName string = 'it-avd-win11-22h2'
 
-@sys.description('Disaster recovery replication location for Image Version. (Default:"")')
+@sys.description('Disaster recovery replication location for Image Version.')
 param imageVersionDisasterRecoveryLocation string = ''
 
-@sys.description('Primary replication location for Image Version. (Default:)')
+@sys.description('Primary replication location for Image Version.')
 param imageVersionPrimaryLocation string
 
 @allowed([
@@ -186,7 +186,7 @@ param imageVersionPrimaryLocation string
     'Standard_LRS'
     'Standard_ZRS'
 ])
-@sys.description('Determine the Storage Account Type for the Image Version distributed by the Image Template. (Default: Standard_LRS)')
+@sys.description('Determine the Storage Account Type for the Image Version distributed by the Image Template.')
 param imageVersionStorageAccountType string = 'Standard_LRS'
 
 @sys.description('Custom name for the Log Analytics Workspace.')
@@ -194,7 +194,7 @@ param logAnalyticsWorkspaceCustomName string = 'log-avd'
 
 @maxValue(720)
 @minValue(30)
-@sys.description('Set the data retention in the number of days for the Log Analytics Workspace. (Default: 30)')
+@sys.description('Set the data retention in the number of days for the Log Analytics Workspace.')
 param logAnalyticsWorkspaceDataRetention int = 30
 
 @allowed([
@@ -207,23 +207,23 @@ param logAnalyticsWorkspaceDataRetention int = 30
     'win11_22h2'
     'win11_22h2_office'
 ])
-@sys.description('AVD OS image source. (Default: win11-22h2)')
+@sys.description('AVD OS image source.')
 param operatingSystemImage string = 'win11_22h2'
 
-@sys.description('Team accountable for day-to-day operations. (Contoso-Ops)')
+@sys.description('Team accountable for day-to-day operations.')
 param operationsTeamTag string = 'workload-admins@Contoso.com'
 
-@sys.description('Organizational owner of the AVD deployment. (Default: Contoso-Owner)')
+@sys.description('Organizational owner of the AVD deployment.')
 param ownerTag string = 'workload-owner@Contoso.com'
 
-@sys.description('Determine whether to enable RDP Short Path for Managed Networks. (Default: false)')
+@sys.description('Determine whether to enable RDP Short Path for Managed Networks.')
 param rdpShortPathManagedNetworks bool = false
 
 @maxLength(90)
-@sys.description('Custom name for Resource Group. (Default: rg-avd-use2-shared-services)')
+@sys.description('Custom name for Resource Group.')
 param resourceGroupCustomName string = 'rg-avd-use2-shared-services'
 
-@sys.description('Determine whether to enable Screen Capture Protection. (Default: false)')
+@sys.description('Determine whether to enable Screen Capture Protection.')
 param screenCaptureProtection bool = false
 
 @sys.description('AVD shared services subscription ID, multiple subscriptions scenario.')
@@ -231,7 +231,7 @@ param sharedServicesSubId string
 
 // Placeholder for future release
 // @maxLength(24)
-// @sys.description('Custom name for Storage Account. (Default: stavdshar)')
+// @sys.description('Custom name for Storage Account.')
 // param storageAccountCustomName string = ''
 
 // Placeholder for future release
@@ -239,20 +239,20 @@ param sharedServicesSubId string
 //     'Standard_LRS'
 //     'Standard_ZRS'
 // ])
-// @sys.description('Determine the Storage Account SKU for local or zonal redundancy. (Default: Standard_LRS)')
+// @sys.description('Determine the Storage Account SKU for local or zonal redundancy.')
 // param storageAccountSku string = 'Standard_LRS'
 
 @sys.description('Do not modify, used to set unique value for resource deployment.')
 param time string = utcNow()
 
-@sys.description('Set to deploy Azure Image Builder to existing virtual network. (Default: false)')
+@sys.description('Set to deploy Azure Image Builder to existing virtual network.')
 param useExistingVirtualNetwork bool = false
 
 @maxLength(128)
-@sys.description('Custom name for User Assigned Identity. (Default: id-avd)')
+@sys.description('Custom name for User Assigned Identity.')
 param userAssignedManagedIdentityCustomName string = ''
 
-@sys.description('Reference to the size of the VM for your workloads (Default: Contoso-Workload)')
+@sys.description('Reference to the size of the VM for your workloads.')
 param workloadNameTag string = 'Contoso-Workload'
 
 // =========== //

@@ -9,7 +9,7 @@ targetScope = 'subscription'
 
 @minLength(2)
 @maxLength(4)
-@sys.description('The name of the resource group to deploy. (Default: AVD1)')
+@sys.description('The name of the resource group to deploy.')
 param deploymentPrefix string = 'AVD1'
 
 @allowed([
@@ -17,24 +17,24 @@ param deploymentPrefix string = 'AVD1'
     'Test' // Test
     'Prod' // Production
 ])
-@sys.description('The name of the resource group to deploy. (Default: Dev)')
+@sys.description('The name of the resource group to deploy.')
 param deploymentEnvironment string = 'Dev'
 
 @maxValue(730)
 @minValue(30)
-@sys.description('This value is used to set the expiration date on the disk encryption key. (Default: 60)')
+@sys.description('This value is used to set the expiration date on the disk encryption key.')
 param diskEncryptionKeyExpirationInDays int = 60
 
-@sys.description('Location where to deploy compute services. (Default: eastus2)')
+@sys.description('Location where to deploy compute services.')
 param avdSessionHostLocation string = 'eastus2'
 
-@sys.description('Location where to deploy AVD management plane. (Default: eastus2)')
+@sys.description('Location where to deploy AVD management plane.')
 param avdManagementPlaneLocation string = 'eastus2'
 
-@sys.description('AVD workload subscription ID, multiple subscriptions scenario. (Default: "")')
+@sys.description('AVD workload subscription ID, multiple subscriptions scenario.')
 param avdWorkloadSubsId string = ''
 
-@sys.description('Azure Virtual Desktop Enterprise Application object ID. (Default: "")')
+@sys.description('Azure Virtual Desktop Enterprise Application object ID.')
 param avdEnterpriseAppObjectId string = ''
 
 @sys.description('AVD session host local username.')
@@ -49,13 +49,13 @@ param avdVmLocalUserPassword string
     'AADDS' // Azure Active Directory Domain Services
     'AAD' // Azure AD Join
 ])
-@sys.description('Required, The service providing domain services for Azure Virtual Desktop. (Default: ADDS)')
+@sys.description('Required, The service providing domain services for Azure Virtual Desktop.')
 param avdIdentityServiceProvider string = 'ADDS'
 
-@sys.description('Required, Eronll session hosts on Intune. (Default: false)')
+@sys.description('Required, Eronll session hosts on Intune.')
 param createIntuneEnrollment bool = false
 
-@sys.description('Optional, Identity ID array to grant RBAC role to access AVD application group. (Default: "")')
+@sys.description('Optional, Identity ID array to grant RBAC role to access AVD application group.')
 param avdApplicationGroupIdentitiesIds array = []
 
 @allowed([
@@ -63,174 +63,174 @@ param avdApplicationGroupIdentitiesIds array = []
     'ServicePrincipal'
     'User'
 ])
-@sys.description('Optional, Identity type to grant RBAC role to access AVD application group. (Default: Group)')
+@sys.description('Optional, Identity type to grant RBAC role to access AVD application group.')
 param avdApplicationGroupIdentityType string = 'Group'
 
 @sys.description('AD domain name.')
 param avdIdentityDomainName string
 
-@sys.description('AD domain GUID. (Default: "")')
+@sys.description('AD domain GUID.')
 param identityDomainGuid string = ''
 
-@sys.description('AVD session host domain join user principal name. (Default: none)')
+@sys.description('AVD session host domain join user principal name.')
 param avdDomainJoinUserName string = 'none'
 
-@sys.description('AVD session host domain join password. (Default: none)')
+@sys.description('AVD session host domain join password.')
 @secure()
 param avdDomainJoinUserPassword string = 'none'
 
-@sys.description('OU path to join AVd VMs. (Default: "")')
+@sys.description('OU path to join AVd VMs.')
 param avdOuPath string = ''
 
 @allowed([
     'Personal'
     'Pooled'
 ])
-@sys.description('AVD host pool type. (Default: Pooled)')
+@sys.description('AVD host pool type.')
 param avdHostPoolType string = 'Pooled'
 
 @allowed([
     'Automatic'
     'Direct'
 ])
-@sys.description('AVD host pool type. (Default: Automatic)')
+@sys.description('AVD host pool type.')
 param avdPersonalAssignType string = 'Automatic'
 
 @allowed([
     'BreadthFirst'
     'DepthFirst'
 ])
-@sys.description('AVD host pool load balacing type. (Default: BreadthFirst)')
+@sys.description('AVD host pool load balacing type.')
 param avdHostPoolLoadBalancerType string = 'BreadthFirst'
 
-@sys.description('AVD host pool maximum number of user sessions per session host. (Default: 8)')
+@sys.description('AVD host pool maximum number of user sessions per session host.')
 param avhHostPoolMaxSessions int = 8
 
-@sys.description('AVD host pool start VM on Connect. (Default: true)')
+@sys.description('AVD host pool start VM on Connect.')
 param avdStartVmOnConnect bool = true
 
-@sys.description('AVD deploy remote app application group. (Default: false)')
+@sys.description('AVD deploy remote app application group.')
 param avdDeployRappGroup bool = false
 
-@sys.description('AVD host pool Custom RDP properties. (Default: audiocapturemode:i:1;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:1;redirectcomports:i:1;redirectprinters:i:1;redirectsmartcards:i:1;screen mode id:i:2)')
+@sys.description('AVD host pool Custom RDP properties.')
 param avdHostPoolRdpProperties string = 'audiocapturemode:i:1;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:1;redirectcomports:i:1;redirectprinters:i:1;redirectsmartcards:i:1;screen mode id:i:2'
 
-@sys.description('AVD deploy scaling plan. (Default: true)')
+@sys.description('AVD deploy scaling plan.')
 param avdDeployScalingPlan bool = true
 
-@sys.description('Create new virtual network. (Default: true)')
+@sys.description('Create new virtual network.')
 param createAvdVnet bool = true
 
-@sys.description('Existing virtual network subnet for AVD. (Default: "")')
+@sys.description('Existing virtual network subnet for AVD.')
 param existingVnetAvdSubnetResourceId string = ''
 
-@sys.description('Existing virtual network subnet for private endpoints. (Default: "")')
+@sys.description('Existing virtual network subnet for private endpoints.')
 param existingVnetPrivateEndpointSubnetResourceId string = ''
 
-@sys.description('Existing hub virtual network for perring. (Default: "")')
+@sys.description('Existing hub virtual network for perring.')
 param existingHubVnetResourceId string = ''
 
-@sys.description('AVD virtual network address prefixes. (Default: 10.10.0.0/23)')
+@sys.description('AVD virtual network address prefixes.')
 param avdVnetworkAddressPrefixes string = '10.10.0.0/23'
 
-@sys.description('AVD virtual network subnet address prefix. (Default: 10.10.0.0/23)')
+@sys.description('AVD virtual network subnet address prefix.')
 param vNetworkAvdSubnetAddressPrefix string = '10.10.0.0/24'
 
-@sys.description('private endpoints virtual network subnet address prefix. (Default: 10.10.1.0/27)')
+@sys.description('private endpoints virtual network subnet address prefix.')
 param vNetworkPrivateEndpointSubnetAddressPrefix string = '10.10.1.0/27'
 
-@sys.description('custom DNS servers IPs. (Default: "")')
+@sys.description('custom DNS servers IPs.')
 param customDnsIps string = ''
 
-@sys.description('Deploy private endpoints for key vault and storage. (Default: true)')
+@sys.description('Deploy private endpoints for key vault and storage.')
 param deployPrivateEndpointKeyvaultStorage bool = true
 
-@sys.description('Create new  Azure private DNS zones for private endpoints. (Default: true)')
+@sys.description('Create new  Azure private DNS zones for private endpoints.')
 param createPrivateDnsZones bool = true
 
-@sys.description('Use existing Azure private DNS zone for Azure files privatelink.file.core.windows.net or privatelink.file.core.usgovcloudapi.net. (Default: "")')
+@sys.description('Use existing Azure private DNS zone for Azure files privatelink.file.core.windows.net or privatelink.file.core.usgovcloudapi.net.')
 param avdVnetPrivateDnsZoneFilesId string = ''
 
-@sys.description('Use existing Azure private DNS zone for key vault privatelink.vaultcore.azure.net or privatelink.vaultcore.usgovcloudapi.net. (Default: "")')
+@sys.description('Use existing Azure private DNS zone for key vault privatelink.vaultcore.azure.net or privatelink.vaultcore.usgovcloudapi.net.')
 param avdVnetPrivateDnsZoneKeyvaultId string = ''
 
-@sys.description('Does the hub contains a virtual network gateway. (Default: false)')
+@sys.description('Does the hub contains a virtual network gateway.')
 param vNetworkGatewayOnHub bool = false
 
-@sys.description('Deploy Fslogix setup. (Default: true)')
+@sys.description('Deploy Fslogix setup.')
 param createAvdFslogixDeployment bool = true
 
-@sys.description('Deploy MSIX App Attach setup. (Default: false)')
+@sys.description('Deploy MSIX App Attach setup.')
 param createMsixDeployment bool = false
 
-@sys.description('Fslogix file share size. (Default: 10)')
+@sys.description('Fslogix file share size.')
 param fslogixFileShareQuotaSize int = 10
 
-@sys.description('MSIX file share size. (Default: 10)')
+@sys.description('MSIX file share size.')
 param msixFileShareQuotaSize int = 10
 
-@sys.description('Deploy new session hosts. (Default: true)')
+@sys.description('Deploy new session hosts.')
 param avdDeploySessionHosts bool = true
 
-@sys.description('Deploy VM GPU extension policies. (Default: true)')
+@sys.description('Deploy VM GPU extension policies.')
 param deployGpuPolicies bool = true
 
-@sys.description('Deploy AVD monitoring resources and setings. (Default: false)')
+@sys.description('Deploy AVD monitoring resources and setings.')
 param avdDeployMonitoring bool = false
 
-@sys.description('Deploy AVD Azure log analytics workspace. (Default: true)')
+@sys.description('Deploy AVD Azure log analytics workspace.')
 param deployAlaWorkspace bool = true
 
-@sys.description('Create and assign custom Azure Policy for diagnostic settings for the AVD Log Analytics workspace. (Default: false)')
+@sys.description('Create and assign custom Azure Policy for diagnostic settings for the AVD Log Analytics workspace.')
 param deployCustomPolicyMonitoring bool = false
 
-@sys.description('AVD Azure log analytics workspace data retention. (Default: 90)')
+@sys.description('AVD Azure log analytics workspace data retention.')
 param avdAlaWorkspaceDataRetention int = 90
 
-@sys.description('Existing Azure log analytics workspace resource ID to connect to. (Default: "")')
+@sys.description('Existing Azure log analytics workspace resource ID to connect to.')
 param alaExistingWorkspaceResourceId string = ''
 
 @minValue(1)
 @maxValue(999)
-@sys.description('Quantity of session hosts to deploy. (Default: 1)')
+@sys.description('Quantity of session hosts to deploy.')
 param avdDeploySessionHostsCount int = 1
 
-@sys.description('The session host number to begin with for the deployment. This is important when adding virtual machines to ensure the names do not conflict. (Default: 0)')
+@sys.description('The session host number to begin with for the deployment. This is important when adding virtual machines to ensure the names do not conflict.')
 param avdSessionHostCountIndex int = 0
 
-@sys.description('When true VMs are distributed across availability zones, when set to false, VMs will be members of a new availability set. (Default: true)')
+@sys.description('When true VMs are distributed across availability zones, when set to false, VMs will be members of a new availability set.')
 param availabilityZonesCompute bool = true
 
-@sys.description('When true, ZOne Redudant Storage (ZRS) is used, when set to false, Locally Redundant Storage (LRS) is used. (Default: false)')
+@sys.description('When true, ZOne Redudant Storage (ZRS) is used, when set to false, Locally Redundant Storage (LRS) is used.')
 param zoneRedundantStorage bool = false
 
-@sys.description('Sets the number of fault domains for the availability set. (Default: 2)')
+@sys.description('Sets the number of fault domains for the availability set.')
 param avdAsFaultDomainCount int = 2
 
-@sys.description('Sets the number of update domains for the availability set. (Default: 5)')
+@sys.description('Sets the number of update domains for the availability set.')
 param avdAsUpdateDomainCount int = 5
 
 @allowed([
     'Standard'
     'Premium'
 ])
-@sys.description('Storage account SKU for FSLogix storage. Recommended tier is Premium (Default: Premium)')
+@sys.description('Storage account SKU for FSLogix storage. Recommended tier is Premium.')
 param fslogixStoragePerformance string = 'Premium'
 
 @allowed([
     'Standard'
     'Premium'
 ])
-@sys.description('Storage account SKU for MSIX storage. Recommended tier is Premium. (Default: Premium)')
+@sys.description('Storage account SKU for MSIX storage. Recommended tier is Premium.')
 param msixStoragePerformance string = 'Premium'
 
-@sys.description('Enables a zero trust configuration on the session host disks. (Default: false)')
+@sys.description('Enables a zero trust configuration on the session host disks.')
 param diskZeroTrust bool = false
 
-@sys.description('Session host VM size. (Default: Standard_D4ads_v5)')
+@sys.description('Session host VM size.')
 param avdSessionHostsSize string = 'Standard_D4ads_v5'
 
-@sys.description('OS disk type for session host. (Default: Standard_LRS)')
+@sys.description('OS disk type for session host.')
 param avdSessionHostDiskType string = 'Standard_LRS'
 
 @sys.description('''Enables accelerated Networking on the session hosts.
@@ -244,13 +244,13 @@ param enableAcceleratedNetworking bool = true
     'TrustedLaunch'
     'ConfidentialVM'
 ])
-@sys.description('Specifies the securityType of the virtual machine. "ConfidentialVM" and "TrustedLaunch" require a Gen2 Image. (Default: TrustedLaunch)')
+@sys.description('Specifies the securityType of the virtual machine. "ConfidentialVM" and "TrustedLaunch" require a Gen2 Image.')
 param securityType string = 'TrustedLaunch'
 
-@sys.description('Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. securityType should be set to TrustedLaunch or ConfidentialVM to enable UefiSettings. (Default: true)')
+@sys.description('Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. securityType should be set to TrustedLaunch or ConfidentialVM to enable UefiSettings.')
 param secureBootEnabled bool = true
 
-@sys.description('Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings. securityType should be set to TrustedLaunch or ConfidentialVM to enable UefiSettings. (Default: true)')
+@sys.description('Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings. securityType should be set to TrustedLaunch or ConfidentialVM to enable UefiSettings.')
 param vTpmEnabled bool = true
 
 @allowed([
@@ -263,166 +263,166 @@ param vTpmEnabled bool = true
     'win11_22h2'
     'win11_22h2_office'
 ])
-@sys.description('AVD OS image SKU. (Default: win11-21h2)')
+@sys.description('AVD OS image SKU.')
 param avdOsImage string = 'win11_22h2'
 
-@sys.description('Management VM image SKU (Default: winServer_2022_Datacenter_smalldisk_g2)')
+@sys.description('Management VM image SKU.')
 param managementVmOsImage string = 'winServer_2022_Datacenter_smalldisk_g2'
 
-@sys.description('Set to deploy image from Azure Compute Gallery. (Default: false)')
+@sys.description('Set to deploy image from Azure Compute Gallery.')
 param useSharedImage bool = false
 
-@sys.description('Source custom image ID. (Default: "")')
+@sys.description('Source custom image ID.')
 param avdImageTemplateDefinitionId string = ''
 
-@sys.description('OU name for Azure Storage Account. It is recommended to create a new AD Organizational Unit (OU) in AD and disable password expiration policy on computer accounts or service logon accounts accordingly.  (Default: "")')
+@sys.description('OU name for Azure Storage Account. It is recommended to create a new AD Organizational Unit (OU) in AD and disable password expiration policy on computer accounts or service logon accounts accordingly.')
 param storageOuPath string = ''
 
-@sys.description('If OU for Azure Storage needs to be created - set to true and ensure the domain join credentials have priviledge to create OU and create computer objects or join to domain. (Default: false)')
+@sys.description('If OU for Azure Storage needs to be created - set to true and ensure the domain join credentials have priviledge to create OU and create computer objects or join to domain.')
 param createOuForStorage bool = false
 
 // Custom Naming
 // Input must followe resource naming rules on https://docs.microsoft.com/azure/azure-resource-manager/management/resource-name-rules
-@sys.description('AVD resources custom naming. (Default: false)')
+@sys.description('AVD resources custom naming.')
 param avdUseCustomNaming bool = false
 
 @maxLength(90)
-@sys.description('AVD service resources resource group custom name. (Default: rg-avd-app1-dev-use2-service-objects)')
+@sys.description('AVD service resources resource group custom name.')
 param avdServiceObjectsRgCustomName string = 'rg-avd-app1-dev-use2-service-objects'
 
 @maxLength(90)
-@sys.description('AVD network resources resource group custom name. (Default: rg-avd-app1-dev-use2-network)')
+@sys.description('AVD network resources resource group custom name.')
 param avdNetworkObjectsRgCustomName string = 'rg-avd-app1-dev-use2-network'
 
 @maxLength(90)
-@sys.description('AVD network resources resource group custom name. (Default: rg-avd-app1-dev-use2-pool-compute)')
+@sys.description('AVD network resources resource group custom name.')
 param avdComputeObjectsRgCustomName string = 'rg-avd-app1-dev-use2-pool-compute'
 
 @maxLength(90)
-@sys.description('AVD network resources resource group custom name. (Default: rg-avd-app1-dev-use2-storage)')
+@sys.description('AVD network resources resource group custom name.')
 param avdStorageObjectsRgCustomName string = 'rg-avd-app1-dev-use2-storage'
 
 @maxLength(90)
-@sys.description('AVD monitoring resource group custom name. (Default: rg-avd-dev-use2-monitoring)')
+@sys.description('AVD monitoring resource group custom name.')
 param avdMonitoringRgCustomName string = 'rg-avd-dev-use2-monitoring'
 
 @maxLength(64)
-@sys.description('AVD virtual network custom name. (Default: vnet-app1-dev-use2-001)')
+@sys.description('AVD virtual network custom name.')
 param avdVnetworkCustomName string = 'vnet-app1-dev-use2-001'
 
 @maxLength(64)
-@sys.description('AVD Azure log analytics workspace custom name. (Default: log-avd-app1-dev-use2)')
+@sys.description('AVD Azure log analytics workspace custom name.')
 param avdAlaWorkspaceCustomName string = 'log-avd-app1-dev-use2'
 
 @maxLength(80)
-@sys.description('AVD virtual network subnet custom name. (Default: snet-avd-app1-dev-use2-001)')
+@sys.description('AVD virtual network subnet custom name.')
 param avdVnetworkSubnetCustomName string = 'snet-avd-app1-dev-use2-001'
 
 @maxLength(80)
-@sys.description('private endpoints virtual network subnet custom name. (Default: snet-pe-app1-dev-use2-001)')
+@sys.description('private endpoints virtual network subnet custom name.')
 param privateEndpointVnetworkSubnetCustomName string = 'snet-pe-app1-dev-use2-001'
 
 @maxLength(80)
-@sys.description('AVD network security group custom name. (Default: nsg-avd-app1-dev-use2-001)')
+@sys.description('AVD network security group custom name.')
 param avdNetworksecurityGroupCustomName string = 'nsg-avd-app1-dev-use2-001'
 
 @maxLength(80)
-@sys.description('Private endpoint network security group custom name. (Default: nsg-pe-app1-dev-use2-001)')
+@sys.description('Private endpoint network security group custom name.')
 param privateEndpointNetworksecurityGroupCustomName string = 'nsg-pe-app1-dev-use2-001'
 
 @maxLength(80)
-@sys.description('AVD route table custom name. (Default: route-avd-app1-dev-use2-001)')
+@sys.description('AVD route table custom name.')
 param avdRouteTableCustomName string = 'route-avd-app1-dev-use2-001'
 
 @maxLength(80)
-@sys.description('Private endpoint route table custom name. (Default: route-avd-app1-dev-use2-001)')
+@sys.description('Private endpoint route table custom name.')
 param privateEndpointRouteTableCustomName string = 'route-pe-app1-dev-use2-001'
 
 @maxLength(80)
-@sys.description('AVD application security custom name. (Default: asg-app1-dev-use2-001)')
+@sys.description('AVD application security custom name.')
 param avdApplicationSecurityGroupCustomName string = 'asg-app1-dev-use2-001'
 
 @maxLength(64)
-@sys.description('AVD workspace custom name. (Default: vdws-app1-dev-use2-001)')
+@sys.description('AVD workspace custom name.')
 param avdWorkSpaceCustomName string = 'vdws-app1-dev-use2-001'
 
 @maxLength(64)
-@sys.description('AVD workspace custom friendly (Display) name. (Default: App1 - Dev - East US 2 - 001)')
+@sys.description('AVD workspace custom friendly (Display) name.')
 param avdWorkSpaceCustomFriendlyName string = 'App1 - Dev - East US 2 - 001'
 
 @maxLength(64)
-@sys.description('AVD host pool custom name. (Default: vdpool-app1-dev-use2-001)')
+@sys.description('AVD host pool custom name.')
 param avdHostPoolCustomName string = 'vdpool-app1-dev-use2-001'
 
 @maxLength(64)
-@sys.description('AVD host pool custom friendly (Display) name. (Default: App1 - East US - Dev - 001)')
+@sys.description('AVD host pool custom friendly (Display) name.')
 param avdHostPoolCustomFriendlyName string = 'App1 - Dev - East US 2 - 001'
 
 @maxLength(64)
-@sys.description('AVD scaling plan custom name. (Default: vdscaling-app1-dev-use2-001)')
+@sys.description('AVD scaling plan custom name.')
 param avdScalingPlanCustomName string = 'vdscaling-app1-dev-use2-001'
 
 @maxLength(64)
-@sys.description('AVD desktop application group custom name. (Default: vdag-desktop-app1-dev-use2-001)')
+@sys.description('AVD desktop application group custom name.')
 param avdApplicationGroupCustomNameDesktop string = 'vdag-desktop-app1-dev-use2-001'
 
 @maxLength(64)
-@sys.description('AVD desktop application group custom friendly (Display) name. (Default: Desktops - App1 - East US - Dev - 001)')
+@sys.description('AVD desktop application group custom friendly (Display) name.')
 param avdApplicationGroupCustomFriendlyName string = 'Desktops - App1 - Dev - East US 2 - 001'
 
 @maxLength(64)
-@sys.description('AVD remote application group custom name. (Default: vdag-rapp-app1-dev-use2-001)')
+@sys.description('AVD remote application group custom name.')
 param avdApplicationGroupCustomNameRapp string = 'vdag-rapp-app1-dev-use2-001'
 
 @maxLength(64)
-@sys.description('AVD remote application group custom name. (Default: Remote apps - App1 - East US - 001)')
+@sys.description('AVD remote application group custom name.')
 param avdApplicationGroupCustomFriendlyNameRapp string = 'Remote apps - App1 - Dev - East US 2 - 001'
 
 @maxLength(11)
-@sys.description('AVD session host prefix custom name. (Default: vmapp1duse2)')
+@sys.description('AVD session host prefix custom name.')
 param avdSessionHostCustomNamePrefix string = 'vmapp1duse2'
 
 @maxLength(9)
-@sys.description('AVD availability set custom name. (Default: avail)')
+@sys.description('AVD availability set custom name.')
 param avdAvailabilitySetCustomNamePrefix string = 'avail'
 
 @maxLength(2)
-@sys.description('AVD FSLogix and MSIX app attach storage account prefix custom name. (Default: st)')
+@sys.description('AVD FSLogix and MSIX app attach storage account prefix custom name.')
 param storageAccountPrefixCustomName string = 'st'
 
-@sys.description('FSLogix file share name. (Default: fslogix-pc-app1-dev-001)')
+@sys.description('FSLogix file share name.')
 param fslogixFileShareCustomName string = 'fslogix-pc-app1-dev-use2-001'
 
-@sys.description('MSIX file share name. (Default: msix-app1-dev-001)')
+@sys.description('MSIX file share name.')
 param msixFileShareCustomName string = 'msix-app1-dev-use2-001'
 
 //@maxLength(64)
-//@sys.description('AVD fslogix storage account office container file share prefix custom name. (Default: fslogix-oc-app1-dev-001)')
+//@sys.description('AVD fslogix storage account office container file share prefix custom name.')
 //param avdFslogixOfficeContainerFileShareCustomName string = 'fslogix-oc-app1-dev-001'
 
 @maxLength(5)
-@sys.description('AVD keyvault prefix custom name. (Default: kv)')
+@sys.description('AVD keyvault prefix custom name.')
 param avdWrklKvPrefixCustomName string = 'kv'
 
 @maxLength(6)
-@sys.description('AVD disk encryption set custom name. (Default: des-zt)')
+@sys.description('AVD disk encryption set custom name.')
 param ztDiskEncryptionSetCustomNamePrefix string = 'des-zt'
 
 @maxLength(5)
-@sys.description('AVD managed identity for zero trust to encrypt managed disks using a customer managed key.  (Default: id-zt)')
+@sys.description('AVD managed identity for zero trust to encrypt managed disks using a customer managed key.')
 param ztManagedIdentityCustomName string = 'id-zt'
 
 @maxLength(5)
-@sys.description('AVD key vault name custom name for zero trust (Default: kv-zt)')
+@sys.description('AVD key vault name custom name for zero trust.')
 param ztKvPrefixCustomName string = 'kv-zt'
 
 //
 // Resource tagging
 //
-@sys.description('Apply tags on resources and resource groups. (Default: false)')
+@sys.description('Apply tags on resources and resource groups.')
 param createResourceTags bool = false
 
-@sys.description('The name of workload for tagging purposes. (Default: Contoso-Workload)')
+@sys.description('The name of workload for tagging purposes.')
 param workloadNameTag string = 'Contoso-Workload'
 
 @allowed([
@@ -431,7 +431,7 @@ param workloadNameTag string = 'Contoso-Workload'
     'High'
     'Power'
 ])
-@sys.description('Reference to the size of the VM for your workloads (Default: Light)')
+@sys.description('Reference to the size of the VM for your workloads.')
 param workloadTypeTag string = 'Light'
 
 @allowed([
@@ -441,10 +441,10 @@ param workloadTypeTag string = 'Light'
     'Confidential'
     'Highly-confidential'
 ])
-@sys.description('Sensitivity of data hosted (Default: Non-business)')
+@sys.description('Sensitivity of data hosted.')
 param dataClassificationTag string = 'Non-business'
 
-@sys.description('Department that owns the deployment, (Dafult: Contoso-AVD)')
+@sys.description('Department that owns the deployment.')
 param departmentTag string = 'Contoso-AVD'
 
 @allowed([
@@ -454,29 +454,29 @@ param departmentTag string = 'Contoso-AVD'
     'Mission-critical'
     'Custom'
 ])
-@sys.description('Criticality of the workload. (Default: Low)')
+@sys.description('Criticality of the workload.')
 param workloadCriticalityTag string = 'Low'
 
-@sys.description('Tag value for custom criticality value. (Default: Contoso-Critical)')
+@sys.description('Tag value for custom criticality value.')
 param workloadCriticalityCustomValueTag string = 'Contoso-Critical'
 
 @sys.description('Details about the application.')
 param applicationNameTag string = 'Contoso-App'
 
-@sys.description('Service level agreement level of the worload. (Contoso-SLA)')
+@sys.description('Service level agreement level of the worload.')
 param workloadSlaTag string = 'Contoso-SLA'
 
-@sys.description('Team accountable for day-to-day operations. (workload-admins@Contoso.com)')
+@sys.description('Team accountable for day-to-day operations.')
 param opsTeamTag string = 'workload-admins@Contoso.com'
 
-@sys.description('Organizational owner of the AVD deployment. (Default: workload-owner@Contoso.com)')
+@sys.description('Organizational owner of the AVD deployment.')
 param ownerTag string = 'workload-owner@Contoso.com'
 
-@sys.description('Cost center of owner team. (Default: Contoso-CC)')
+@sys.description('Cost center of owner team.')
 param costCenterTag string = 'Contoso-CC'
 //
 
-//@sys.description('Remove resources not needed afdter deployment. (Default: false)')
+//@sys.description('Remove resources not needed afdter deployment.')
 //param removePostDeploymentTempResources bool = false
 
 @sys.description('Do not modify, used to set unique value for resource deployment.')
