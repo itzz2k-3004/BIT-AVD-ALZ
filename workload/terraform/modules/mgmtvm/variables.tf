@@ -4,6 +4,17 @@ variable "dsc_storage_path"  {
   default     = "https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/DSCStorageScripts.zip"
 }
 
+variable "azure_cloud_environment" {
+  type        = string
+  description = "Azure Cloud Environment"
+  default     = "AzureCloud"
+
+validation {
+  condition = contains(["AzureCloud", "AzureChinaCloud", "AzureGermanCloud", "AzureUSGovernment"], var.azure_cloud_environment)
+  error_message = "value must be one of AzureCloud, AzureChinaCloud, AzureGermanCloud, AzureUSGovernment"
+}
+}
+
 variable "publisher" {
   type        = string
   description = "Publisher of the image"
