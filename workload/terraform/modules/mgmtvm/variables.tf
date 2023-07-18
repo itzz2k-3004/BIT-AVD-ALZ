@@ -1,3 +1,9 @@
+variable "dsc_storage_path"  {
+  type        = string
+  description = "Path to the DSC script"
+  default     = "https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/DSCStorageScripts.zip"
+}
+
 variable "publisher" {
   type        = string
   description = "Publisher of the image"
@@ -48,6 +54,11 @@ variable "avdLocation" {
 variable "rg_so" {
   type        = string
   description = "Name of the Resource group in which to deploy service objects"
+}
+
+variable "rg_stor" {
+  type        = string
+  description = "Name of the Resource group in which to deploy storage"
 }
 
 variable "prefix" {

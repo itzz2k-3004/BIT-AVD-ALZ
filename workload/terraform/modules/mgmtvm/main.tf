@@ -6,6 +6,27 @@ resource "random_string" "AVD_local_password" {
   override_special = "*!@#?"
 }
 
+# User Assigned Managed Identity for the MGMT VM to join storage accounts to the domain
+resource "azurerm_user_assigned_identity" "stguai" {
+  name                = "id-storage-${var.prefix}-${var.deployment_environment}-001"
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+}
+
+# Assigns the Managed Identity Storage Account Contributor RBAC to the Storage RG scope
+resource "azurerm_role_assignment" "assign_stguai_sac" {
+  scope                = data.azurerm_resource_group.rg_storage.id
+  role_definition_name = "Storage Account Contributor"
+  principal_id         = azurerm_user_assigned_identity.stguai.principal_id
+}
+
+# Assigns the Managed Identity Reader RBAC to the Storage RG scope
+resource "azurerm_role_assignment" "assign_stguai_sac" {
+  scope                = data.azurerm_resource_group.rg_storage.id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_user_assigned_identity.stguai.principal_id
+}
+
 # Resource block to create a network interface for the AVD VM
 resource "azurerm_network_interface" "avd_vm_nic" {
   name                          = "${var.prefix}-nic"
@@ -51,10 +72,11 @@ resource "azurerm_windows_virtual_machine" "mgmt_vm" {
     version   = "latest"
   }
   identity {
-    type         = "UserAssigned"
-    identity_ids = ["/subscriptions/b0aeeba8-4430-4cf1-acbc-6e24cadf86c9/resourceGroups/rg-avd-eastu-adds-storage/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-avd-fslogix-eus-adds"]
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.stguai.id
+    ]
   }
-
 }
 
 # Resource block to join the MGMT VM to a domain
@@ -96,7 +118,7 @@ resource "azurerm_virtual_machine_extension" "dscStorageScript" {
 
   settings = jsonencode({
     fileUris         = [var.baseScriptUri]
-    commandToExecute = "powershell.exe -ExecutionPolicy Unrestricted -File ${var.vfile} ${var.scriptArguments} -DomainAdminUserPassword ${var.domainJoinUserPassword} -verbose"
+    commandToExecute = "powershell.exe -ExecutionPolicy Unrestricted -File ${var.vfile} -DscPath ${var.dsc_storage_path} -StorageAccountName ${var.storage_account_name} -StorageAccountRG ${var.storage_account_rg} -StoragePurpose fslogix -DomainName ${var.domain_name} -IdentityServiceProvider ${var.IdentityServiceProvider} -AzureCloudEnvironment AzureCloud -SubscriptionId ${var.workloadSubsId} -DomainAdminUserName ${var.domain_user}@${var.domain_name} -CustomOuPath ${var.storageCustomOuPath} -OUName ${var.ouStgPath} -CreateNewOU ${var.createOuForStorageString} -ShareName ${var.file_share_name} -ClientId ${var.clientid} -DomainAdminUserPassword ${var.domain_password} -verbose"
   })
 
   depends_on = [

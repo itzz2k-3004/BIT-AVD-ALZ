@@ -2,6 +2,10 @@ data "azurerm_subscription" "current" {}
 
 data "azurerm_client_config" "current" {}
 
+data "azurerm_resource_group" "rg_storage" {
+  name = "rg-avd-${substr(var.avdLocation, 0, 5)}-${var.prefix}-${var.rg_stor}"
+}
+
 data "azurerm_resource_group" "rg" {
   name = "rg-avd-${substr(var.avdLocation, 0, 5)}-${var.prefix}-${var.rg_so}"
 }
