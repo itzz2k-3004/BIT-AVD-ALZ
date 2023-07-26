@@ -35,10 +35,10 @@ param serviceObjectsRgName string
 param subscriptionId string
 
 @sys.description('Quantity of session hosts to deploy')
-param sessionHostsCount int
+param sessionHostsCount int = 0 // Only required in initial deployment, not in replacement plans
 
 @sys.description('The session host number to begin with for the deployment.')
-param sessionHostCountIndex int
+param sessionHostCountIndex int = 0 // Only required in initial deployment, not in replacement plans
 
 @sys.description('Creates an availability zone and adds the VMs to it. Cannot be used in combination with availability set nor scale set.')
 param useAvailabilityZones bool
@@ -139,6 +139,12 @@ param deployMonitoring bool
 @sys.description('Do not modify, used to set unique value for resource deployment.')
 param time string = utcNow()
 
+// AVD Replacment Plans Parameters
+param ReplacementPlanDeployment bool = false
+param ReplacementPlanDeploymentSessionHostNames array = []
+param ImageReference object = {} // This is for compatilibty with Replacement Plans and is not used otherwise. //TODO can we remove this?
+
+
 // =========== //
 // Variable declaration //
 // =========== //
@@ -154,6 +160,11 @@ var varManagedDisk = empty(diskEncryptionSetResourceId) ? {
     }
     storageAccountType: sessionHostDiskType
 }
+
+// AVD Replacement Plans variables
+var varSessionHostCalculatedNames = [for i in range(1, sessionHostsCount): '${sessionHostNamePrefix}-${padLeft((i + sessionHostCountIndex), 3, '0')}']
+var varSessionHostNames = ReplacementPlanDeployment ? ReplacementPlanDeploymentSessionHostNames : varSessionHostCalculatedNames
+
 // =========== //
 // Deployments //
 // =========== //
@@ -164,11 +175,17 @@ resource wrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing
 }
 
 // Session hosts.
-module sessionHosts '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/deploy.bicep' = [for i in range(1, sessionHostsCount): {
+
+/*
+We have two cases:
+1. Initial deployment, we use session hosts count to create VMs with sequential names.
+2. Replacment plan, we use the supplied session host names, but need the count to assign AGs
+*/
+module sessionHosts '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/deploy.bicep' = [for (vmName,i) in varSessionHostNames: {
     scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
-    name: 'Session-Host-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
+    name: 'Session-Host-${vmName}-${time}'
     params: {
-        name: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
+        name: vmName
         location: sessionHostLocation
         timeZone: timeZone
         userAssignedIdentities: createAvdFslogixDeployment ? {
@@ -206,7 +223,7 @@ module sessionHosts '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachine
                             {
                                 id: applicationSecurityGroupResourceId
                             }
-                        ] 
+                        ]
                     }
                 ] : [
                     {
@@ -271,15 +288,15 @@ module sessionHostsWait '../../../../../carml/1.3.0/Microsoft.Resources/deployme
     dependsOn: [
         sessionHosts
     ]
-} 
+}
 
 // Add antimalware extension to session host.
-module sessionHostsAntimalwareExtension '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/extensions/deploy.bicep' = [for i in range(1, sessionHostsCount): {
+module sessionHostsAntimalwareExtension '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/extensions/deploy.bicep' =  [for (vmName,i) in varSessionHostNames: {
     scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
-    name: 'SH-Antimalware-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
+    name: 'SH-Antimalware-${vmName}-${time}'
     params: {
         location: sessionHostLocation
-        virtualMachineName: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
+        virtualMachineName: vmName
         name: 'MicrosoftAntiMalware'
         publisher: 'Microsoft.Azure.Security'
         type: 'IaaSAntimalware'
@@ -329,7 +346,7 @@ module antimalwareExtensionWait '../../../../../carml/1.3.0/Microsoft.Resources/
     dependsOn: [
         sessionHostsAntimalwareExtension
     ]
-} 
+}
 
 // Call to the ALA workspace.
 resource alaWorkspaceGet 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = if (!empty(alaWorkspaceResourceId) && deployMonitoring) {
@@ -338,12 +355,12 @@ resource alaWorkspaceGet 'Microsoft.OperationalInsights/workspaces@2021-06-01' e
 }
 
 // Add monitoring extension to session host.
-module sessionHostsMonitoring '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/extensions/deploy.bicep' = [for i in range(1, sessionHostsCount): if (deployMonitoring) {
+module sessionHostsMonitoring '../../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/extensions/deploy.bicep' = [for (vmName,i) in varSessionHostNames: if (deployMonitoring) {
     scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
-    name: 'SH-Mon-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
+    name: 'SH-Monitoring-${vmName}-${time}'
     params: {
         location: sessionHostLocation
-        virtualMachineName: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
+        virtualMachineName: vmName
         name: 'MicrosoftMonitoringAgent'
         publisher: 'Microsoft.EnterpriseCloud.Monitoring'
         type: 'MicrosoftMonitoringAgent'
@@ -385,15 +402,15 @@ module sessionHostsMonitoringWait '../../../../../carml/1.3.0/Microsoft.Resource
     dependsOn: [
         sessionHostsMonitoring
     ]
-} 
+}
 
 // Add the registry keys for Fslogix. Alternatively can be enforced via GPOs.
-module configureFsLogixAvdHosts './configureFslogixOnSessionHosts.bicep' = [for i in range(1, sessionHostsCount): if (createAvdFslogixDeployment) {
+module configureFsLogixAvdHosts './configureFslogixOnSessionHosts.bicep' =  [for (vmName,i) in varSessionHostNames: if (createAvdFslogixDeployment) {
     scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
-    name: 'Fsl-Conf-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
+    name: 'Fsl-Conf-${vmName}-${time}'
     params: {
         location: sessionHostLocation
-        name: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
+        name: vmName
         file: fsLogixScriptFile
         fsLogixScriptArguments: fsLogixScriptArguments
         baseScriptUri: fslogixScriptUri
@@ -405,13 +422,13 @@ module configureFsLogixAvdHosts './configureFslogixOnSessionHosts.bicep' = [for 
 }]
 
 // Add session hosts to AVD Host pool.
-module addAvdHostsToHostPool './registerSessionHostsOnHopstPool.bicep' = [for i in range(1, sessionHostsCount): {
+module addAvdHostsToHostPool './registerSessionHostsOnHopstPool.bicep' =  [for (vmName,i) in varSessionHostNames: {
     scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
-    name: 'HP-Join-${padLeft((i + sessionHostCountIndex), 4, '0')}-${time}'
+    name: 'HP-Join-${vmName}-to-HP-${time}'
     params: {
         location: sessionHostLocation
         hostPoolToken: hostPoolToken
-        name: '${sessionHostNamePrefix}${padLeft((i + sessionHostCountIndex), 4, '0')}'
+        name: vmName
         hostPoolName: hostPoolName
         avdAgentPackageLocation: avdAgentPackageLocation
     }
@@ -421,4 +438,3 @@ module addAvdHostsToHostPool './registerSessionHostsOnHopstPool.bicep' = [for i 
         configureFsLogixAvdHosts
     ]
 }]
-

@@ -91,8 +91,8 @@ param avdHostPoolType string = 'Pooled'
 
 @sys.description('Optional. The type of preferred application group type, default to Desktop Application Group.')
 @allowed([
-  'Desktop'
-  'RemoteApp'
+    'Desktop'
+    'RemoteApp'
 ])
 param hostPoolPreferredAppGroupType string = 'Desktop'
 
@@ -485,13 +485,16 @@ param time string = utcNow()
 @sys.description('Enable usage and telemetry feedback to Microsoft.')
 param enableTelemetry bool = true
 
+// AVD Replacement Plans
+@sys.description('Optional. Enable AVD replacement plans. (Default: false)')
+param useAVDReplacementPlans bool = false
 // =========== //
 // Variable declaration //
 // =========== //
 // Resource naming
 var varDeploymentPrefixLowercase = toLower(deploymentPrefix)
 var varDeploymentEnvironmentLowercase = toLower(deploymentEnvironment)
-var varDeploymentEnvironmentComputeStorage = (deploymentEnvironment == 'Dev') ? 'd': ((deploymentEnvironment == 'Test') ? 't' : ((deploymentEnvironment == 'Prod') ? 'p' : ''))
+var varDeploymentEnvironmentComputeStorage = (deploymentEnvironment == 'Dev') ? 'd' : ((deploymentEnvironment == 'Test') ? 't' : ((deploymentEnvironment == 'Prod') ? 'p' : ''))
 var varNamingUniqueStringThreeChar = take('${uniqueString(avdWorkloadSubsId, varDeploymentPrefixLowercase, time)}', 3)
 var varSessionHostLocationAcronym = varLocations[varSessionHostLocationLowercase].acronym
 var varManagementPlaneLocationAcronym = varLocations[varManagementPlaneLocationLowercase].acronym
@@ -512,7 +515,7 @@ var varMonitoringRgName = avdUseCustomNaming ? avdMonitoringRgCustomName : 'rg-a
 //var varAvdSharedResourcesRgName = 'rg-${varAvdSessionHostLocationAcronym}-avd-shared-resources'
 var varVnetName = avdUseCustomNaming ? avdVnetworkCustomName : 'vnet-${varComputeStorageResourcesNamingStandard}-001'
 var varHubVnetName = (createAvdVnet && !empty(existingHubVnetResourceId)) ? split(existingHubVnetResourceId, '/')[8] : ''
-var varVnetPeeringName = 'peer-${varHubVnetName}' 
+var varVnetPeeringName = 'peer-${varHubVnetName}'
 var varRemoteVnetPeeringName = 'peer-${varVnetName}'
 var varVnetAvdSubnetName = avdUseCustomNaming ? avdVnetworkSubnetCustomName : 'snet-avd-${varComputeStorageResourcesNamingStandard}-001'
 var varVnetPrivateEndpointSubnetName = avdUseCustomNaming ? privateEndpointVnetworkSubnetCustomName : 'snet-pe-${varComputeStorageResourcesNamingStandard}-001'
@@ -775,6 +778,65 @@ var verResourceGroups = [
     }
 ]
 
+// Replacement Plan Variables
+// When a repalcement plan is in use we add this tag to allow repalcement of the VMs created at deployment time.
+var varReplacementPlanSessionHostTags = useAVDReplacementPlans ? {
+    IncludeInAutoReplace: 'True'
+} : {}
+var varAVDReplacementPlansSessionHostParams = {
+    // This part is very similar to how we call the avdSessionHosts.bicep module
+    diskEncryptionSetResourceId: diskZeroTrust ? zeroTrust.outputs.ztDiskEncryptionSetResourceId : ''
+    avdAgentPackageLocation: varAvdAgentPackageLocation
+    timeZone: varTimeZoneSessionHosts
+    applicationSecurityGroupResourceId: (avdDeploySessionHosts || createAvdFslogixDeployment || createMsixDeployment) ? '${networking.outputs.applicationSecurityGroupResourceId}' : ''
+    availabilitySetNamePrefix: varAvailabilitySetNamePrefix
+    maxAvailabilitySetMembersCount: 199
+    computeObjectsRgName: varComputeObjectsRgName
+    domainJoinUserName: avdDomainJoinUserName
+    wrklKvName: varWrklKvName
+    serviceObjectsRgName: varServiceObjectsRgName
+    // hostPoolName: This is passed from the RP function app
+    identityDomainName: avdIdentityDomainName
+    imageTemplateDefinitionId: avdImageTemplateDefinitionId
+    sessionHostOuPath: avdOuPath
+    //sessionHostsCount: This is skipped. RP function app passes VM names.
+    //sessionHostCountIndex: This is skipped. RP function app passes VM names.
+    sessionHostDiskType: avdSessionHostDiskType
+    sessionHostLocation: avdSessionHostLocation
+    //sessionHostNamePrefix: This is skipped. RP function app passes VM names.
+    sessionHostsSize: avdSessionHostsSize
+    enableAcceleratedNetworking: enableAcceleratedNetworking
+    securityType: securityType == 'Standard' ? '' : securityType
+    secureBootEnabled: secureBootEnabled
+    vTpmEnabled: vTpmEnabled
+    subnetId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetAvdSubnetName}' : existingVnetAvdSubnetResourceId
+    useAvailabilityZones: availabilityZonesCompute
+    vmLocalUserName: avdVmLocalUserName
+    subscriptionId: avdWorkloadSubsId
+    encryptionAtHost: diskZeroTrust
+    createAvdFslogixDeployment: createAvdFslogixDeployment
+    storageManagedIdentityResourceId: (varCreateStorageDeployment && (avdIdentityServiceProvider != 'AAD')) ? managedIdentitiesRoleAssign.outputs.managedIdentityResourceId : ''
+    fsLogixScriptFile: varFsLogixScript
+    fsLogixScriptArguments: varFsLogixScriptArguments
+    fslogixSharePath: '\\\\${varFslogixStorageName}.file.${environment().suffixes.storage}\\${varFslogixFileShareName}'
+    fslogixScriptUri: varFslogixScriptUri
+    //hostPoolToken //This is passed from the RP function app
+    marketPlaceGalleryWindows: varMarketPlaceGalleryWindows[avdOsImage] // TODO: We need to pass the image to the replacement plan
+    useSharedImage: useSharedImage
+    identityServiceProvider: avdIdentityServiceProvider
+    createIntuneEnrollment: createIntuneEnrollment
+    tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags // RP will add its own tags to VMs created during replacement.
+    deployMonitoring: avdDeployMonitoring
+    alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
+    diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
+
+    // This is used by the Replacement Plan
+    ReplacementPlanDeployment: true
+    ImageReference: useSharedImage ? {// We use this for the replacement plan.
+        Id: avdImageTemplateDefinitionId
+    } : varMarketPlaceGalleryWindows[avdOsImage]
+}
+
 // =========== //
 // Deployments //
 // =========== //
@@ -866,7 +928,7 @@ module networking './modules/networking/deploy.bicep' = if (createAvdVnet || cre
         existingPeSubnetResourceId: existingVnetPrivateEndpointSubnetResourceId
         existingAvdSubnetResourceId: existingVnetAvdSubnetResourceId
         createPrivateDnsZones: createPrivateDnsZones
-        applicationSecurityGroupName: varApplicationSecurityGroupName 
+        applicationSecurityGroupName: varApplicationSecurityGroupName
         computeObjectsRgName: varComputeObjectsRgName
         networkObjectsRgName: varNetworkObjectsRgName
         avdNetworksecurityGroupName: varAvdNetworksecurityGroupName
@@ -994,7 +1056,7 @@ module zeroTrust './modules/zeroTrust/deploy.bicep' = if (diskZeroTrust && avdDe
         baselineResourceGroups
         baselineStorageResourceGroup
         monitoringDiagnosticSettings
-        managedIdentitiesRoleAssign     
+        managedIdentitiesRoleAssign
     ]
 }
 
@@ -1250,7 +1312,7 @@ module sessionHosts './modules/avdSessionHosts/deploy.bicep' = if (avdDeploySess
         fsLogixScriptArguments: varFsLogixScriptArguments
         marketPlaceGalleryWindows: varMarketPlaceGalleryWindows[avdOsImage]
         useSharedImage: useSharedImage
-        tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags
+        tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags, varReplacementPlanSessionHostTags) : union(varAvdDefaultTags, varReplacementPlanSessionHostTags)
         deployMonitoring: avdDeployMonitoring
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
@@ -1263,6 +1325,99 @@ module sessionHosts './modules/avdSessionHosts/deploy.bicep' = if (avdDeploySess
         monitoringDiagnosticSettings
     ]
 }
+
+// AVD Replacement Plan
+
+module avdReplacementPlan 'modules/avdReplacementPlans/deploy.bicep' = if (useAVDReplacementPlans) {
+    name: 'AVD-Replacement-Plan-${time}'
+    scope: resourceGroup('${avdWorkloadSubsId}', '${varServiceObjectsRgName}')
+    params: {
+        Location: avdManagementPlaneLocation
+        StorageAccountName: 'stavdrpfunc${varNamingUniqueStringThreeChar}'
+        LogAnalyticsWorkspaceName: 'log-AVDReplacementPlan-01' // TODO: Change this to use the same workspace as the AVD deployment.
+        FunctionAppName: 'func-AVDReplacementPlan-01'
+        FunctionAppZipUrl: 'https://github.com/WillyMoselhy/AVDReplacementPlans/raw/Development/Nightly/FunctionApp.zip'
+        SessionHostTemplate: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${varServiceObjectsRgName}/providers/Microsoft.Resources/templateSpecs/spec-avd-session-hosts'
+        ReplacementPlanSettings: [
+            {
+                name: '_HostPoolResourceGroupName'
+                value: varServiceObjectsRgName
+            }
+            {
+                name: '_SessionHostResourceGroupName'
+                value: varComputeObjectsRgName
+            }
+            {
+                name: '_HostPoolName'
+                value: varHostPoolName
+            }
+            {
+                name: '_RemoveAzureADDevice'
+                value: avdIdentityServiceProvider == 'AAD' ? true : false
+            }
+            {
+                name: '_SessionHostInstanceNumberPadding'
+                value: '4'
+            }
+            {
+                name: '_SessionHostTemplate'
+                value: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${varServiceObjectsRgName}/providers/Microsoft.Resources/templateSpecs/spec-avd-session-hosts'
+            }
+            {
+                name: '_SessionHostParameters'
+                value: string(varAVDReplacementPlansSessionHostParams)
+            }
+            {
+                name: '_SubscriptionId'
+                value: subscription().subscriptionId
+            }
+            {
+                name: '_SessionHostNamePrefix'
+                value: varSessionHostNamePrefix
+            }
+            {
+                name: '_TargetSessionHostCount'
+                value: avdDeploySessionHostsCount
+            }
+            {
+                name: '_VMNamesTemplateParameterName'
+                value: 'ReplacementPlanDeploymentSessionHostNames'
+            }
+        ]
+    }
+    dependsOn: [
+        sessionHosts
+    ]
+}
+
+module RBACFunctionAppPermissionComputeObjects './modules/avdReplacementPlans/.bicep/roleAssignment.bicep' = if (varComputeObjectsRgName != varServiceObjectsRgName) {
+    name: 'RBACFunctionAppPermissionComputeObjects'
+    scope: resourceGroup(varComputeObjectsRgName)
+    params: {
+        PrinicpalId: avdReplacementPlan.outputs.functionAppPrincipalId
+        RoleDefinitionId: 'b24988ac-6180-42a0-ab88-20f7382dd24c' // Contributor
+        Scope: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${varComputeObjectsRgName}'
+    }
+}
+module RBACFunctionAppPermissionNetworkObjects './modules/avdReplacementPlans/.bicep/roleAssignment.bicep' = if (varComputeObjectsRgName != varServiceObjectsRgName) {
+    name: 'RBACFunctionAppPermissionComputeObjects'
+    scope: resourceGroup(varNetworkObjectsRgName)
+    params: {
+        PrinicpalId: avdReplacementPlan.outputs.functionAppPrincipalId
+        RoleDefinitionId: 'a959dbd1-f747-45e3-8ba6-dd80f235f97c' // (Desktop Virtualization Virtual Machine Contributor) // TODO: Assign to vnet only?
+        Scope: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${varNetworkObjectsRgName}'
+    }
+}
+module RBACFunctionAppMonitoringPermissions './modules/avdReplacementPlans/.bicep/roleAssignment.bicep' = if (avdDeployMonitoring) {
+    name: 'RBACFunctionAppMonitoringPermissions'
+    scope: resourceGroup(varMonitoringRgName)
+    params: {
+        PrinicpalId: avdReplacementPlan.outputs.functionAppPrincipalId
+        RoleDefinitionId: '92aaf0da-9dab-42b6-94a3-d43ce8d16293' // Log Analytics Contributor
+        Scope: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${varMonitoringRgName}'
+    }
+}
+
 /*
 // Post deployment resources clean up.
 module addShareToDomainScript './modules/postDeploymentTempResourcesCleanUp/deploy.bicep' = if (removePostDeploymentTempResources)  {
