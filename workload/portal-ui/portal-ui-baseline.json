@@ -501,6 +501,55 @@
                                     }
                                 }
                             ]
+                        },
+                        {
+                            "name": "managementPlaneAVDReplacementPlan",
+                            "type": "Microsoft.Common.Section",
+                            "visible": true,
+                            "label": "AVD Replacement Plan options",
+                            "elements": [
+                                {
+                                    "name": "replacementPlan",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "visible": "[equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled')]",
+                                    "label": "AVD Replacement Plan",
+                                    "defaultValue": "Yes (Recommended)",
+                                    "toolTip": "Will automatically replace session hosts when a new image is available from Marketplace or image gallery.",
+                                    "constraints": {
+                                        "required": false,
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (Recommended)",
+                                                "value": true
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": false
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "replacementPlanInfo",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[equals(steps('managementPlane').managementPlaneAVDReplacementPlan.replacementPlan, true)]",
+                                    "options": {
+                                        "text": "AVD Replacement Plan works by adding new session hosts once a new version is available in the Marketplace or Image Gallery defined during deployment. Old session hosts are removed once new ones are successfully added.",
+                                        "uri": "https://docs.microsoft.com/azure/virtual-desktop/autoscale-scenarios#scenario-4-how-do-exclusion-tags-work",
+                                        "style": "Info"
+                                    }
+                                },
+                                {
+                                    "name": "replacementPlanInfoAzureADJoined",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[and(equals(steps('managementPlane').managementPlaneAVDReplacementPlan.replacementPlan, true),equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'))]",
+                                    "options": {
+                                        "text": "When the session hosts are Azure AD Joined, the replacement plan requires permissions to delete the device record from Azure AD when deleting old session hosts. Please review the documentation for steps to provide the needed permissions.",
+                                        "uri": "https://github.com/WillyMoselhy/AVDReplacementPlans/blob/main/docs/bicepDeploy.md#azure-ad-for-azure-ad-joined",
+                                        "style": "Info"
+                                    }
+                                }
+                            ]
                         }
                     ]
                 },
@@ -2375,7 +2424,8 @@
                 "avdAlaWorkspaceCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingMonitoring.monitoringLogAnalyticsWorkspaceName, 'no')]",
                 "ztDiskEncryptionSetCustomNamePrefix": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsDiskEncryptionSetCustomName]",
                 "ztKvPrefixCustomName ": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsKeyVaultCustomPrefix]",
-                "ztManagedIdentityCustomName": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsManagedIdentityCustomName]"
+                "ztManagedIdentityCustomName": "[steps('resourceNaming').resourceNamingZeroTrust.zeroTrustObjectsManagedIdentityCustomName]",
+                "useAVDReplacementPlans": "[if(equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled'), steps('managementPlane').managementPlaneAVDReplacementPlan.replacementPlan, false)]"
             },
             "kind": "Subscription",
             "location": "[steps('basics').resourceScope.location.name]",
