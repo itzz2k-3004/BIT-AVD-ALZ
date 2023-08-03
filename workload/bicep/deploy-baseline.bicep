@@ -1138,8 +1138,8 @@ module fslogixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if 
         storageSku: varFslogixStorageSku
         fileShareQuotaSize: fslogixFileShareQuotaSize
         storageAccountName: varFslogixStorageName
-        storageToDomainScript: varAzureFilesToDomainScript
-        storageToDomainScriptUri: varAzureFilesToDomainScriptUri
+        azureFilesToDomainScript: varAzureFilesToDomainScript
+        azureFilesToDomainScriptUri: varAzureFilesToDomainScriptUri
         identityServiceProvider: avdIdentityServiceProvider
         customScriptLocation: varAzureFilesCustomScriptLocation
         storageCustomOuPath: varStorageCustomOuPath
@@ -1157,7 +1157,7 @@ module fslogixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if 
         storageObjectsRgName: varStorageObjectsRgName
         privateEndpointSubnetId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetPrivateEndpointSubnetName}' : existingVnetPrivateEndpointSubnetResourceId
         vnetPrivateDnsZoneFilesId: createPrivateDnsZones ? networking.outputs.azureFilesDnsZoneResourceId : avdVnetPrivateDnsZoneFilesId
-        workloadSubsId: avdWorkloadSubsId
+        subscriptionId: avdWorkloadSubsId
         tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
@@ -1181,8 +1181,8 @@ module msixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if (cr
         storageSku: varMsixStorageSku
         fileShareQuotaSize: msixFileShareQuotaSize
         storageAccountName: varMsixStorageName
-        storageToDomainScript: varAzureFilesToDomainScript
-        storageToDomainScriptUri: varAzureFilesToDomainScriptUri
+        azureFilesToDomainScript: varAzureFilesToDomainScript
+        azureFilesToDomainScriptUri: varAzureFilesToDomainScriptUri
         identityServiceProvider: avdIdentityServiceProvider
         customScriptLocation: varAzureFilesCustomScriptLocation
         storageCustomOuPath: varStorageCustomOuPath
@@ -1200,7 +1200,7 @@ module msixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if (cr
         storageObjectsRgName: varStorageObjectsRgName
         privateEndpointSubnetId: createAvdVnet ? '${networking.outputs.virtualNetworkResourceId}/subnets/${varVnetPrivateEndpointSubnetName}' : existingVnetPrivateEndpointSubnetResourceId
         vnetPrivateDnsZoneFilesId: createPrivateDnsZones ? networking.outputs.azureFilesDnsZoneResourceId : avdVnetPrivateDnsZoneFilesId
-        workloadSubsId: avdWorkloadSubsId
+        subscriptionId: avdWorkloadSubsId
         tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         diagnosticLogsRetentionInDays: avdAlaWorkspaceDataRetention
