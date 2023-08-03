@@ -181,6 +181,11 @@ Catch {
 
 Try {
     Write-Log "setting up NTFS permission for FSLogix"
+
+	$Commands = "icacls ${DriveLetter}: /remove ('BUILTIN\Administrators')"
+    Invoke-Expression -Command $Commands
+    Write-Log "ACLs set"
+
 	$NetBIOSName = (Get-ADDomain).NetBIOSName
     $Commands1 = "icacls ${DriveLetter}: /remove ('BUILTIN\Administrators')"
 	$Commands2 = "icacls $FileShareLocation /inheritance:r"
@@ -192,26 +197,20 @@ Try {
 	Invoke-Expression -Command $Commands3
 	Invoke-Expression -Command $Commands4
 	Invoke-Expression -Command $Commands5
-    Write-Log "ACLs set"
 
-	# Set recommended NTFS permissions on the file share
-	$ACL = Get-Acl -Path $DriveLetter
-	$CreatorOwner = New-Object System.Security.Principal.Ntaccount ("Creator Owner")
-	$ACL.PurgeAccessRules($CreatorOwner)
-	$AuthenticatedUsers = New-Object System.Security.Principal.Ntaccount ("Authenticated Users")
-	$ACL.PurgeAccessRules($AuthenticatedUsers)
-	$Users = New-Object System.Security.Principal.Ntaccount ("Users")
-	$ACL.PurgeAccessRules($Users)
-	$DomainUsers = New-Object System.Security.AccessControl.FileSystemAccessRule("$Group","Modify","None","None","Allow")
-	$ACL.SetAccessRule($DomainUsers)
-	$CreatorOwner = New-Object System.Security.AccessControl.FileSystemAccessRule("Creator Owner","Modify","ContainerInherit,ObjectInherit","InheritOnly","Allow")
-	$ACL.AddAccessRule($CreatorOwner)
-	$ACL | Set-Acl -Path $DriveLetter
-	Write-Log -Message "Setting the NTFS permissions on the Azure file share succeeded" -Type 'INFO'
-
-
-
-
+	# $acl = get-acl -path 'z:'
+	# $creatorowner = new-object system.security.principal.ntaccount ("creator owner")
+	# $acl.purgeaccessrules($creatorowner)
+	# $authenticatedusers = new-object system.security.principal.ntaccount ("authenticated users")
+	# $acl.purgeaccessrules($authenticatedusers)
+	# $users = new-object system.security.principal.ntaccount ("users")
+	# $acl.purgeaccessrules($users)
+	# $domainusers = new-object system.security.accesscontrol.filesystemaccessrule("$group","modify","none","none","allow")
+	# $acl.setaccessrule($domainusers)
+	# $creatorowner = new-object system.security.accesscontrol.filesystemaccessrule("creator owner","modify","containerinherit,objectinherit","inheritonly","allow")
+	# $acl.addaccessrule($creatorowner)
+	# $acl | set-acl -path 'z:'
+	write-log -message "setting the ntfs permissions on the azure file share succeeded" -type 'info'
 
 	# Unmount file share
 	Remove-PSDrive -Name $DriveLetter -PSProvider 'FileSystem' -Force
