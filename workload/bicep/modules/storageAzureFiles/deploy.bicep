@@ -5,7 +5,7 @@ targetScope = 'subscription'
 // ========== //
 
 @sys.description('AVD workload subscription ID, multiple subscriptions scenario.')
-param workloadSubsId string
+param subscriptionId string
 
 @sys.description('Resource Group Name for Azure Files.')
 param storageObjectsRgName string
@@ -53,10 +53,10 @@ param fileShareQuotaSize int
 param vnetPrivateDnsZoneFilesId string
 
 @sys.description('Script name for adding storage account to Active Directory.')
-param storageToDomainScript string
+param azureFilesToDomainScript string
 
 @sys.description('URI for the script for adding the storage account to Active Directory.')
-param storageToDomainScriptUri string
+param azureFilesToDomainScriptUri string
 
 @sys.description('Tags to be applied to resources')
 param tags object
@@ -80,8 +80,8 @@ param time string = utcNow()
 param storagePurpose string
 
 //parameters for domain join
-@sys.description('Sets location of DSC Agent.')
-param dscAgentPackageLocation string
+@sys.description('Sets location of custom script.')
+param customScriptLocation string
 
 @sys.description('Custom OU path for storage.')
 param storageCustomOuPath string
@@ -108,7 +108,7 @@ var varAvdFileShareMetricsDiagnostic = [
 ]
 var varWrklStoragePrivateEndpointName = 'pe-${storageAccountName}-file'
 var vardirectoryServiceOptions = (identityServiceProvider == 'AADDS') ? 'AADDS': (identityServiceProvider == 'AAD') ? 'AADKERB': 'None'
-var varStorageToDomainScriptArgs = '-DscPath ${dscAgentPackageLocation} -StorageAccountName ${storageAccountName} -StorageAccountRG ${storageObjectsRgName} -StoragePurpose ${storagePurpose} -DomainName ${identityDomainName} -IdentityServiceProvider ${identityServiceProvider} -AzureCloudEnvironment ${varAzureCloudName} -SubscriptionId ${workloadSubsId} -DomainAdminUserName ${domainJoinUserName} -CustomOuPath ${storageCustomOuPath} -OUName ${ouStgPath} -CreateNewOU ${createOuForStorageString} -ShareName ${fileShareName} -ClientId ${managedIdentityClientId}'
+var varStorageToDomainScriptArgs = '-CustomScriptPath ${customScriptLocation} -StorageAccountName ${storageAccountName} -StorageAccountRG ${storageObjectsRgName} -StoragePurpose ${storagePurpose} -DomainName ${identityDomainName} -IdentityServiceProvider ${identityServiceProvider} -AzureCloudEnvironment ${varAzureCloudName} -SubscriptionId ${subscriptionId} -DomainAdminUserName ${domainJoinUserName} -CustomOuPath ${storageCustomOuPath} -OUName ${ouStgPath} -CreateNewOU ${createOuForStorageString} -ShareName ${fileShareName} -ClientId ${managedIdentityClientId}'
 // =========== //
 // Deployments //
 // =========== //
@@ -116,12 +116,12 @@ var varStorageToDomainScriptArgs = '-DscPath ${dscAgentPackageLocation} -Storage
 // Call on the KV.
 resource avdWrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
     name: wrklKvName
-    scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
+    scope: resourceGroup('${subscriptionId}', '${serviceObjectsRgName}')
 }
 
 // Provision the storage account and Azure Files.
 module storageAndFile '../../../../carml/1.3.0/Microsoft.Storage/storageAccounts/deploy.bicep' = {
-    scope: resourceGroup('${workloadSubsId}', '${storageObjectsRgName}')
+    scope: resourceGroup('${subscriptionId}', '${storageObjectsRgName}')
     name: 'Storage-${storagePurpose}-${time}'
     params: {
         name: storageAccountName
@@ -187,17 +187,17 @@ module storageAndFile '../../../../carml/1.3.0/Microsoft.Storage/storageAccounts
 //    scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
 //}
 
-// Custom Extension call in on the DSC script to join Azure storage account to domain. 
+// Custom Extension call in on the custom script to join Azure storage account to domain. 
 module addShareToDomainScript './.bicep/azureFilesDomainJoin.bicep' = {
-    scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
+    scope: resourceGroup('${subscriptionId}', '${serviceObjectsRgName}')
     name: 'Add-${storagePurpose}-Storage-Setup-${time}'
     params: {
         location: sessionHostLocation
         name: managementVmName
-        file: storageToDomainScript
+        file: azureFilesToDomainScript
         scriptArguments: varStorageToDomainScriptArgs
         domainJoinUserPassword: avdWrklKeyVaultget.getSecret('domainJoinUserPassword')
-        baseScriptUri: storageToDomainScriptUri
+        baseScriptUri: azureFilesToDomainScriptUri
     }
     dependsOn: [
         storageAndFile

@@ -63,7 +63,7 @@ Write-Log "Forcing group policy updates"
 gpupdate /force
 
 Write-Log "Waiting for domain policies to be applied (2 minutes)"
-Start-Sleep -Seconds 120
+Start-Sleep -Seconds 60
 
 
 Write-Log "Turning off Windows firewall. "
@@ -144,7 +144,6 @@ $account = Set-AzStorageAccount -ResourceGroupName $StorageAccountRG -AccountNam
 $account.AzureFilesIdentityBasedAuth
 
 # Remove Administrators from full control
-
 
 if ($StoragePurpose -eq 'fslogix') {
 	$DriveLetter = 'Y'

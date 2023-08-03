@@ -153,7 +153,7 @@ Configuration DomainJoinFileShare
             SetScript            = {
                 . (Join-Path $using:ScriptPath "Logger.ps1")
                 try {
-                    Write-Log "DSC DomainJoinStorage SetScript Domain joining storage account $Using:StorageAccountName"
+                    Write-Log "Custom Script DomainJoinStorage SetScript Domain joining storage account $Using:StorageAccountName"
                     & "$using:ScriptPath\Script-DomainJoinStorage.ps1" -StorageAccountName $Using:StorageAccountName -StorageAccountRG $Using:StorageAccountRG -SubscriptionId $Using:SubscriptionId -ClientId $Using:ClientId -ShareName $Using:ShareName -DomainName $Using:DomainName -IdentityServiceProvider $Using:IdentityServiceProvider -AzureCloudEnvironment $Using:AzureCloudEnvironment -CustomOuPath $Using:CustomOuPath -OUName $Using:OUName -CreateNewOU $Using:CreateNewOU -StoragePurpose $Using:StoragePurpose
 
                     Write-Log "Successfully domain joined and/or NTFS permission set on Storage account"
@@ -161,14 +161,14 @@ Configuration DomainJoinFileShare
                 catch {
                     $ErrMsg = $PSItem | Format-List -Force | Out-String
                     Write-Log -Err $ErrMsg
-                    throw [System.Exception]::new("Some error occurred in DSC DomainJoinStorage SetScript: $ErrMsg", $PSItem.Exception)
+                    throw [System.Exception]::new("Some error occurred in custom script DomainJoinStorage SetScript: $ErrMsg", $PSItem.Exception)
                 }
             }
             TestScript           = {
                 . (Join-Path $using:ScriptPath "Logger.ps1")
 
                 try {
-                    Write-Log "DSC DomainJoinStorage TestScript checking if storage account $Using:StorageAccountName is domain joined."
+                    Write-Log "Custom script DomainJoinStorage TestScript checking if storage account $Using:StorageAccountName is domain joined."
                     $ADModule = Get-Module -Name ActiveDirectory
                     if (-not $ADModule) {
                         return $False
@@ -189,7 +189,7 @@ Configuration DomainJoinFileShare
                 catch {
                     $ErrMsg = $PSItem | Format-List -Force | Out-String
                     Write-Log -Err $ErrMsg
-                    throw [System.Exception]::new("Some error occurred in DSC DomainJoinStorage TestScript: $ErrMsg", $PSItem.Exception)
+                    throw [System.Exception]::new("Some error occurred in custom script DomainJoinStorage TestScript: $ErrMsg", $PSItem.Exception)
                 }
             }
 		

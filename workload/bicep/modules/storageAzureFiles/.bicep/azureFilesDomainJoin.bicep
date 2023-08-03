@@ -31,7 +31,7 @@ var varscriptArgumentsWithPassword = '${scriptArguments} -DomainAdminUserPasswor
 // =========== //
 
 // Add Azure Files to AD DS domain.
-resource dscStorageScript 'Microsoft.Compute/virtualMachines/extensions@2022-08-01' = {
+resource storageCustomScript 'Microsoft.Compute/virtualMachines/extensions@2022-08-01' = {
   name: '${name}/AzureFilesDomainJoin'
   location: location
   properties: {

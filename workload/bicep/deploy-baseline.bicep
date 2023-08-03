@@ -724,11 +724,11 @@ var varStorageAccountContributorRoleId = '17d1049b-9a84-46fb-8f53-869881c3d3ab'
 var varReaderRoleId = 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
 var varStorageSmbShareContributorRoleId = '0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb'
 
-var varStorageAzureFilesDscAgentPackageLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/DSCStorageScripts.zip'
+var varAzureFilesCustomScriptLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/customScriptExtensionStorage.zip'
 //var varTempResourcesCleanUpDscAgentPackageLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/postDeploymentTempResourcesCleanUp.zip'
-var varStorageToDomainScriptUri = '${varBaseScriptUri}scripts/Manual-DSC-Storage-Scripts.ps1'
+var varAzureFilesToDomainScriptUri = '${varBaseScriptUri}scripts/storageDomainJoinScripts.ps1'
 //var varPostDeploymentTempResuorcesCleanUpScriptUri = '${varBaseScriptUri}scripts/postDeploymentTempResuorcesCleanUp.ps1'
-var varStorageToDomainScript = './Manual-DSC-Storage-Scripts.ps1'
+var varAzureFilesToDomainScript = './storageDomainJoinScripts.ps1'
 //var varPostDeploymentTempResuorcesCleanUpScript = './PostDeploymentTempResuorcesCleanUp.ps1'
 var varOuStgPath = !empty(storageOuPath) ? '"${storageOuPath}"' : '"${varDefaultStorageOuPath}"'
 var varDefaultStorageOuPath = (avdIdentityServiceProvider == 'AADDS') ? 'AADDC Computers' : 'Computers'
@@ -1138,10 +1138,10 @@ module fslogixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if 
         storageSku: varFslogixStorageSku
         fileShareQuotaSize: fslogixFileShareQuotaSize
         storageAccountName: varFslogixStorageName
-        storageToDomainScript: varStorageToDomainScript
-        storageToDomainScriptUri: varStorageToDomainScriptUri
+        storageToDomainScript: varAzureFilesToDomainScript
+        storageToDomainScriptUri: varAzureFilesToDomainScriptUri
         identityServiceProvider: avdIdentityServiceProvider
-        dscAgentPackageLocation: varStorageAzureFilesDscAgentPackageLocation
+        customScriptLocation: varAzureFilesCustomScriptLocation
         storageCustomOuPath: varStorageCustomOuPath
         managementVmName: varManagementVmName
         deployPrivateEndpoint: deployPrivateEndpointKeyvaultStorage
@@ -1181,10 +1181,10 @@ module msixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if (cr
         storageSku: varMsixStorageSku
         fileShareQuotaSize: msixFileShareQuotaSize
         storageAccountName: varMsixStorageName
-        storageToDomainScript: varStorageToDomainScript
-        storageToDomainScriptUri: varStorageToDomainScriptUri
+        storageToDomainScript: varAzureFilesToDomainScript
+        storageToDomainScriptUri: varAzureFilesToDomainScriptUri
         identityServiceProvider: avdIdentityServiceProvider
-        dscAgentPackageLocation: varStorageAzureFilesDscAgentPackageLocation
+        customScriptLocation: varAzureFilesCustomScriptLocation
         storageCustomOuPath: varStorageCustomOuPath
         managementVmName: varManagementVmName
         deployPrivateEndpoint: deployPrivateEndpointKeyvaultStorage
