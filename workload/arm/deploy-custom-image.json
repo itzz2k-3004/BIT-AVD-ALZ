@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "10271373507996292917"
+      "templateHash": "15185302854453123490"
     },
     "name": "AVD Accelerator - Baseline Custom Image Deployment",
     "description": "AVD Accelerator - Custom Image Baseline"
@@ -54,7 +54,7 @@
       "type": "string",
       "defaultValue": "Contoso-CC",
       "metadata": {
-        "description": "Cost center of owner team. (Defualt: Contoso-CC)"
+        "description": "Cost center of owner team. (Default: Contoso-CC)"
       }
     },
     "criticalityCustomTag": {

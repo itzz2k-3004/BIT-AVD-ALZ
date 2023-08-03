@@ -415,15 +415,28 @@
                             "name": "managementPlaneAppGroupOptions",
                             "type": "Microsoft.Common.Section",
                             "visible": "[equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled')]",
-                            "label": "Application group options (Desktop application group will be deployed by default)",
+                            "label": "",
                             "elements": [
                                 {
-                                    "name": "deployRemoteAppGroup",
-                                    "type": "Microsoft.Common.CheckBox",
+                                    "name": "preferredAppGroupType",
+                                    "type": "Microsoft.Common.OptionsGroup",
                                     "visible": true,
-                                    "label": "Create remote app group",
-                                    "defaultValue": false,
-                                    "toolTip": "This application group type allows to publish seamless apps instead of full desktops."
+                                    "label": "Preferred app group type",
+                                    "defaultValue": "Desktop",
+                                    "toolTip": "Select the preferred type of application group for the host pool, the option selected will be used to deploy the default application group of the host pool.",
+                                    "constraints": {
+                                        "required": true,
+                                        "allowedValues": [
+                                            {
+                                                "label": "Desktop",
+                                                "value": "Desktop"
+                                            },
+                                            {
+                                                "label": "Remote App (RAIL)",
+                                                "value": "RemoteApp"
+                                            }
+                                        ]
+                                    }
                                 }
                             ]
                         },
@@ -601,12 +614,12 @@
                                     "name": "sessionHostsCount",
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "VM count",
-                                    "toolTip": "Provide the number of session hosts to deploy (1-49).",
+                                    "toolTip": "Provide the number of session hosts to deploy (1-100).",
                                     "defaultValue": 1,
                                     "constraints": {
                                         "required": true,
-                                        "regex": "^([1-9]|[1-4][0-9])$",
-                                        "validationMessage": "The count must be between 1-49 session hosts."
+                                        "regex": "^([1-9]|[1-9][0-9]|[1][0][0])$",
+                                        "validationMessage": "The count must be between 1-100 session hosts."
                                     }
                                 },
                                 {
@@ -772,7 +785,7 @@
                                     "type": "Microsoft.Common.DropDown",
                                     "label": "Security type",
                                     "filter": true,
-                                    "defaultValue": "Standard",
+                                    "defaultValue": "Trusted Launch Virtual Machines",
                                     "toolTip": "Choose a type of security that matches your needs: Standard includes basic protections at no additional cost. Trusted launch virtual machines provide additional security features on Gen2 virtual machines to protect against persistent and advanced attacks.",
                                     "constraints": {
                                         "required": true,
@@ -797,7 +810,7 @@
                                     "type": "Microsoft.Common.CheckBox",
                                     "visible": "[or(equals(steps('sessionHosts').sessionHostsSecuritySection.securityType, 'TrustedLaunch'), equals(steps('sessionHosts').sessionHostsSecuritySection.securityType, 'ConfidentialVM'))]",
                                     "label": "Enable secure boot",
-                                    "defaultValue": false,
+                                    "defaultValue": true,
                                     "toolTip": "Secure boot helps protect your VMs against boot kits, rootkits, and kernel-level malware."
                                 },
                                 {
@@ -805,7 +818,7 @@
                                     "type": "Microsoft.Common.CheckBox",
                                     "visible": "[or(equals(steps('sessionHosts').sessionHostsSecuritySection.securityType, 'TrustedLaunch'), equals(steps('sessionHosts').sessionHostsSecuritySection.securityType, 'ConfidentialVM'))]",
                                     "label": "Enable vTPM",
-                                    "defaultValue": false,
+                                    "defaultValue": true,
                                     "toolTip": "Virtual Trusted Platform Module (vTPM) is TPM2.0 compliant and validates your VM boot integrity apart from securely storing keys and secrets."
                                 }
                             ]
@@ -1606,10 +1619,10 @@
                                     }
                                 },
                                 {
-                                    "name": "applicationGroupCustomNameDesktop",
+                                    "name": "applicationGroupCustomName",
                                     "type": "Microsoft.Common.TextBox",
-                                    "label": "Application group (Desktop)",
-                                    "toolTip": "Desktop application group custom name.",
+                                    "label": "Application group",
+                                    "toolTip": "Application group custom name.",
                                     "placeholder": "Example: vdag-desktop-app1-dev-use2-001",
                                     "constraints": {
                                         "required": true,
@@ -1618,37 +1631,11 @@
                                     }
                                 },
                                 {
-                                    "name": "applicationGroupCustomFriendlyNameDesktop",
+                                    "name": "applicationGroupCustomFriendlyName",
                                     "type": "Microsoft.Common.TextBox",
-                                    "label": "Application group (Desktop, Friendly name)",
+                                    "label": "Application group (Friendly name)",
                                     "toolTip": "Desktop application group custom name.",
                                     "placeholder": "Example: Desktops - App1 - Dev - East US 2 - 001",
-                                    "constraints": {
-                                        "required": true,
-                                        "regex": "^[a-z0-9A-Z-]{1,64}$",
-                                        "validationMessage": "Value must be 1-64 characters."
-                                    }
-                                },
-                                {
-                                    "name": "applicationGroupCustomNameRemoteApp",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "label": "Application group (Remote App)",
-                                    "visible": "[steps('managementPlane').managementPlaneAppGroupOptions.deployRemoteAppGroup]",
-                                    "toolTip": "Remote application group custom name.",
-                                    "placeholder": "Example: vdag-rapp-app1-dev-use2-001",
-                                    "constraints": {
-                                        "required": true,
-                                        "regex": "^[a-z0-9A-Z-]{1,64}$",
-                                        "validationMessage": "Value must be 1-64 characters."
-                                    }
-                                },
-                                {
-                                    "name": "applicationGroupCustomFriendlyNameRemoteApp",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "label": "Application group (Remote App, Friendly name)",
-                                    "visible": "[steps('managementPlane').managementPlaneAppGroupOptions.deployRemoteAppGroup]",
-                                    "toolTip": "Remote application group custom name.",
-                                    "placeholder": "Example: Remote apps - App1 - Dev - East US 2 - 001",
                                     "constraints": {
                                         "required": true,
                                         "regex": "^[a-z0-9A-Z-]{1,64}$",
@@ -2292,10 +2279,10 @@
                 "avdSessionHostLocation": "[if(equals(steps('sessionHosts').deploySessionHosts, true), steps('sessionHosts').sessionHostsRegionSection.sessionHostsRegion, steps('basics').resourceScope.location.name)]",
                 "avdWorkloadSubsId": "[steps('basics').resourceScope.subscription.subscriptionId]",
                 "avdHostPoolType": "[steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType]",
+                "hostPoolPreferredAppGroupType": "[if(equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled'), steps('managementPlane').managementPlaneAppGroupOptions.preferredAppGroupType, 'Desktop')]",
                 "avdHostPoolLoadBalancerType": "[steps('managementPlane').managementPlaneHostPoolSettings.loadBalancerType]",
                 "avhHostPoolMaxSessions": "[if(equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled'), steps('managementPlane').managementPlaneHostPoolSettings.maxSessions, 1)]",
                 "avdPersonalAssignType": "[if(equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Personal'), steps('managementPlane').managementPlaneHostPoolSettings.assignmentType, 'Automatic')]",
-                "avdDeployRappGroup": "[if(equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled'), steps('managementPlane').managementPlaneAppGroupOptions.deployRemoteAppGroup, false)]",
                 "avdIdentityServiceProvider": "[steps('identity').identityDomainInformation.identityServiceProvider]",
                 "createIntuneEnrollment": "[if(equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'), steps('identity').identityDomainInformation.identityServiceProviderIntuneEnrollment, false)]",
                 "avdIdentityDomainName": "[steps('identity').identityDomainInformation.identityDomainName]",
@@ -2335,7 +2322,7 @@
                 "avdVnetPrivateDnsZoneKeyvaultId": "[if(and(equals(steps('network').deployPrivateEndpointKeyvaultStorage, true), equals(steps('network').virtualNetworkPrivateDnsZone, false)), steps('network').virtualNetworkPrivateDnsZoneSelection.virtualNetworkPrivateDnsZoneKeyvaultSelector.id, '')]",
                 "createAvdFslogixDeployment": "[steps('storage').storageFslogix.fslogixDeployment]",
                 "fslogixStoragePerformance": "[if(equals(steps('storage').storageFslogix.fslogixDeployment, true), steps('storage').storageFslogix.fslogixStorageAccountSku, 'Premium')]",
-                "avdFslogixFileShareQuotaSize": "[if(equals(steps('storage').storageFslogix.fslogixDeployment, true), steps('storage').storageFslogix.sessionHostsFslogixFileShareQuota, 1 )]",
+                "fslogixFileShareQuotaSize": "[if(equals(steps('storage').storageFslogix.fslogixDeployment, true), steps('storage').storageFslogix.sessionHostsFslogixFileShareQuota, 1 )]",
                 "createMsixDeployment": "[steps('storage').storageMsix.msixDeployment]",
                 "msixStoragePerformance": "[if(equals(steps('storage').storageMsix.msixDeployment, true), steps('storage').storageMsix.msixStorageAccountSku, 'Premium')]",
                 "msixFileShareQuotaSize": "[if(equals(steps('storage').storageMsix.msixDeployment, true), steps('storage').storageMsix.sessionHostsMsixFileShareQuota, 1 )]",
@@ -2358,10 +2345,8 @@
                 "avdHostPoolCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.hostPoolCustomName, 'no')]",
                 "avdHostPoolCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.hostPoolCustomFriendlyName, 'no')]",
                 "avdScalingPlanCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.scalingPlanCustomName, 'no')]",
-                "avdApplicationGroupCustomNameDesktop": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomNameDesktop, 'no')]",
-                "avdApplicationGroupCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomFriendlyNameDesktop, 'no')]",
-                "avdApplicationGroupCustomNameRapp": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomNameRemoteApp, 'no')]",
-                "avdApplicationGroupCustomFriendlyNameRapp": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomFriendlyNameRemoteApp, 'no')]",
+                "avdApplicationGroupCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomName, 'no')]",
+                "avdApplicationGroupCustomFriendlyName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingAvdManagementPlane.applicationGroupCustomFriendlyName, 'no')]",
                 "avdSessionHostCustomNamePrefix": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.sessionHostCustomNamePrefix, 'no')]",
                 "avdAvailabilitySetCustomNamePrefix": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingCompute.availabilitySetCustomNamePrefix, 'no')]",
                 "storageAccountPrefixCustomName": "[if(equals(steps('resourceNaming').resourceNamingSelection, true), steps('resourceNaming').resourceNamingStorage.storageAccountPrefixCustomName, 'no')]",
