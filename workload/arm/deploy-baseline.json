@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "4616995295848360231"
+      "templateHash": "11665914716621401026"
     },
     "name": "AVD Accelerator - Baseline Deployment",
     "description": "AVD Accelerator - Deployment Baseline"
@@ -51653,7 +51653,7 @@
               },
               {
                 "name": "_SessionHostInstanceNumberPadding",
-                "value": "4"
+                "value": "3"
               },
               {
                 "name": "_SessionHostTemplate",
