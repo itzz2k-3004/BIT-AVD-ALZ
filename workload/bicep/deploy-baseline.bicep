@@ -1357,7 +1357,7 @@ module avdReplacementPlan 'modules/avdReplacementPlans/deploy.bicep' = if (useAV
             }
             {
                 name: '_SessionHostInstanceNumberPadding'
-                value: '4'
+                value: '3'
             }
             {
                 name: '_SessionHostTemplate'
