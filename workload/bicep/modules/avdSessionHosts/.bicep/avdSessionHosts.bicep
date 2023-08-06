@@ -17,7 +17,7 @@ param sessionHostLocation string
 param timeZone string
 
 @sys.description('AVD Session Host prefix.')
-param sessionHostNamePrefix string
+param sessionHostNamePrefix string = '' // Only required in initial deployment, not in replacement plans as it provides complete VM Names.
 
 @sys.description('Availablity Set name.')
 param availabilitySetNamePrefix string

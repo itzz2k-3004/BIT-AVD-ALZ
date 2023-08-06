@@ -33,13 +33,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs ARM build from the bicep. Used for portal UI. Compile AVD baseline. 
+      # Runs ARM build from the bicep. Used for portal UI. Compile AVD baseline.
       - name: bicep-build-output
         uses: Azure/bicep-build-action@v1.0.0
         with:
           bicepFilePath: ./workload/bicep/deploy-baseline.bicep
           outputFilePath: ./workload/arm/deploy-baseline.json
-          
+
       - name: Validate the AVD baseline output
         shell: bash
         run: |
@@ -51,8 +51,8 @@ jobs:
             exit 1
           fi
 
-      # Runs ARM build from the bicep. Used for portal UI. Compile AVD Custom image. 
-      - name: bicep-build-output
+      # Runs ARM build from the bicep. Used for portal UI. Compile AVD Custom image.
+      - name: bicep-build-output-
         uses: Azure/bicep-build-action@v1.0.0
         with:
           bicepFilePath: ./workload/bicep/deploy-custom-image.bicep
@@ -68,12 +68,45 @@ jobs:
             echo "$FILE not found."
             exit 1
           fi
-          
+
+      # Runs ARM build from the bicep. Builds avdSessionHosts.bicep file for use by the template spec. (for AVD Repalcement Plan)
+      - name: bicep-build-output
+        uses: Azure/bicep-build-action@v1.0.0
+        with:
+          bicepFilePath: ./workload/bicep/modules/avdSessionHosts/.bicep/avdSessionHosts.bicep
+          outputFilePath: ./workload/arm/avdSessionHosts.json
+
+      - name: Validate the AVD custom image output
+        shell: bash
+        run: |
+          FILE="./workload/arm/avdSessionHosts.json"
+          if test -f "$FILE"; then
+            echo "$FILE created successfully"
+          else
+            echo "$FILE not found."
+            exit 1
+          fi
+
+      # Runs ARM build from the bicep. Builds TemplateSpec.bicep. (for AVD Repalcement Plan)
+      - name: bicep-build-output
+        uses: Azure/bicep-build-action@v1.0.0
+        with:
+          bicepFilePath: ./workload/bicep/modules/avdReplacementPlans/TemplateSpec.bicep
+          outputFilePath: ./workload/arm/TemplateSpec.json
+
+      - name: Validate the AVD custom image output
+        shell: bash
+        run: |
+          FILE="./workload/arm/TemplateSpec.json"
+          if test -f "$FILE"; then
+            echo "$FILE created successfully"
+          else
+            echo "$FILE not found."
+            exit 1
+          fi
+
       # Publish the compiled ARM templates to Github
       - name: publish
         uses: stefanzweifel/git-auto-commit-action@v4
-        with: 
+        with:
           commit_message: Automated update for ARM templates
-          
-
-
