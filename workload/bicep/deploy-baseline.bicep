@@ -1336,7 +1336,7 @@ module avdReplacementPlan 'modules/avdReplacementPlans/deploy.bicep' = if (useAV
         StorageAccountName: 'stavdrpfunc${varNamingUniqueStringThreeChar}'
         LogAnalyticsWorkspaceName: 'log-AVDReplacementPlan-01' // TODO: Change this to use the same workspace as the AVD deployment.
         FunctionAppName: 'func-AVDReplacementPlan-01'
-        FunctionAppZipUrl: 'https://github.com/WillyMoselhy/AVDReplacementPlans/raw/Development/Nightly/FunctionApp.zip'
+        FunctionAppZipUrl: 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.2.0/FunctionApp.zip'
         SessionHostTemplate: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${varServiceObjectsRgName}/providers/Microsoft.Resources/templateSpecs/spec-avd-session-hosts'
         ReplacementPlanSettings: [
             {
