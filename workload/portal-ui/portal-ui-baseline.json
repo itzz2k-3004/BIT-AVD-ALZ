@@ -506,7 +506,7 @@
                             "name": "managementPlaneAVDReplacementPlan",
                             "type": "Microsoft.Common.Section",
                             "visible": "[equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled')]",
-                            "label": "AVD Replacement Plan optionssss",
+                            "label": "AVD Replacement Plan options",
                             "elements": [
                                 {
                                     "name": "replacementPlan",
@@ -520,11 +520,11 @@
                                         "allowedValues": [
                                             {
                                                 "label": "Yes (Recommended)",
-                                                "value": true
+                                                "value": "[equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled')]"
                                             },
                                             {
                                                 "label": "No",
-                                                "value": false
+                                                "value": "[equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Personal')]"
                                             }
                                         ]
                                     }
