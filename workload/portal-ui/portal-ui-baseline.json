@@ -505,7 +505,7 @@
                         {
                             "name": "managementPlaneAVDReplacementPlan",
                             "type": "Microsoft.Common.Section",
-                            "visible": true,
+                            "visible": "[equals(steps('managementPlane').managementPlaneHostPoolSettings.hostPoolType, 'Pooled')]",
                             "label": "AVD Replacement Plan options",
                             "elements": [
                                 {
