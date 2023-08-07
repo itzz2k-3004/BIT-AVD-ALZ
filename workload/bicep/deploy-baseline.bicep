@@ -783,6 +783,7 @@ var verResourceGroups = [
 var varReplacementPlanSessionHostTags = useAVDReplacementPlans ? {
     IncludeInAutoReplace: 'True'
 } : {}
+var varReplacementPlanName = 'func-ReplacementPlan-${varManagementPlaneNamingStandard}-001'
 var varAVDReplacementPlansSessionHostParams = {
     // This part is very similar to how we call the avdSessionHosts.bicep module
     diskEncryptionSetResourceId: diskZeroTrust ? zeroTrust.outputs.ztDiskEncryptionSetResourceId : ''
@@ -1335,7 +1336,7 @@ module avdReplacementPlan 'modules/avdReplacementPlans/deploy.bicep' = if (useAV
         Location: avdManagementPlaneLocation
         StorageAccountName: 'stavdrpfunc${varNamingUniqueStringThreeChar}'
         LogAnalyticsWorkspaceName: 'log-AVDReplacementPlan-01' // TODO: Change this to use the same workspace as the AVD deployment.
-        FunctionAppName: 'func-AVDReplacementPlan-01'
+        FunctionAppName: varReplacementPlanName
         FunctionAppZipUrl: 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.2.0/FunctionApp.zip'
         SessionHostTemplate: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${varServiceObjectsRgName}/providers/Microsoft.Resources/templateSpecs/spec-avd-session-hosts'
         ReplacementPlanSettings: [
