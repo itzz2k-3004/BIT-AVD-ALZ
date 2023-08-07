@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "11665914716621401026"
+      "templateHash": "5053058711686930342"
     },
     "name": "AVD Accelerator - Baseline Deployment",
     "description": "AVD Accelerator - Deployment Baseline"
@@ -1476,7 +1476,8 @@
         "tags": "[if(parameters('createResourceTags'), union(variables('varAllComputeStorageTags'), variables('varAvdDefaultTags')), union(variables('varAvdDefaultTags'), variables('varAllComputeStorageTags')))]"
       }
     ],
-    "varReplacementPlanSessionHostTags": "[if(parameters('useAVDReplacementPlans'), createObject('IncludeInAutoReplace', 'True'), createObject())]"
+    "varReplacementPlanSessionHostTags": "[if(parameters('useAVDReplacementPlans'), createObject('IncludeInAutoReplace', 'True'), createObject())]",
+    "varReplacementPlanName": "[format('func-ReplacementPlan-{0}-001', variables('varManagementPlaneNamingStandard'))]"
   },
   "resources": [
     {
@@ -51625,10 +51626,10 @@
             "value": "log-AVDReplacementPlan-01"
           },
           "FunctionAppName": {
-            "value": "func-AVDReplacementPlan-01"
+            "value": "[variables('varReplacementPlanName')]"
           },
           "FunctionAppZipUrl": {
-            "value": "https://github.com/WillyMoselhy/AVDReplacementPlans/raw/Development/Nightly/FunctionApp.zip"
+            "value": "https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.2.0/FunctionApp.zip"
           },
           "SessionHostTemplate": {
             "value": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Resources/templateSpecs/spec-avd-session-hosts', subscription().subscriptionId, variables('varServiceObjectsRgName'))]"
