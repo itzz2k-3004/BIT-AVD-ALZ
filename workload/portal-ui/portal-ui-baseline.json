@@ -530,22 +530,22 @@
                                     }
                                 },
                                 {
-                                    "name": "replacementPlanInfo",
-                                    "type": "Microsoft.Common.InfoBox",
-                                    "visible": "[equals(steps('managementPlane').managementPlaneAVDReplacementPlan.replacementPlan, true)]",
-                                    "options": {
-                                        "text": "AVD Replacement Plan works by adding new session hosts once a new version is available in the Marketplace or Image Gallery defined during deployment. Old session hosts are removed once new ones are successfully added.",
-                                        "uri": "https://docs.microsoft.com/azure/virtual-desktop/autoscale-scenarios#scenario-4-how-do-exclusion-tags-work",
-                                        "style": "Info"
-                                    }
-                                },
-                                {
                                     "name": "replacementPlanInfoAzureADJoined",
                                     "type": "Microsoft.Common.InfoBox",
                                     "visible": "[and(equals(steps('managementPlane').managementPlaneAVDReplacementPlan.replacementPlan, true),equals(steps('identity').identityDomainInformation.identityServiceProvider, 'AAD'))]",
                                     "options": {
                                         "text": "When the session hosts are Azure AD Joined, the replacement plan requires permissions to delete the device record from Azure AD when deleting old session hosts. Please review the documentation for steps to provide the needed permissions.",
                                         "uri": "https://github.com/WillyMoselhy/AVDReplacementPlans/blob/main/docs/bicepDeploy.md#azure-ad-for-azure-ad-joined",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "replacementPlanInfo",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[equals(steps('managementPlane').managementPlaneAVDReplacementPlan.replacementPlan, true)]",
+                                    "options": {
+                                        "text": "AVD Replacement Plan works by adding new session hosts once a new version is available in the Marketplace or Image Gallery defined during deployment. Old session hosts are removed once new ones are successfully added.",
+                                        "uri": "https://docs.microsoft.com/azure/virtual-desktop/autoscale-scenarios#scenario-4-how-do-exclusion-tags-work",
                                         "style": "Info"
                                     }
                                 }
