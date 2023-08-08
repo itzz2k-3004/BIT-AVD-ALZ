@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "16806618822583250693"
+      "templateHash": "12399385689328933772"
     },
     "name": "AVD Accelerator - Baseline Deployment",
     "description": "AVD Accelerator - Deployment Baseline"
@@ -12954,7 +12954,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "11424470055734916525"
+              "templateHash": "14730988355193470252"
             }
           },
           "parameters": {
@@ -14494,8 +14494,7 @@
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
               "name": "[format('Workspace-{0}', parameters('time'))]",
-              "subscriptionId": "[format('{0}', parameters('workloadSubsId'))]",
-              "resourceGroup": "[format('{0}', parameters('serviceObjectsRgName'))]",
+              "location": "[deployment().location]",
               "properties": {
                 "expressionEvaluationOptions": {
                   "scope": "inner"
@@ -15428,7 +15427,7 @@
               "dependsOn": [
                 "applicationGroups",
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('workloadSubsId')), format('{0}', parameters('serviceObjectsRgName'))), 'Microsoft.Resources/deployments', format('HostPool-{0}', parameters('time')))]",
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('workloadSubsId')), format('{0}', parameters('serviceObjectsRgName'))), 'Microsoft.Resources/deployments', format('Workspace-{0}', parameters('time')))]"
+                "[subscriptionResourceId('Microsoft.Resources/deployments', format('Workspace-{0}', parameters('time')))]"
               ]
             }
           ]

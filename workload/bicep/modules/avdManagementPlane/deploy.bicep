@@ -280,7 +280,7 @@ resource workSpace_Existing 'Microsoft.DesktopVirtualization/workspaces@2022-09-
 }
 
 module workSpace '../../../../carml/1.3.0/Microsoft.DesktopVirtualization/workspaces/deploy.bicep' = {
-  scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
+  scope: empty(existingAVDWorkspaceResourceId) ? resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}') : resourceGroup('${varExistingAVDWorkspaceSubId}', '${varExistingAVDWorkspaceRGName}')
   name: 'Workspace-${time}'
   params: {
       name: empty(existingAVDWorkspaceResourceId) ? workSpaceName : workSpace_Existing.name
