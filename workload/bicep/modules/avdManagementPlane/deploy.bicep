@@ -114,9 +114,9 @@ param time string = utcNow()
 // Variable declaration //
 // =========== //
 
-var varExistingAVDWorkspaceName = !empty(existingAVDWorkspaceResourceId) ? last(split(existingAVDWorkspaceResourceId, '/')) : null
-var varExistingAVDWorkspaceSubId = !empty(existingAVDWorkspaceResourceId) ? split(existingAVDWorkspaceResourceId, '/')[2] : null
-var varExistingAVDWorkspaceRGName = !empty(existingAVDWorkspaceResourceId) ? split(existingAVDWorkspaceResourceId, '/')[4] : null
+var varExistingAVDWorkspaceName = !empty(existingAVDWorkspaceResourceId) ? last(split(existingAVDWorkspaceResourceId, '/')) : ''
+var varExistingAVDWorkspaceSubId = !empty(existingAVDWorkspaceResourceId) ? split(existingAVDWorkspaceResourceId, '/')[2] : ''
+var varExistingAVDWorkspaceRGName = !empty(existingAVDWorkspaceResourceId) ? split(existingAVDWorkspaceResourceId, '/')[4] : ''
 
 var varApplicationGroups = [
   {
@@ -330,3 +330,6 @@ module scalingPlan '../../../../carml/1.3.0/Microsoft.DesktopVirtualization/scal
 // =========== //
 // Outputs //
 // =========== //
+
+output existingAVDWorkspaceRGName string = varExistingAVDWorkspaceRGName
+output existingAVDWorkspaceSubId string = varExistingAVDWorkspaceSubId
