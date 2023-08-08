@@ -114,9 +114,9 @@ param time string = utcNow()
 // Variable declaration //
 // =========== //
 
-var varExistingAVDWorkspaceName = !empty(existingAVDWorkspaceResourceId) ? last(split(existingAVDWorkspaceResourceId, '/')) : ''
-var varExistingAVDWorkspaceSubId = !empty(existingAVDWorkspaceResourceId) ? split(existingAVDWorkspaceResourceId, '/')[2] : ''
-var varExistingAVDWorkspaceRGName = !empty(existingAVDWorkspaceResourceId) ? split(existingAVDWorkspaceResourceId, '/')[4] : ''
+var varAVDWorkspaceName = empty(existingAVDWorkspaceResourceId) ? workSpaceName : last(split(existingAVDWorkspaceResourceId, '/'))
+var varAVDWorkspaceSubId = empty(existingAVDWorkspaceResourceId) ? workloadSubsId : split(existingAVDWorkspaceResourceId, '/')[2]
+var varAVDWorkspaceRgName = empty(existingAVDWorkspaceResourceId) ? serviceObjectsRgName : split(existingAVDWorkspaceResourceId, '/')[4]
 
 var varApplicationGroups = [
   {
@@ -275,12 +275,12 @@ module applicationGroups '../../../../carml/1.3.0/Microsoft.DesktopVirtualizatio
 // Workspace.
 
 resource workSpace_Existing 'Microsoft.DesktopVirtualization/workspaces@2022-09-09' existing = if (!empty(existingAVDWorkspaceResourceId)) {
-  name: varExistingAVDWorkspaceName!
-  scope: resourceGroup('${varExistingAVDWorkspaceSubId}', '${varExistingAVDWorkspaceRGName}')
+  name: varAVDWorkspaceName
+  scope: resourceGroup('${varAVDWorkspaceSubId}', '${varAVDWorkspaceRgName}')
 }
 
 module workSpace '../../../../carml/1.3.0/Microsoft.DesktopVirtualization/workspaces/deploy.bicep' = {
-  scope: empty(existingAVDWorkspaceResourceId) ? resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}') : resourceGroup('${varExistingAVDWorkspaceSubId}', '${varExistingAVDWorkspaceRGName}')
+  scope: resourceGroup('${varAVDWorkspaceSubId}', '${varAVDWorkspaceRgName}')
   name: 'Workspace-${time}'
   params: {
       name: empty(existingAVDWorkspaceResourceId) ? workSpaceName : workSpace_Existing.name
@@ -331,5 +331,3 @@ module scalingPlan '../../../../carml/1.3.0/Microsoft.DesktopVirtualization/scal
 // Outputs //
 // =========== //
 
-output existingAVDWorkspaceRGName string = varExistingAVDWorkspaceRGName
-output existingAVDWorkspaceSubId string = varExistingAVDWorkspaceSubId

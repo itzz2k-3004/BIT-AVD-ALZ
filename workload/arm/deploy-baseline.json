@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "10233864503549981253"
+      "templateHash": "18129017153205732613"
     },
     "name": "AVD Accelerator - Baseline Deployment",
     "description": "AVD Accelerator - Deployment Baseline"
@@ -12954,7 +12954,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "12596495557095032828"
+              "templateHash": "7702611557986162378"
             }
           },
           "parameters": {
@@ -13162,9 +13162,9 @@
             }
           },
           "variables": {
-            "varExistingAVDWorkspaceName": "[if(not(empty(parameters('existingAVDWorkspaceResourceId'))), last(split(parameters('existingAVDWorkspaceResourceId'), '/')), '')]",
-            "varExistingAVDWorkspaceSubId": "[if(not(empty(parameters('existingAVDWorkspaceResourceId'))), split(parameters('existingAVDWorkspaceResourceId'), '/')[2], '')]",
-            "varExistingAVDWorkspaceRGName": "[if(not(empty(parameters('existingAVDWorkspaceResourceId'))), split(parameters('existingAVDWorkspaceResourceId'), '/')[4], '')]",
+            "varAVDWorkspaceName": "[if(empty(parameters('existingAVDWorkspaceResourceId')), parameters('workSpaceName'), last(split(parameters('existingAVDWorkspaceResourceId'), '/')))]",
+            "varAVDWorkspaceSubId": "[if(empty(parameters('existingAVDWorkspaceResourceId')), parameters('workloadSubsId'), split(parameters('existingAVDWorkspaceResourceId'), '/')[2])]",
+            "varAVDWorkspaceRgName": "[if(empty(parameters('existingAVDWorkspaceResourceId')), parameters('serviceObjectsRgName'), split(parameters('existingAVDWorkspaceResourceId'), '/')[4])]",
             "varApplicationGroups": [
               {
                 "name": "[parameters('applicationGroupName')]",
@@ -14494,18 +14494,19 @@
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
               "name": "[format('Workspace-{0}', parameters('time'))]",
-              "location": "[deployment().location]",
+              "subscriptionId": "[format('{0}', variables('varAVDWorkspaceSubId'))]",
+              "resourceGroup": "[format('{0}', variables('varAVDWorkspaceRgName'))]",
               "properties": {
                 "expressionEvaluationOptions": {
                   "scope": "inner"
                 },
                 "mode": "Incremental",
                 "parameters": {
-                  "name": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('workSpaceName')), createObject('value', variables('varExistingAVDWorkspaceName')))]",
-                  "friendlyName": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('workSpaceFriendlyName')), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varExistingAVDWorkspaceSubId')), format('{0}', variables('varExistingAVDWorkspaceRGName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varExistingAVDWorkspaceName')), '2022-09-09').friendlyName))]",
-                  "location": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('managementPlaneLocation')), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varExistingAVDWorkspaceSubId')), format('{0}', variables('varExistingAVDWorkspaceRGName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varExistingAVDWorkspaceName')), '2022-09-09', 'full').location))]",
-                  "appGroupResourceIds": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', createArray(variables('varApplicationGroupId'))), if(contains(reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varExistingAVDWorkspaceSubId')), format('{0}', variables('varExistingAVDWorkspaceRGName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varExistingAVDWorkspaceName')), '2022-09-09').applicationGroupReferences, variables('varApplicationGroupId')), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varExistingAVDWorkspaceSubId')), format('{0}', variables('varExistingAVDWorkspaceRGName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varExistingAVDWorkspaceName')), '2022-09-09').applicationGroupReferences), createObject('value', union(reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varExistingAVDWorkspaceSubId')), format('{0}', variables('varExistingAVDWorkspaceRGName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varExistingAVDWorkspaceName')), '2022-09-09').applicationGroupReferences, createArray(variables('varApplicationGroupId'))))))]",
-                  "tags": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('tags')), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varExistingAVDWorkspaceSubId')), format('{0}', variables('varExistingAVDWorkspaceRGName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varExistingAVDWorkspaceName')), '2022-09-09', 'full').tags))]",
+                  "name": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('workSpaceName')), createObject('value', variables('varAVDWorkspaceName')))]",
+                  "friendlyName": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('workSpaceFriendlyName')), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varAVDWorkspaceSubId')), format('{0}', variables('varAVDWorkspaceRgName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varAVDWorkspaceName')), '2022-09-09').friendlyName))]",
+                  "location": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('managementPlaneLocation')), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varAVDWorkspaceSubId')), format('{0}', variables('varAVDWorkspaceRgName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varAVDWorkspaceName')), '2022-09-09', 'full').location))]",
+                  "appGroupResourceIds": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', createArray(variables('varApplicationGroupId'))), if(contains(reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varAVDWorkspaceSubId')), format('{0}', variables('varAVDWorkspaceRgName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varAVDWorkspaceName')), '2022-09-09').applicationGroupReferences, variables('varApplicationGroupId')), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varAVDWorkspaceSubId')), format('{0}', variables('varAVDWorkspaceRgName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varAVDWorkspaceName')), '2022-09-09').applicationGroupReferences), createObject('value', union(reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varAVDWorkspaceSubId')), format('{0}', variables('varAVDWorkspaceRgName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varAVDWorkspaceName')), '2022-09-09').applicationGroupReferences, createArray(variables('varApplicationGroupId'))))))]",
+                  "tags": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('tags')), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varAVDWorkspaceSubId')), format('{0}', variables('varAVDWorkspaceRgName'))), 'Microsoft.DesktopVirtualization/workspaces', variables('varAVDWorkspaceName')), '2022-09-09', 'full').tags))]",
                   "diagnosticWorkspaceId": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('alaWorkspaceResourceId')), createObject('value', ''))]",
                   "diagnosticLogsRetentionInDays": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', parameters('diagnosticLogsRetentionInDays')), createObject('value', 365))]",
                   "diagnosticLogCategoriesToEnable": "[if(empty(parameters('existingAVDWorkspaceResourceId')), createObject('value', variables('varWorkspaceDiagnostic')), createObject('value', createArray()))]"
@@ -15427,20 +15428,10 @@
               "dependsOn": [
                 "applicationGroups",
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', parameters('workloadSubsId')), format('{0}', parameters('serviceObjectsRgName'))), 'Microsoft.Resources/deployments', format('HostPool-{0}', parameters('time')))]",
-                "[subscriptionResourceId('Microsoft.Resources/deployments', format('Workspace-{0}', parameters('time')))]"
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', format('{0}', variables('varAVDWorkspaceSubId')), format('{0}', variables('varAVDWorkspaceRgName'))), 'Microsoft.Resources/deployments', format('Workspace-{0}', parameters('time')))]"
               ]
             }
-          ],
-          "outputs": {
-            "existingAVDWorkspaceRGName": {
-              "type": "string",
-              "value": "[variables('varExistingAVDWorkspaceRGName')]"
-            },
-            "existingAVDWorkspaceSubId": {
-              "type": "string",
-              "value": "[variables('varExistingAVDWorkspaceSubId')]"
-            }
-          }
+          ]
         }
       },
       "dependsOn": [
