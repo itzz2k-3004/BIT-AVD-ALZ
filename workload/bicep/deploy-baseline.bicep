@@ -720,11 +720,7 @@ var varMarketPlaceGalleryWindows = {
         version: 'latest'
     }
 }
-var varStorageAccountContributorRoleId = '17d1049b-9a84-46fb-8f53-869881c3d3ab'
-var varReaderRoleId = 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
-var varStorageSmbShareContributorRoleId = '0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb'
 
-var varAzureFilesCustomScriptLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/customScriptExtensionStorage.zip'
 //var varTempResourcesCleanUpDscAgentPackageLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/postDeploymentTempResourcesCleanUp.zip'
 var varAzureFilesToDomainScriptUri = '${varBaseScriptUri}scripts/storageDomainJoinScripts.ps1'
 //var varPostDeploymentTempResuorcesCleanUpScriptUri = '${varBaseScriptUri}scripts/postDeploymentTempResuorcesCleanUp.ps1'
