@@ -4,6 +4,16 @@ variable "dsc_storage_path"  {
   default     = "https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/DSCStorageScripts.zip"
 }
 
+variable "workloadSubsId" {
+  type = string
+}
+
+variable "deployment_environment" {
+  type        = string
+  description = "Deployment environment"
+  default     = "dev"
+}
+
 variable "azure_cloud_environment" {
   type        = string
   description = "Azure Cloud Environment"
@@ -13,6 +23,15 @@ validation {
   condition = contains(["AzureCloud", "AzureChinaCloud", "AzureGermanCloud", "AzureUSGovernment"], var.azure_cloud_environment)
   error_message = "value must be one of AzureCloud, AzureChinaCloud, AzureGermanCloud, AzureUSGovernment"
 }
+}
+
+variable "create_ou_for_storage_string" {
+  type = string
+  description = "Specifies whether to create an OU for the storage account. Valid values are true or false."
+  default = "false"
+  validation {
+    condition = contains(["true", "false"], var.create_ou_for_storage_string)
+  }
 }
 
 variable "publisher" {
@@ -51,6 +70,10 @@ variable "vm_size" {
 
 variable "ou_path" {
   description = "Distinguished name of the organizational unit for the session host"
+}
+
+variable "custom_ou_path" {
+  description = "Distinguished name of the CUSTOM organizational unit for the session host"
 }
 
 variable "local_admin_username" {
@@ -113,7 +136,7 @@ variable "storage_account_name" {
   description = "Name of the storage account"
 }
 
-variable "storge_account_rg" {
+variable "storage_account_rg" {
   type        = string
   description = "Name of the storage account resource group"
 }

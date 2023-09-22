@@ -21,7 +21,7 @@ resource "azurerm_role_assignment" "assign_stguai_sac" {
 }
 
 # Assigns the Managed Identity Reader RBAC to the Storage RG scope
-resource "azurerm_role_assignment" "assign_stguai_sac" {
+resource "azurerm_role_assignment" "assign_stguai_sar" {
   scope                = data.azurerm_resource_group.rg_storage.id
   role_definition_name = "Reader"
   principal_id         = azurerm_user_assigned_identity.stguai.principal_id
@@ -118,7 +118,7 @@ resource "azurerm_virtual_machine_extension" "dscStorageScript" {
 
   settings = jsonencode({
     fileUris         = [var.baseScriptUri]
-    commandToExecute = "powershell.exe -ExecutionPolicy Unrestricted -File ${var.vfile} -DscPath ${var.dsc_storage_path} -StorageAccountName ${var.storage_account_name} -StorageAccountRG ${var.storage_account_rg} -StoragePurpose fslogix -DomainName ${var.domain_name} -IdentityServiceProvider ${var.IdentityServiceProvider} -AzureCloudEnvironment ${var.azure_cloud_environment} -SubscriptionId ${var.workloadSubsId} -DomainAdminUserName ${var.domain_user}@${var.domain_name} -CustomOuPath ${var.storageCustomOuPath} -OUName ${var.ouStgPath} -CreateNewOU ${var.createOuForStorageString} -ShareName ${var.file_share_name} -ClientId ${var.clientid} -DomainAdminUserPassword ${var.domain_password} -verbose"
+    commandToExecute = "powershell.exe -ExecutionPolicy Unrestricted -File ${var.vfile} -DscPath ${var.dsc_storage_path} -StorageAccountName ${var.storage_account_name} -StorageAccountRG ${var.storage_account_rg} -StoragePurpose fslogix -DomainName ${var.domain_name} -IdentityServiceProvider ${var.IdentityServiceProvider} -AzureCloudEnvironment ${var.azure_cloud_environment} -SubscriptionId ${var.workloadSubsId} -DomainAdminUserName ${var.domain_user}@${var.domain_name} -CustomOuPath ${var.ou_path} -OUName ${var.ou_path} -CreateNewOU ${var.create_ou_for_storage_string} -ShareName ${var.fsshare} -ClientId ${var.clientid} -DomainAdminUserPassword ${var.domain_password} -verbose"
   })
 
   depends_on = [
