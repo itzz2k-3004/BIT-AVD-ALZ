@@ -96,7 +96,6 @@ param managedIdentityClientId string
 // Variable declaration //
 // =========== //
 var varAzureCloudName = environment().name
-var varStoragePurposeLower = toLower(storagePurpose)
 var varAvdFileShareLogsDiagnostic = [
     'allLogs'
 ]
@@ -176,12 +175,6 @@ module storageAndFile '../../../../carml/1.3.0/Microsoft.Storage/storageAccounts
         diagnosticWorkspaceId: alaWorkspaceResourceId
     }
 }
-
-// Call on the VM.
-//resource managementVMget 'Microsoft.Compute/virtualMachines@2022-11-01' existing = {
-//    name: managementVmName
-//    scope: resourceGroup('${workloadSubsId}', '${serviceObjectsRgName}')
-//}
 
 // Custom Extension call in on the DSC script to join Azure storage account to domain. 
 module addShareToDomainScript './.bicep/azureFilesDomainJoin.bicep' = {

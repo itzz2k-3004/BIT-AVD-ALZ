@@ -392,10 +392,6 @@ param fslogixFileShareCustomName string = 'fslogix-pc-app1-dev-use2-001'
 @sys.description('MSIX file share name. (Default: msix-app1-dev-001)')
 param msixFileShareCustomName string = 'msix-app1-dev-use2-001'
 
-//@maxLength(64)
-//@sys.description('AVD fslogix storage account office container file share prefix custom name. (Default: fslogix-oc-app1-dev-001)')
-//param avdFslogixOfficeContainerFileShareCustomName string = 'fslogix-oc-app1-dev-001'
-
 @maxLength(6)
 @sys.description('AVD keyvault prefix custom name (with Zero Trust to store credentials to domain join and local admin). (Default: kv-sec)')
 param avdWrklKvPrefixCustomName string = 'kv-sec'
@@ -472,9 +468,6 @@ param ownerTag string = 'workload-owner@Contoso.com'
 param costCenterTag string = 'Contoso-CC'
 //
 
-//@sys.description('Remove resources not needed afdter deployment. (Default: false)')
-//param removePostDeploymentTempResources bool = false
-
 @sys.description('Do not modify, used to set unique value for resource deployment.')
 param time string = utcNow()
 
@@ -538,9 +531,7 @@ var varFslogixFileShareName = avdUseCustomNaming ? fslogixFileShareCustomName : 
 var varMsixFileShareName = avdUseCustomNaming ? msixFileShareCustomName : 'msix-pc-${varDeploymentPrefixLowercase}-${varDeploymentEnvironmentLowercase}-${varSessionHostLocationAcronym}-001'
 var varFslogixStorageName = avdUseCustomNaming ? '${storageAccountPrefixCustomName}fsl${varDeploymentPrefixLowercase}${varDeploymentEnvironmentComputeStorage}${varNamingUniqueStringThreeChar}' : 'stfsl${varDeploymentPrefixLowercase}${varDeploymentEnvironmentComputeStorage}${varNamingUniqueStringThreeChar}'
 var varMsixStorageName = avdUseCustomNaming ? '${storageAccountPrefixCustomName}msx${varDeploymentPrefixLowercase}${varDeploymentEnvironmentComputeStorage}${varNamingUniqueStringThreeChar}' : 'stmsx${varDeploymentPrefixLowercase}${varDeploymentEnvironmentComputeStorage}${varNamingUniqueStringThreeChar}'
-//var varAvdMsixStorageName = deployAvdMsixStorageAzureFiles.outputs.storageAccountName
 var varManagementVmName = 'vmmgmt${varDeploymentPrefixLowercase}${varDeploymentEnvironmentComputeStorage}${varSessionHostLocationAcronym}'
-//var varAvdWrklStoragePrivateEndpointName = 'pe-stavd${varDeploymentPrefixLowercase}${varAvdNamingUniqueStringSixChar}-file'
 var varAlaWorkspaceName = avdUseCustomNaming ? avdAlaWorkspaceCustomName : 'log-avd-${varDeploymentEnvironmentLowercase}-${varManagementPlaneLocationAcronym}' //'log-avd-${varAvdComputeStorageResourcesNamingStandard}-${varAvdNamingUniqueStringSixChar}'
 var varZtKvName = avdUseCustomNaming ? '${ztKvPrefixCustomName}-${varComputeStorageResourcesNamingStandard}-${varNamingUniqueStringTwoChar}' : 'kv-key-${varComputeStorageResourcesNamingStandard}-${varNamingUniqueStringTwoChar}' // max length limit 24 characters
 var varZtKvPrivateEndpointName = 'pe-${varZtKvName}-vault'
@@ -550,8 +541,6 @@ var varFslogixSharePath = '\\\\${varFslogixStorageName}.file.${environment().suf
 var varBaseScriptUri = 'https://raw.githubusercontent.com/Azure/avdaccelerator/main/workload/'
 var varFslogixScriptUri = (avdIdentityServiceProvider == 'AAD') ? '${varBaseScriptUri}scripts/Set-FSLogixRegKeysAAD.ps1' : '${varBaseScriptUri}scripts/Set-FSLogixRegKeys.ps1'
 var varFsLogixScript = (avdIdentityServiceProvider == 'AAD') ? './Set-FSLogixRegKeysAad.ps1' : './Set-FSLogixRegKeys.ps1'
-//var varCompRgDeploCleanScript = './cleanUpRgDeployments.ps1'
-//var varCompRgDeploCleanScriptUri = '${varBaseScriptUri}scripts/cleanUpRgDeployments.ps1'
 var varAvdAgentPackageLocation = 'https://wvdportalstorageblob.blob.${environment().suffixes.storage}/galleryartifacts/Configuration_09-08-2022.zip'
 var varDiskEncryptionKeyExpirationInEpoch = dateTimeToEpoch(dateTimeAdd(time, 'P${string(diskEncryptionKeyExpirationInDays)}D'))
 var varCreateStorageDeployment = (createAvdFslogixDeployment || createMsixDeployment == true) ? true : false
@@ -766,11 +755,8 @@ var varMarketPlaceGalleryWindows = {
     }
 }
 var varStorageAzureFilesDscAgentPackageLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/DSCStorageScripts.zip'
-//var varTempResourcesCleanUpDscAgentPackageLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/postDeploymentTempResourcesCleanUp.zip'
 var varStorageToDomainScriptUri = '${varBaseScriptUri}scripts/Manual-DSC-Storage-Scripts.ps1'
-//var varPostDeploymentTempResuorcesCleanUpScriptUri = '${varBaseScriptUri}scripts/postDeploymentTempResuorcesCleanUp.ps1'
 var varStorageToDomainScript = './Manual-DSC-Storage-Scripts.ps1'
-//var varPostDeploymentTempResuorcesCleanUpScript = './PostDeploymentTempResuorcesCleanUp.ps1'
 var varOuStgPath = !empty(storageOuPath) ? '"${storageOuPath}"' : '"${varDefaultStorageOuPath}"'
 var varDefaultStorageOuPath = (avdIdentityServiceProvider == 'AADDS') ? 'AADDC Computers' : 'Computers'
 var varStorageCustomOuPath = !empty(storageOuPath) ? 'true' : 'false'
@@ -825,14 +811,6 @@ var verResourceGroups = [
         enableDefaultTelemetry: false
         tags: createResourceTags ? union(varAllComputeStorageTags, varAvdDefaultTags) : union(varAvdDefaultTags, varAllComputeStorageTags)
     }
-    //{
-    //    purpose: 'Deployment-Temp'
-    //    name: varTempRgName
-    //    location: avdSessionHostLocation
-    //    enableDefaultTelemetry: false
-    //    tags: createResourceTags ? union(varAllComputeStorageTags, varAvdDefaultTags) : union(varAvdDefaultTags, varAllComputeStorageTags)
-    //}
-    
 ]
 
 // =========== //
@@ -1343,41 +1321,11 @@ module gpuPolicies './modules/avdSessionHosts/.bicep/azurePolicyGpuExtensions.bi
     scope: subscription('${avdWorkloadSubsId}')
     name: 'GPU-VM-Extensions-${time}'
     params: {
-      computeObjectsRgName: varComputeObjectsRgName
-      location: avdSessionHostLocation
-      subscriptionId: avdWorkloadSubsId
-    }
-    dependsOn: [
-        sessionHosts
-    ]
-  }
-
-/*
-// Post deployment resources clean up.
-module addShareToDomainScript './modules/postDeploymentTempResourcesCleanUp/deploy.bicep' = if (removePostDeploymentTempResources)  {
-    scope: resourceGroup('${avdWorkloadSubsId}', '${varServiceObjectsRgName}')
-    name: 'CleanUp-Temp-Resources-${time}'
-    params: {
-        location: avdSessionHostLocation
-        managementVmName: varManagementVmName
-        scriptFile: varPostDeploymentTempResuorcesCleanUpScript
-        //scriptArguments: varPostDeploymentTempResuorcesCleanUpScriptArgs
-        baseScriptUri: varPostDeploymentTempResuorcesCleanUpScriptUri
-        azureCloudName: varAzureCloudName
-        dscAgentPackageLocation: varTempResourcesCleanUpDscAgentPackageLocation
-        subscriptionId: avdWorkloadSubsId
-        serviceObjectsRgName: varServiceObjectsRgName
         computeObjectsRgName: varComputeObjectsRgName
-        storageObjectsRgName: varStorageObjectsRgName
-        networkObjectsRgName: varNetworkObjectsRgName
-        monitoringObjectsRgName: varMonitoringRgName
+        location: avdSessionHostLocation
+        subscriptionId: avdWorkloadSubsId
     }
     dependsOn: [
         sessionHosts
-        msixStorageAzureFiles
-        fslogixStorageAzureFiles
-        managementPLane
-        networking
     ]
 }
-*/

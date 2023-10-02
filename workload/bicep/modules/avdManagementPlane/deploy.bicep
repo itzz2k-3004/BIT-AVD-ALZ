@@ -279,7 +279,7 @@ module scalingPlan '../../../../carml/1.3.0/Microsoft.DesktopVirtualization/scal
   params: {
       name:scalingPlanName
       location: managementPlaneLocation
-      hostPoolType: 'Pooled' //avdHostPoolType
+      hostPoolType: 'Pooled' //avdHostPoolType future improvement for personal scaling
       exclusionTag: scalingPlanExclusionTag
       timeZone: computeTimeZone
       schedules: scalingPlanSchedules
