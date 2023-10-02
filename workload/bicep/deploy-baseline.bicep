@@ -900,7 +900,6 @@ module networking './modules/networking/deploy.bicep' = if (createAvdVnet || cre
     params: {
         createVnet: createAvdVnet
         deployAsg: (avdDeploySessionHosts || createAvdFslogixDeployment || createMsixDeployment) ? true : false
-        existingPeSubnetResourceId: existingVnetPrivateEndpointSubnetResourceId
         existingAvdSubnetResourceId: existingVnetAvdSubnetResourceId
         createPrivateDnsZones: deployPrivateEndpointKeyvaultStorage ? createPrivateDnsZones : false
         applicationSecurityGroupName: varApplicationSecurityGroupName 
@@ -986,7 +985,6 @@ module identity './modules/identity/deploy.bicep' = {
         storageObjectsRgName: varStorageObjectsRgName
         avdEnterpriseObjectId: avdEnterpriseAppObjectId
         deployScalingPlan: avdDeployScalingPlan
-        createSessionHosts: avdDeploySessionHosts
         storageManagedIdentityName: varStorageManagedIdentityName
         enableStartVmOnConnect: avdStartVmOnConnect
         identityServiceProvider: avdIdentityServiceProvider
