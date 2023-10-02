@@ -36,14 +36,8 @@ param deployScalingPlan bool
 @sys.description('Storage managed identity name.')
 param storageManagedIdentityName string
 
-@sys.description('Clean up managed identity name.')
-param cleanUpManagedIdentityName string
-
 @sys.description('Deploy Storage setup.')
 param createStorageDeployment bool
-
-@sys.description('Deploy Storage setup.')
-param createSessionHosts bool
 
 @sys.description('Tags to be applied to resources')
 param tags object
@@ -70,10 +64,6 @@ var varDesktopVirtualizationPowerOnOffContributorRole = {
   id: '40c5ff49-9181-41f8-ae61-143b0e78555e'
   name: 'Desktop Virtualization Power On Off Contributor'
 } 
-var varContributorRole = {
-  id: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
-  name: 'Contributor'
-}
 var computeAndServiceObjectsRgs = [
   {
     name: 'ServiceObjects'
@@ -112,17 +102,6 @@ module managedIdentityStorage '../../../../carml/1.3.0/Microsoft.ManagedIdentity
   }
 }
 
-// Managed identity for fslogix/msix app attach
-module managedIdentityCleanUp '../../../../carml/1.3.0/Microsoft.ManagedIdentity/userAssignedIdentities/deploy.bicep' = if (createStorageDeployment || createSessionHosts) {
-  scope: resourceGroup('${subscriptionId}', '${serviceObjectsRgName}')
-  name: 'MI-CleanUp-${time}'
-  params: {
-    name: cleanUpManagedIdentityName
-    location: location
-    tags: tags
-  }
-}
-
 // Introduce wait for management VM to be ready.
 module managedIdentityWait '../../../../carml/1.3.0/Microsoft.Resources/deploymentScripts/deploy.bicep' = if (createStorageDeployment) {
   scope: resourceGroup('${subscriptionId}', '${storageObjectsRgName}')
@@ -144,7 +123,6 @@ module managedIdentityWait '../../../../carml/1.3.0/Microsoft.Resources/deployme
   }
   dependsOn: [
     managedIdentityStorage
-    managedIdentityCleanUp
   ]
 }
 
@@ -210,19 +188,6 @@ module aadIdentityLoginAccessServiceObjects '../../../../carml/1.3.0/Microsoft.A
     principalId: appGroupIdentitiesId
   }
 }]
-
-// Clean up contributor compute RG
-module cleanUpRoleAssign '../../../../carml/1.3.0/Microsoft.Authorization/roleAssignments/resourceGroup/deploy.bicep' = if (createStorageDeployment || createSessionHosts) {
-  name: 'Storage-ReaderRoleAssign-${time}'
-  scope: resourceGroup('${subscriptionId}', '${computeObjectsRgName}')
-  params: {
-    roleDefinitionIdOrName: '/subscriptions/${subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/${varContributorRole.id}'
-    principalId: (createStorageDeployment || createSessionHosts) ? managedIdentityCleanUp.outputs.principalId : ''
-  }
-  dependsOn: [
-    managedIdentityWait
-  ]
-}
 //
 
 // =========== //
@@ -230,5 +195,3 @@ module cleanUpRoleAssign '../../../../carml/1.3.0/Microsoft.Authorization/roleAs
 // =========== //
 output managedIdentityStorageResourceId string = (createStorageDeployment) ? managedIdentityStorage.outputs.resourceId : ''
 output managedIdentityStorageClientId string = (createStorageDeployment) ? managedIdentityStorage.outputs.clientId : ''
-output managedIdentityCleanUpResourceId string = (createStorageDeployment || createSessionHosts) ? managedIdentityCleanUp.outputs.resourceId : ''
-output managedIdentityCleanUpClientId string = (createStorageDeployment || createSessionHosts) ? managedIdentityCleanUp.outputs.clientId : ''
