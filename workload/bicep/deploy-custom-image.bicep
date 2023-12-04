@@ -503,7 +503,7 @@ var varRemainingCustomizers = [
     }
     {
         type: 'PowerShell'
-        name: 'Sleep for a min'
+        name: 'Sleep for 5 mins'
         runElevated: true
         runAsSystem: true
         inline: [
