@@ -1,15 +1,15 @@
 using './deploy-baseline.bicep'
 
-param deploymentPrefix = 'AVD1'
+param deploymentPrefix = 'AVD01'
 param deploymentEnvironment = 'Dev'
 param diskEncryptionKeyExpirationInDays = 60
 param avdSessionHostLocation = 'eastus2'
 param avdManagementPlaneLocation = 'eastus2'
-param avdWorkloadSubsId = ''
+param avdWorkloadSubsId = 
 param avdEnterpriseAppObjectId = ''
 param avdVmLocalUserName = ''
 param avdVmLocalUserPassword = ''
-param avdIdentityServiceProvider = 'ADDS'
+param avdIdentityServiceProvider = 'EntraID'
 param createIntuneEnrollment = false
 param securityPrincipalId = ''
 param securityPrincipalName = ''
@@ -114,7 +114,7 @@ param workloadSlaTag = 'Contoso-SLA'
 param opsTeamTag = 'workload-admins@Contoso.com'
 param ownerTag = 'workload-owner@Contoso.com'
 param costCenterTag = 'Contoso-CC'
-param time = ? /* TODO : please fix the value assigned to this parameter `utcNow()` */
+param time = 'utcNow("u")'
 param enableTelemetry = true
 param enableKvPurgeProtection = true
 

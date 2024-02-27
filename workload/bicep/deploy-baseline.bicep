@@ -476,7 +476,7 @@ param costCenterTag string = 'Contoso-CC'
 param time string = utcNow()
 
 @sys.description('Enable usage and telemetry feedback to Microsoft.')
-param enableTelemetry bool = true
+param enableTelemetry bool = false
 
 @sys.description('Enable purge protection for the keyvaults. (Default: true)')
 param enableKvPurgeProtection bool = true
@@ -495,7 +495,7 @@ var varSessionHostLocationAcronym = varLocations[varSessionHostLocationLowercase
 var varManagementPlaneLocationAcronym = varLocations[varManagementPlaneLocationLowercase].acronym
 var varLocations = loadJsonContent('../variables/locations.json')
 var varTimeZoneSessionHosts = varLocations[varSessionHostLocationLowercase].timeZone
-var varTimeZoneManagementPlane = varLocations[varManagementPlaneLocationLowercase].timeZone
+//var varTimeZoneManagementPlane = varLocations[varManagementPlaneLocationLowercase].timeZone
 var varManagementPlaneNamingStandard = '${varDeploymentPrefixLowercase}-${varDeploymentEnvironmentLowercase}-${varManagementPlaneLocationAcronym}'
 var varComputeStorageResourcesNamingStandard = '${varDeploymentPrefixLowercase}-${varDeploymentEnvironmentLowercase}-${varSessionHostLocationAcronym}'
 var varDiskEncryptionSetName = avdUseCustomNaming ? '${ztDiskEncryptionSetCustomNamePrefix}-${varComputeStorageResourcesNamingStandard}-001' : 'des-zt-${varComputeStorageResourcesNamingStandard}-001'
@@ -789,7 +789,7 @@ module baselineResourceGroups '../../carml/1.3.0/Microsoft.Resources/resourceGro
     params: {
         name: resourceGroup.name
         location: resourceGroup.location
-        enableDefaultTelemetry: resourceGroup.enableDefaultTelemetry
+        enableDefaultTelemetry: false
         tags: resourceGroup.tags
     }
 }]
