@@ -921,7 +921,7 @@
     },
     "enableTelemetry": {
       "type": "bool",
-      "defaultValue": true,
+      "defaultValue": false,
       "metadata": {
         "description": "Enable usage and telemetry feedback to Microsoft."
       }
@@ -1639,7 +1639,7 @@
             },
             "enableDefaultTelemetry": {
               "type": "bool",
-              "defaultValue": true,
+              "defaultValue": false,
               "metadata": {
                 "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
               }
@@ -1724,9 +1724,9 @@
                         "description": "Optional. The decription attached to the lock."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -2324,9 +2324,9 @@
                         "description": "Optional. The decription attached to the lock."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -2919,9 +2919,9 @@
                         "description": "Optional. The decription attached to the lock."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -3581,9 +3581,9 @@
                         "description": "Optional. The ID of the resource that manages this resource group."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -4347,9 +4347,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -7731,9 +7731,9 @@
                         "description": "Optional. Tags of the NSG resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -8455,9 +8455,9 @@
                         "description": "Optional. Tags of the NSG resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -9128,9 +9128,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -9472,9 +9472,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -9821,9 +9821,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -10258,9 +10258,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -12493,9 +12493,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -13049,9 +13049,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -13670,9 +13670,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -14186,9 +14186,9 @@
                         "description": "Optional. Array of role assignment objects that contain the 'roleDefinitionIdOrName' and 'principalIds' to define RBAC role assignments on this resource. In the roleDefinitionIdOrName attribute, you can provide either the display name of the role definition, or its fully qualified ID in the following format: '/providers/Microsoft.Authorization/roleDefinitions/c2f4ef07-c644-48eb-af81-4b1b4947fb11'."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -14737,9 +14737,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -15086,9 +15086,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -15666,9 +15666,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -16244,9 +16244,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -16827,9 +16827,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -17407,9 +17407,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -17987,9 +17987,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -18796,9 +18796,9 @@
                         "description": "Optional. Location deployment metadata."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -19049,9 +19049,9 @@
                         "description": "Optional. The Target Scope for the Policy. The name of the resource group for the policy assignment. If not provided, will use the current scope for deployment."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -19413,9 +19413,9 @@
                         "description": "Optional. The Target Scope for the Policy. The name of the resource group for the policy assignment. If not provided, will use the current scope for deployment."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -19697,9 +19697,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -20281,9 +20281,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -20861,9 +20861,9 @@
                         "description": "Optional. The principal type of the assigned principal ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -25081,9 +25081,9 @@
                         "description": "Optional. An array of 0 to 16 identities that have access to the key vault. All identities in the array must use the same tenant ID as the key vault's tenant ID."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -25253,9 +25253,9 @@
                         "description": "Required. The value of the secret. NOTE: \"value\" will never be returned from the service, as APIs using this model are is intended for internal use in ARM deployments. Users should use the data-plane REST service for interaction with vault secrets."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -25635,9 +25635,9 @@
                         "description": "Optional. Key rotation policy properties object."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -26017,9 +26017,9 @@
                         "description": "Optional. Manual PrivateLink Service Connections."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -27468,9 +27468,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -31899,9 +31899,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -36107,9 +36107,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -39830,9 +39830,9 @@
                         "description": "Optional. Tags of the availability set resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -41108,9 +41108,9 @@
                         "description": "Optional. Tags of the resource."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -45000,9 +45000,9 @@
                         "description": "Required. Indicates whether the extension should be automatically upgraded by the platform if there is a newer version of the extension available."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -45220,9 +45220,9 @@
                         "description": "Required. Indicates whether the extension should be automatically upgraded by the platform if there is a newer version of the extension available."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -45753,9 +45753,9 @@
                         "description": "Optional. Location deployment metadata."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
@@ -45992,9 +45992,9 @@
                         "description": "Optional. The Target Scope for the Policy. The name of the resource group for the policy assignment. If not provided, will use the current scope for deployment."
                       }
                     },
-                    "enableDefaultTelemetry": {
+                     "enableDefaultTelemetry": {
                       "type": "bool",
-                      "defaultValue": true,
+                      "defaultValue": false,
                       "metadata": {
                         "description": "Optional. Enable telemetry via a Globally Unique Identifier (GUID)."
                       }
