@@ -1,0 +1,24 @@
+name: Deploy Bicep file
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@main
+
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDS }}
+
+    - name: Deploy Bicep file
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUB_ID }}
+        location: eastus2
+        resourceGroupName: ${{ secrets.AVD01_AZURE_RG }}
+        template: ./workload/bicep/deploy-baseline.bicep
+        parameters: ./workload/bicep/parmeters/deploy-baseline-parameters-example.json
+        failOnStdErr: false
