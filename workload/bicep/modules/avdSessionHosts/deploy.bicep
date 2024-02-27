@@ -308,7 +308,7 @@ module monitoring '../../../../carml/1.3.0/Microsoft.Compute/virtualMachines/ext
         autoUpgradeMinorVersion: true
         enableAutomaticUpgrade: true
         settings: {
-            workspaceId: !empty(alaWorkspaceResourceId) ? reference(alaWorkspace.id, alaWorkspace.apiVersion).customerId : ''
+            workspaceId: !empty(alaWorkspaceResourceId) ? alaWorkspace.properties.customerId : ''
         }
         protectedSettings: {
             workspaceKey: !empty(alaWorkspaceResourceId) ? alaWorkspace.listKeys().primarySharedKey : ''
