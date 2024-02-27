@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "deploymentPrefix": {
-            "value": "AVD1"
+            "value": "AVD01"
         },
         "avdUseCustomNaming": {
             "value": false
@@ -18,19 +18,19 @@
             "value": false
         },   
         "avdWorkloadSubsId": {
-            "value": "<<subscriptionId>>"
+            "value": "${{ secrets.AZURE_SUB_ID }}"
         },
         "avdEnterpriseAppObjectId": {
             "value": false
         },
         "avdVmLocalUserName": {
-            "value": "<<localUserName>>"
+            "value": "${{ secrets.AVD01_LOCAL_ADMINACCOUNT }}"
         },
         "avdVmLocalUserPassword": {
-            "value": "<<localUserPassword>>"
+            "value": "${{ secrets.AVD01_LOCAL_ADMINPWD }}"
         },
         "avdIdentityServiceProvider": {
-            "value": "<<IdentityServiceProviderType>>"
+            "value": "EntraID"
         },     
         "createIntuneEnrollment": {
             "value": false
@@ -159,7 +159,7 @@
             "value": "Premium_LRS"
         },
         "avdOsImage": {
-            "value": "win11_21h2"
+            "value": "win11_23h2_office"
         },
         "managementVmOsImage": {
             "value": "winServer_2022_Datacenter_smalldisk_g2"
