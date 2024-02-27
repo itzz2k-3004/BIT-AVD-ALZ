@@ -114,7 +114,7 @@ param workloadSlaTag = 'Contoso-SLA'
 param opsTeamTag = 'workload-admins@Contoso.com'
 param ownerTag = 'workload-owner@Contoso.com'
 param costCenterTag = 'Contoso-CC'
-param time = ''
+//param time = ''
 param enableTelemetry = false
 param enableKvPurgeProtection = true
 
