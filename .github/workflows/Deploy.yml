@@ -18,7 +18,7 @@ jobs:
       with:
         scope: subscription
         subscriptionId: ${{ secrets.AZURE_SUB_ID }}
-        location: eastus2
+        region: eastus2
         resourceGroupName: ${{ secrets.AVD01_AZURE_RG }}
         template: ./workload/bicep/deploy-baseline.bicep
         parameters: ./workload/bicep/parmeters/deploy-baseline-parameters-example.json
