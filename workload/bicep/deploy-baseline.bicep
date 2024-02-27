@@ -46,7 +46,7 @@ param avdVmLocalUserPassword string
 
 @allowed([
     'ADDS' // Active Directory Domain Services
-    'EntraDS' // Microsoft Entra Domain Services
+    'EntraDS' // Microsoft Entra Domain Services.
     'EntraID' // Microsoft Entra ID Join <-use this
 ])
 @sys.description('Required, The service providing domain services for Azure Virtual Desktop. (Default: ADDS)')
