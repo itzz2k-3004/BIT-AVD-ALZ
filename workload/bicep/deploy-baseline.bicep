@@ -72,7 +72,7 @@ param avdDomainJoinUserName string = 'none'
 
 @sys.description('AVD session host domain join password. (Default: none)')
 @secure()
-param avdDomainJoinUserPassword string = 'none'
+param avdDomainJoinUserPassword string 
 
 @sys.description('OU path to join AVd VMs. (Default: "")')
 param avdOuPath string = ''
@@ -147,7 +147,7 @@ param deployPrivateEndpointKeyvaultStorage bool = true
 @sys.description('Create new  Azure private DNS zones for private endpoints. (Default: true)')
 param createPrivateDnsZones bool = true
 
-@sys.description('Use existing Azure private DNS zone for Azure files privatelink.file.core.windows.net or privatelink.file.core.usgovcloudapi.net. (Default: "")')
+@sys.description('Use existing Azure private DNS zone for Azure files. (Default: "")')
 param avdVnetPrivateDnsZoneFilesId string = ''
 
 @sys.description('Use existing Azure private DNS zone for key vault privatelink.vaultcore.azure.net or privatelink.vaultcore.usgovcloudapi.net. (Default: "")')
@@ -755,6 +755,7 @@ var verResourceGroups = [
 // =========== //
 
 //  Telemetry Deployment
+#disable-next-line no-deployments-resources
 resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (enableTelemetry) {
     name: varTelemetryId
     location: avdManagementPlaneLocation
