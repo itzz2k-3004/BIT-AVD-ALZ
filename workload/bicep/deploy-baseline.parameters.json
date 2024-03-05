@@ -104,7 +104,7 @@
       "avdIdentityServiceProvider": {
           "value": "EntraID"
       },
-      "identityDomainGuid ": {
+      "identityDomainGuid": {
         "value": ""
       },     
       "createIntuneEnrollment": {
