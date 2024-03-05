@@ -108,15 +108,12 @@
           "value": false
       },            
       "securityPrincipalId": {
-          "value": ""
+          "value": "5af9b059-c50f-4a95-ab71-6e0edd2fc638"
       },        
       "securityPrincipalName": {
-          "value": ""
+          "value": "GitHubDeployApp"
       },       
       "identityDomainName": {
-          "value": "none"
-      },
-      "avdDomainJoinUserName": {
           "value": "none"
       },
       "avdOuPath": {
