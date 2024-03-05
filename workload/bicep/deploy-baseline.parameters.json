@@ -177,7 +177,7 @@
           "value": ""
       },
       "deployPrivateEndpointKeyvaultStorage": {
-        "value": "true"
+        "value": true
       },
       "createPrivateDnsZones": {
           "value": false
