@@ -6,7 +6,7 @@
           "value": "AVDB"
       },
       "deploymentEnvironment": {
-        "value": "DEV"
+        "value": "Dev"
     },
       "avdUseCustomNaming": {
           "value": true
