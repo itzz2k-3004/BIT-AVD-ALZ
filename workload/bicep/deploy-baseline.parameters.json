@@ -23,9 +23,6 @@
       "avdWorkloadSubsId": {
           "value": ""
       },
-      "avdEnterpriseAppObjectId": {
-          "value": false
-      },
       "avdVmLocalUserName": {
         "value": ""
       },

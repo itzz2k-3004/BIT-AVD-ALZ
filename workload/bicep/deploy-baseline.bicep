@@ -52,7 +52,7 @@ param avdVmLocalUserPassword string
     'EntraID' // Microsoft Entra ID Join <-use this
 ])
 @sys.description('Required, The service providing domain services for Azure Virtual Desktop. (Default: ADDS)')
-param avdIdentityServiceProvider string = 'ADDS'
+param avdIdentityServiceProvider string = 'EntraID'
 
 @sys.description('Required, Eronll session hosts on Intune. (Default: false)')
 param createIntuneEnrollment bool = false
@@ -64,7 +64,7 @@ param securityPrincipalId string = ''
 param securityPrincipalName string = ''
 
 @sys.description('FQDN of on-premises AD domain, used for FSLogix storage configuration and NTFS setup. (Default: "")')
-param identityDomainName string = 'none'
+param identityDomainName string = ''
 
 @sys.description('AD domain GUID. (Default: "")')
 param identityDomainGuid string = ''
