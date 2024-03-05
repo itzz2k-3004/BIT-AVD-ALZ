@@ -119,9 +119,6 @@
       "avdDomainJoinUserName": {
           "value": "none"
       },
-      "avdDomainJoinUserPassword": {
-          "value": "NotTheP@55word"
-      },
       "avdOuPath": {
           "value": ""
       },
