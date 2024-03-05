@@ -180,7 +180,7 @@
         "value": true
       },
       "createPrivateDnsZones": {
-          "value": false
+          "value": true
       },
       "avdVnetPrivateDnsZoneFilesId": {
           "value": ""
