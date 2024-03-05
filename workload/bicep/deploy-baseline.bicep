@@ -32,9 +32,11 @@ param avdSessionHostLocation string = 'eastus2'
 param avdManagementPlaneLocation string = 'eastus2'
 
 @sys.description('AVD workload subscription ID, multiple subscriptions scenario. (Default: "")')
-param avdWorkloadSubsId string = '5e59332d-6f87-41b0-bf2f-a9a9ee67c581'
+@secure()
+param avdWorkloadSubsId string
 
 @sys.description('Azure Virtual Desktop Enterprise Application object ID. (Default: "")')
+@secure()
 param avdEnterpriseAppObjectId string
 
 @sys.description('AVD session host local username.')
