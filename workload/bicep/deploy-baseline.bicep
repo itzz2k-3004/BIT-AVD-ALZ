@@ -475,7 +475,7 @@ param costCenterTag string = 'Contoso-CC'
 //param removePostDeploymentTempResources bool = false
 
 @sys.description('Do not modify, used to set unique value for resource deployment.')
-param time string = utcNow('yyyyMMddTmmssZ')
+param time string = utcNow()
 
 @sys.description('Enable usage and telemetry feedback to Microsoft.')
 param enableTelemetry bool = false
