@@ -108,10 +108,10 @@
           "value": false
       },            
       "securityPrincipalId": {
-          "value": "fa95be0c-3904-4af2-94f9-f02f04c6341f"
+          "value": ""
       },        
       "securityPrincipalName": {
-          "value": "GitHubDeployApp"
+          "value": ""
       },       
       "identityDomainName": {
           "value": "none"
