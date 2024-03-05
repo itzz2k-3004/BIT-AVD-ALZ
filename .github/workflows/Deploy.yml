@@ -14,12 +14,12 @@ jobs:
         creds: ${{ secrets.AZURE_CREDS }}
 
     - name: Deploy Bicep file
-      uses: azure/arm-deploy@v1
+      uses: azure/arm-deploy@v2
       with:
         scope: subscription
         subscriptionId: ${{ secrets.AZURE_SUB_ID }}
         region: eastus2
         resourceGroupName: ${{ secrets.AVD01_AZURE_RG }}
         template: ./workload/bicep/deploy-baseline.bicep
-        parameters: workload/bicep/deploy-baseline.bicepparam avdWorkloadSubsId=${{ env.AVD_SUBSCRIPTIONID }} avdVmLocalUserPassword=${{ env.AVD_LOCALADMINPWD }} avdEnterpriseAppObjectId=${{ env.AVD_ENTAPPID }}
+        parameters: workload/bicep/deploy-baseline.bicepparam avdWorkloadSubsId=${{ secrets.AZURE_SUB_ID }} avdVmLocalUserPassword=${{ secrets.AVD01_LOCAL_ADMINPWD }} avdEnterpriseAppObjectId=${{ secrets.AVD_ENTAPPID }}
         failOnStdErr: false
