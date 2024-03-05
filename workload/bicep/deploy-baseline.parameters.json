@@ -9,7 +9,7 @@
         "value": "Dev"
     },
       "avdUseCustomNaming": {
-          "value": true
+          "value": false
       },
       "avdSessionHostLocation": {
           "value": "westus2"
