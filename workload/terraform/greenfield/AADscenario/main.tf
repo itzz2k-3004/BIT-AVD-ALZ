@@ -38,7 +38,7 @@ module "network" {
 # Remove /* at beginning and */ at the end to uncomment out the entire module
 /*
 module "poolremoteapp" {
-  source         = "../../modules/poolremoteapp"
+  source         = "../../modules/avd/poolremoteapp"
   ragworkspace   = "${var.ragworkspace}-${substr(var.avdLocation,0,5)}-${var.prefix}-remote"  //var.ragworkspace
   raghostpool    = "${var.raghostpool}-${substr(var.avdLocation,0,5)}-${var.prefix}-poolremoteapp" //var.raghostpool
   rag            = "${var.rag}-${substr(var.avdLocation,0,5)}-${var.prefix}" //var.rag
@@ -56,7 +56,7 @@ module "poolremoteapp" {
 # Remove /* at beginning and */ at the end to uncomment out the entire module
 /*
 module "personal" {
-  source         = "../../modules/personal"
+  source         = "../../modules/avd/personal"
   personalpool   = "${var.personalpool}-${substr(var.avdLocation,0,5)}-${var.prefix}-personal" //var.personalpool
   pworkspace     = "${var.pworkspace}-${substr(var.avdLocation,0,5)}-${var.prefix}-personal" //var.pworkspace
   rg_so          = var.rg_so
