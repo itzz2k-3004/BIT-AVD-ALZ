@@ -55,11 +55,14 @@ param avdIdentityServiceProvider string = 'ADDS'
 @sys.description('Required, Eronll session hosts on Intune. (Default: false)')
 param createIntuneEnrollment bool = false
 
-@sys.description('Optional, Identity ID to grant RBAC role to access AVD application group and NTFS permissions. (Default: "")')
-param securityPrincipalId string = ''
+// @sys.description('Optional, Identity ID to grant RBAC role to access AVD application group and NTFS permissions. (Default: "")')
+// param securityPrincipalId string = ''
 
-@sys.description('Optional, Identity name to grant RBAC role to access AVD application group and NTFS permissions. (Default: "")')
-param securityPrincipalName string = ''
+// @sys.description('Optional, Identity name to grant RBAC role to access AVD application group and NTFS permissions. (Default: "")')
+// param securityPrincipalName string = ''
+
+@sys.description('Optional, List of identities with ID to access AVD application group and Name to configure NTFS permissions. (Default: "")')
+param securityPrincipals array = []
 
 @sys.description('FQDN of on-premises AD domain, used for FSLogix storage configuration and NTFS setup. (Default: "")')
 param identityDomainName string = 'none'
@@ -900,7 +903,7 @@ module managementPLane './modules/avdManagementPlane/deploy.bicep' = {
         startVmOnConnect: (avdHostPoolType == 'Pooled') ? varDeployScalingPlan : avdStartVmOnConnect
         workloadSubsId: avdWorkloadSubsId
         identityServiceProvider: avdIdentityServiceProvider
-        securityPrincipalIds: !empty(securityPrincipalId)? array(securityPrincipalId): []
+        securityPrincipalIds: [for securityPrincipal in securityPrincipals ?? [] : securityPrincipal.id]
         tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags
         alaWorkspaceResourceId: avdDeployMonitoring ? (deployAlaWorkspace ? monitoringDiagnosticSettings.outputs.avdAlaWorkspaceResourceId : alaExistingWorkspaceResourceId) : ''
         hostPoolAgentUpdateSchedule: varHostPoolAgentUpdateSchedule
@@ -927,7 +930,7 @@ module identity './modules/identity/deploy.bicep' = {
         enableStartVmOnConnect: avdStartVmOnConnect
         identityServiceProvider: avdIdentityServiceProvider
         createStorageDeployment: varCreateStorageDeployment
-        securityPrincipalIds: !empty(securityPrincipalId)? array(securityPrincipalId): []
+        securityPrincipalIds: [for securityPrincipal in securityPrincipals ?? [] : securityPrincipal.id]
         tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags
     }
     dependsOn: [
@@ -1111,7 +1114,7 @@ module fslogixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if 
         deployPrivateEndpoint: deployPrivateEndpointKeyvaultStorage
         ouStgPath: varOuStgPath
         managedIdentityClientId: varCreateStorageDeployment ? identity.outputs.managedIdentityStorageClientId : ''
-        securityPrincipalName: !empty(securityPrincipalName)? securityPrincipalName: ''
+        securityPrincipalNames: [for securityPrincipal in securityPrincipals ?? [] : securityPrincipal.name]
         domainJoinUserName: avdDomainJoinUserName
         wrklKvName: varWrklKvName
         serviceObjectsRgName: varServiceObjectsRgName
@@ -1155,7 +1158,7 @@ module msixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if (va
         deployPrivateEndpoint: deployPrivateEndpointKeyvaultStorage
         ouStgPath: varOuStgPath
         managedIdentityClientId: varCreateStorageDeployment ? identity.outputs.managedIdentityStorageClientId : ''
-        securityPrincipalName: !empty(securityPrincipalName)? securityPrincipalName: ''
+        securityPrincipalNames: [for securityPrincipal in securityPrincipals ?? [] : securityPrincipal.name]
         domainJoinUserName: avdDomainJoinUserName
         wrklKvName: varWrklKvName
         serviceObjectsRgName: varServiceObjectsRgName

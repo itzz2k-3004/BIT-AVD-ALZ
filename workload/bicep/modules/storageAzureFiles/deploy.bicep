@@ -92,8 +92,8 @@ param ouStgPath string
 @sys.description('Managed Identity Client ID')
 param managedIdentityClientId string
 
-@sys.description('Identity name array to grant RBAC role to access AVD application group and NTFS permissions.')
-param securityPrincipalName string
+@sys.description('List of Identity names to grant RBAC role to access AVD application group and NTFS permissions.')
+param securityPrincipalNames array
 
 @sys.description('storage account FDQN.')
 param storageAccountFqdn string
@@ -110,9 +110,9 @@ var varAvdFileShareMetricsDiagnostic = [
 ]
 var varWrklStoragePrivateEndpointName = 'pe-${storageAccountName}-file'
 var varDirectoryServiceOptions = (identityServiceProvider == 'EntraDS') ? 'AADDS': (identityServiceProvider == 'EntraID') ? 'AADKERB': 'None'
-var varSecurityPrincipalName = !empty(securityPrincipalName)? securityPrincipalName : 'none'
+var varSecurityPrincipalNames = !empty(securityPrincipalNames) ? securityPrincipalNames : 'none'
 var varAdminUserName = (identityServiceProvider == 'EntraID') ? vmLocalUserName : domainJoinUserName
-var varStorageToDomainScriptArgs = '-DscPath ${dscAgentPackageLocation} -StorageAccountName ${storageAccountName} -StorageAccountRG ${storageObjectsRgName} -StoragePurpose ${storagePurpose} -DomainName ${identityDomainName} -IdentityServiceProvider ${identityServiceProvider} -AzureCloudEnvironment ${varAzureCloudName} -SubscriptionId ${workloadSubsId} -AdminUserName ${varAdminUserName} -CustomOuPath ${storageCustomOuPath} -OUName ${ouStgPath} -ShareName ${fileShareName} -ClientId ${managedIdentityClientId} -SecurityPrincipalName "${varSecurityPrincipalName}" -StorageAccountFqdn ${storageAccountFqdn} '
+var varStorageToDomainScriptArgs = '-DscPath ${dscAgentPackageLocation} -StorageAccountName ${storageAccountName} -StorageAccountRG ${storageObjectsRgName} -StoragePurpose ${storagePurpose} -DomainName ${identityDomainName} -IdentityServiceProvider ${identityServiceProvider} -AzureCloudEnvironment ${varAzureCloudName} -SubscriptionId ${workloadSubsId} -AdminUserName ${varAdminUserName} -CustomOuPath ${storageCustomOuPath} -OUName ${ouStgPath} -ShareName ${fileShareName} -ClientId ${managedIdentityClientId} -SecurityPrincipalNames "${varSecurityPrincipalNames}" -StorageAccountFqdn ${storageAccountFqdn} '
 
 // =========== //
 // Deployments //

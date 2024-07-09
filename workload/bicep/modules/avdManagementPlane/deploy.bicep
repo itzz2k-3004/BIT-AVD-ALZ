@@ -233,13 +233,12 @@ module applicationGroups '../../../../carml/1.3.0/Microsoft.DesktopVirtualizatio
     hostpoolName: hostPoolName
     tags: tags
     applications: (applicationGroup.applicationGroupType == 'RemoteApp')  ? varRAppApplicationGroupsApps : []
-    roleAssignments: !empty(securityPrincipalIds) ? [
-      {
+    roleAssignments: [for securityPrincipalId in securityPrincipalIds ?? [] : {
       roleDefinitionIdOrName: 'Desktop Virtualization User'
-      principalIds: securityPrincipalIds
+      principalId: securityPrincipalId
       principalType: 'Group'
       }
-    ]: []   
+    ] 
     diagnosticWorkspaceId: alaWorkspaceResourceId
     diagnosticLogCategoriesToEnable: varApplicationGroupDiagnostic
   }

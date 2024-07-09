@@ -20,7 +20,7 @@ param(
 
 	[Parameter(Mandatory = $false)]
 	[ValidateNotNullOrEmpty()]
-	[string]$SecurityPrincipalName,
+	[string[]]$SecurityPrincipalNames,
 
 	[Parameter(Mandatory = $true)]
 	[ValidateNotNullOrEmpty()]
@@ -163,6 +163,12 @@ Catch {
 	Throw $_
 }
 
+if ($SecurityPrincipalNames -match ',') {
+    $SecurityPrincipalNamesArray = $SecurityPrincipalNames -split ','
+} else {
+    $SecurityPrincipalNamesArray = @($SecurityPrincipalNames)
+}
+
 Try {
 	Write-Log "setting up NTFS permission for FSLogix or App attach"
 	icacls ${DriveLetter}: /inheritance:r
@@ -171,14 +177,18 @@ Try {
 	icacls ${DriveLetter}: /remove "BUILTIN\Users"
 	Write-Log "ACLs set"
 	#AVD group permissions
-	if ($SecurityPrincipalName -eq 'none' -or $IdentityServiceProvider -eq 'EntraID') {
+	if ($SecurityPrincipalNamesArray -contains 'none' -or $IdentityServiceProvider -eq 'EntraID') {
 		Write-Log "AD group not provided or using Microsoft Entra ID joined session hosts, ACLs for AD group not set"
 	}
 	else {
 		icacls ${DriveLetter}: /remove "Authenticated Users"
-		$Group = $DomainName + '\' + $SecurityPrincipalName
-		icacls ${DriveLetter}: /grant "${Group}:(M)"
-		Write-Log "AD group $Group ACLs set"
+		foreach ($SecurityPrincipalName in $SecurityPrincipalNamesArray) {
+            if (-not [string]::IsNullOrWhiteSpace($SecurityPrincipalName)) {
+                $Group = $DomainName + '\' + $SecurityPrincipalName
+                icacls ${DriveLetter}: /grant "${Group}:(M)"
+                Write-Log "AD group $Group ACLs set"
+            }
+        }
 	}
 	# Write-Log "Unmounting drive"
 	# # Remove-PSDrive -Name $DriveLetter -Force

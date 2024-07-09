@@ -220,20 +220,49 @@
                                     "toolTip": "When the desired group is not listed in the drop down, selecting this box will allow for entering the group's ObjectID and name. this information will be used to setup AVD access and FSLogix's file share NTFS permissions."
                                 },
                                 {
-                                    "name": "identityAvdUserAccessGroupTextBox1",
-                                    "type": "Microsoft.Common.TextBox",
+                                    "name": "identityAvdUserAccessGroups",
+                                    "type": "Microsoft.Common.EditableGrid",
                                     "visible": "[steps('identity').identityAvdAccess.identityAvdUserAccessGroupCheckBox]",
-                                    "label": "Name",
-                                    "toolTip": "Group name to be granted access to Azure Virtual Desktop published items and FSLogix NTFS permissions.",
-                                    "placeholder": "Example: AVD-users"
-                                },
-                                {
-                                    "name": "identityAvdUserAccessGroupTextBox2",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "visible": "[steps('identity').identityAvdAccess.identityAvdUserAccessGroupCheckBox]",
-                                    "label": "Object ID",
-                                    "toolTip": "Group objectID to be granted access to Azure Virtual Desktop published items and FSLogix NTFS permissions.",
-                                    "placeholder": "Example: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+                                    "ariaLabel": "Enter Group name and ID",
+                                    "label": "Access Groups",
+                                    "toolTip": "Group name and ID to be granted access to Azure Virtual Desktop published items and FSLogix NTFS permissions.",
+                                    "constraints": {
+                                        "width": "Full",
+                                        "rows": {
+                                            "count": {
+                                                "min": 1,
+                                                "max": 10
+                                            }
+                                        },
+                                        "columns": [
+                                            {
+                                                "id": "name",
+                                                "header": "Name",
+                                                "width": "1fr",
+                                                "element": {
+                                                    "type": "Microsoft.Common.TextBox",
+                                                    "placeholder": "Example: AVD-users",
+                                                    "constraints": {
+                                                        "required": true
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "id": "id",
+                                                "header": "Object ID",
+                                                "width": "1fr",
+                                                "element": {
+                                                    "type": "Microsoft.Common.TextBox",
+                                                    "placeholder": "Example: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+                                                    "constraints": {
+                                                        "required": true,
+                                                        "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                                                        "validationMessage": "The ID must be a valid UUID in the format: 8-4-4-4-12 hexadecimal characters (Example: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX)."
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
                                 }
                             ]
                         },
@@ -2446,8 +2475,7 @@
                 "opsTeamTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsOpsTeamTag, 'no')]",
                 "ownerTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsOwnerTag, 'no')]",
                 "costCenterTag": "[if(equals(steps('resourceTagging').resourceTaggingSelection, true), steps('resourceTagging').resourceTags.tagsCostCenterTag, 'no')]",
-                "securityPrincipalId": "[if(steps('identity').identityAvdAccess.identityAvdUserAccessGroupCheckBox, steps('identity').identityAvdAccess.identityAvdUserAccessGroupTextBox2, steps('identity').identityAvdAccess.identityAvdUserAccessGroupDropDown.id)]",
-                "securityPrincipalName": "[if(steps('identity').identityAvdAccess.identityAvdUserAccessGroupCheckBox, steps('identity').identityAvdAccess.identityAvdUserAccessGroupTextBox1, steps('identity').identityAvdAccess.identityAvdUserAccessGroupDropDown.name)]",
+                "securityPrincipals": "[steps('identity').identityAvdAccess.identityAvdUserAccessGroups]",
                 "avdDeployMonitoring": "[steps('monitoring').deployMonitoring]",
                 "deployAlaWorkspace": "[if(equals(steps('monitoring').deployMonitoring, true), steps('monitoring').deployMonitoringAlaWorkspace, false)]",
                 "avdAlaWorkspaceDataRetention": "[if(equals(steps('monitoring').deployMonitoringAlaWorkspace, true), steps('monitoring').deployMonitoringNewAlaWorkspaceRetention, 0)]",
