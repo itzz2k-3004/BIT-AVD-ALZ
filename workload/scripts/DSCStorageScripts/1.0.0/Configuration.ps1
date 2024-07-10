@@ -112,7 +112,7 @@ Configuration DomainJoinFileShare
 
         [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
-        [string]$SecurityPrincipalNames,
+        [string[]]$SecurityPrincipalNames,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
