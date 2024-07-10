@@ -56,12 +56,6 @@ param avdIdentityServiceProvider string = 'ADDS'
 @sys.description('Required, Eronll session hosts on Intune. (Default: false)')
 param createIntuneEnrollment bool = false
 
-// @sys.description('Optional, Identity ID to grant RBAC role to access AVD application group and NTFS permissions. (Default: "")')
-// param securityPrincipalId string = ''
-
-// @sys.description('Optional, Identity name to grant RBAC role to access AVD application group and NTFS permissions. (Default: "")')
-// param securityPrincipalName string = ''
-
 @sys.description('Optional, List of identities with ID to access AVD application group and Name to configure NTFS permissions. (Default: "")')
 param securityPrincipals array = []
 
@@ -1125,7 +1119,7 @@ module managementPLane './modules/avdManagementPlane/deploy.bicep' = {
     startVmOnConnect: avdStartVmOnConnect
     subscriptionId: avdWorkloadSubsId
     identityServiceProvider: avdIdentityServiceProvider
-    securityPrincipalId: !empty(securityPrincipalId) ? securityPrincipalId : ''
+    securityPrincipalIds: [for securityPrincipal in securityPrincipals ?? [] : securityPrincipal.id]
     tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags
     alaWorkspaceResourceId: avdDeployMonitoring
       ? (deployAlaWorkspace
@@ -1157,7 +1151,7 @@ module identity './modules/identity/deploy.bicep' = {
     enableStartVmOnConnect: avdStartVmOnConnect
     identityServiceProvider: avdIdentityServiceProvider
     createStorageDeployment: varCreateStorageDeployment
-    securityPrincipalId: !empty(securityPrincipalId) ? securityPrincipalId : ''
+    securityPrincipalIds: [for securityPrincipal in securityPrincipals ?? [] : securityPrincipal.id]
     tags: createResourceTags ? union(varCustomResourceTags, varAvdDefaultTags) : varAvdDefaultTags
   }
   dependsOn: [
@@ -1356,7 +1350,7 @@ module fslogixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if 
     deployPrivateEndpoint: deployPrivateEndpointKeyvaultStorage
     ouStgPath: varOuStgPath
     managedIdentityClientId: varCreateStorageDeployment ? identity.outputs.managedIdentityStorageClientId : ''
-    securityPrincipalName: !empty(securityPrincipalName) ? securityPrincipalName : ''
+    securityPrincipalNames: [for securityPrincipal in securityPrincipals ?? [] : securityPrincipal.name]
     domainJoinUserName: avdDomainJoinUserName
     wrklKvName: varWrklKvName
     serviceObjectsRgName: varServiceObjectsRgName
@@ -1408,7 +1402,7 @@ module msixAzureFilesStorage './modules/storageAzureFiles/deploy.bicep' = if (va
     deployPrivateEndpoint: deployPrivateEndpointKeyvaultStorage
     ouStgPath: varOuStgPath
     managedIdentityClientId: varCreateStorageDeployment ? identity.outputs.managedIdentityStorageClientId : ''
-    securityPrincipalName: !empty(securityPrincipalName) ? securityPrincipalName : ''
+    securityPrincipalNames: [for securityPrincipal in securityPrincipals ?? [] : securityPrincipal.name]
     domainJoinUserName: avdDomainJoinUserName
     wrklKvName: varWrklKvName
     serviceObjectsRgName: varServiceObjectsRgName

@@ -235,7 +235,6 @@ module applicationGroups '../../../../avm/1.0.0/res/desktop-virtualization/appli
     roleAssignments: [for securityPrincipalId in securityPrincipalIds ?? [] : {
       roleDefinitionIdOrName: 'Desktop Virtualization User'
       principalId: securityPrincipalId
-      principalType: 'Group'
       }
     ] 
     diagnosticSettings: varDiagnosticSettings
