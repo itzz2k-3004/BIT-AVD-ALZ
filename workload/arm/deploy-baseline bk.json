@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "8707774696395711589"
+      "templateHash": "13630766501625401996"
     },
     "name": "AVD Accelerator - Baseline Deployment",
     "description": "AVD Accelerator - Deployment Baseline"
@@ -39793,7 +39793,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "12234495674327022915"
+              "templateHash": "7529644503552537022"
             }
           },
           "parameters": {
@@ -39872,7 +39872,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.29.47.4906",
-                      "templateHash": "14985401709216874255"
+                      "templateHash": "4815917831957322627"
                     }
                   },
                   "parameters": {
@@ -39900,7 +39900,7 @@
                       "type": "string",
                       "defaultValue": "Aligned",
                       "metadata": {
-                        "description": "Optional. SKU of the availability set.\n- Use \\'Aligned\\' for virtual machines with managed disks.\n- Use \\'Classic\\' for virtual machines with unmanaged disks.\n"
+                        "description": "Optional. SKU of the availability set.\r\n- Use \\'Aligned\\' for virtual machines with managed disks.\r\n- Use \\'Classic\\' for virtual machines with unmanaged disks.\r\n"
                       }
                     },
                     "proximityPlacementGroupId": {
